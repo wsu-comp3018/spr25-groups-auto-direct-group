@@ -23,47 +23,62 @@ function CarDetailPage() {
 
   // Process the heart icon based for save and unsave
   const handleToggleFavourite = async (vehicleID) => {
-    if (!token || !userID) {
-      console.warn("A user must be signed in to save a car", userID);
-      return;
-    }
-
     const isCurrentlyFavourite = favourites.includes(vehicleID);
-    let route;
-    let method;
-    let bodyData = { userID, vehicleID };
 
-    // Handle route depending on if the vehicle is a favourite or not
-    if (isCurrentlyFavourite) {
-      route = api + `/vehicle/save-vehicle/remove`;
-      method = "POST";
-    } else {
-      route = api + `/vehicle/save-vehicle/add`;
-      method = "POST";
-    }
+    if (token && userID) {
+      // User is signed in - use API
+      let route;
+      let method;
+      let bodyData = { userID, vehicleID };
 
-    try {
-      const response = await fetch(route, {
-        method: method,
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: token,
-        },
-        body: JSON.stringify(bodyData),
-      });
-
-      if (!response.ok) {
-        throw new Error("Unable to toggle favourite");
+      // Handle route depending on if the vehicle is a favourite or not
+      if (isCurrentlyFavourite) {
+        route = api + `/vehicle/save-vehicle/remove`;
+        method = "POST";
+      } else {
+        route = api + `/vehicle/save-vehicle/add`;
+        method = "POST";
       }
 
-      setFavourites((prev) =>
-        isCurrentlyFavourite
-          ? prev.filter((x) => x !== vehicleID)
-          : [...prev, vehicleID]
-      );
-      console.log(`Vehicle saved successfully.`);
-    } catch (error) {
-      console.error("Error toggling favourite:", error);
+      try {
+        const response = await fetch(route, {
+          method: method,
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: token,
+          },
+          body: JSON.stringify(bodyData),
+        });
+
+        if (!response.ok) {
+          throw new Error("Unable to toggle favourite");
+        }
+
+        setFavourites((prev) =>
+          isCurrentlyFavourite
+            ? prev.filter((x) => x !== vehicleID)
+            : [...prev, vehicleID]
+        );
+        console.log(`Vehicle saved successfully.`);
+      } catch (error) {
+        console.error("Error toggling favourite:", error);
+      }
+    } else {
+      // Guest user - use localStorage
+      const guestFavourites = JSON.parse(localStorage.getItem('guestFavourites') || '[]');
+      
+      if (isCurrentlyFavourite) {
+        // Remove from favourites
+        const updatedFavourites = guestFavourites.filter((id) => id !== vehicleID);
+        localStorage.setItem('guestFavourites', JSON.stringify(updatedFavourites));
+        setFavourites(updatedFavourites);
+      } else {
+        // Add to favourites
+        const updatedFavourites = [...guestFavourites, vehicleID];
+        localStorage.setItem('guestFavourites', JSON.stringify(updatedFavourites));
+        setFavourites(updatedFavourites);
+      }
+      console.log(`Vehicle ${isCurrentlyFavourite ? 'removed from' : 'added to'} guest favourites.`);
     }
   };
 
@@ -99,7 +114,7 @@ function CarDetailPage() {
   useEffect(() => {
     const fetchSavedVehicles = async () => {
       if (token && userID) {
-        // Only fetch if user is logged in and userID is available
+        // User is signed in - fetch from API
         try {
           const savedVehiclesRes = await fetch(
             api + `/vehicle/saved-vehicles/`,
@@ -127,7 +142,9 @@ function CarDetailPage() {
           setFavourites([]);
         }
       } else {
-        setFavourites([]); // No user, no token, or no userID, so no favorites
+        // Guest user - load from localStorage
+        const guestFavourites = JSON.parse(localStorage.getItem('guestFavourites') || '[]');
+        setFavourites(guestFavourites);
       }
     };
 

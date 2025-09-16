@@ -132,14 +132,19 @@ const RegisterPage = () => {
     <div className="min-h-screen pt-24 pb-12 px-4 relative">
       {/* Car image background */}
       <img 
-        src="/assets/black.png" 
+        src="/assets/LEXUSLFA.jpg" 
         alt="Car background"
-        className="absolute inset-0 w-full h-full object-cover"
+        className="absolute inset-0 w-full h-full object-cover opacity-95"
+        style={{ zIndex: 1 }}
         onError={(e) => {
           console.log('Image failed to load:', e.target.src);
-          e.target.style.display = 'none';
+          e.target.src = './assets/LEXUSLFA.jpg';
+        }}
+        onLoad={() => {
+          console.log('Image loaded successfully');
         }}
       />
+      {/* No overlay - using image opacity instead */}
       
       <div className="max-w-4xl mx-auto relative z-10">
         {/* Header Section */}
