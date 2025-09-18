@@ -64,121 +64,61 @@ function Login() {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center px-4 py-12 relative">
-      {/* Car image background */}
-      <img 
-        src="/assets/LEXUSLFA.jpg" 
-        alt="Car background"
-        className="absolute inset-0 w-full h-full object-cover opacity-95"
-        style={{ zIndex: 1 }}
-        onError={(e) => {
-          console.log('Image failed to load:', e.target.src);
-          // Try alternative path
-          e.target.src = './assets/LEXUSLFA.jpg';
-        }}
-        onLoad={() => {
-          console.log('Image loaded successfully');
-        }}
-      />
-      {/* No overlay - using image opacity instead */}
-      
-      <div className="w-full max-w-md relative z-10">
-        {/* Logo/Brand Section */}
-        <div className="text-center mb-8">
-          <div className="inline-flex items-center justify-center w-16 h-16 bg-black rounded-full mb-4">
-            <svg className="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
-            </svg>
-          </div>
-          <h1 className="text-2xl font-bold text-white mb-2">Welcome Back</h1>
-          <p className="text-gray-200 text-sm">Sign in to your account to continue</p>
-        </div>
+    <div className="min-h-screen pt-24 px-4 bg-white">
+      <div className="max-w-md mx-auto bg-white shadow-lg rounded-lg p-8 border border-black">
+        <h2 className="text-3xl font-bold text-black mb-6 text-center">
+          Login to Your Account
+				</h2>
 
-        {/* Login Form */}
-        <div className="bg-white bg-opacity-95 backdrop-blur-sm rounded-2xl shadow-xl border border-gray-200 p-8">
-          <form className="space-y-6" onSubmit={handleSubmit}>
-            {/* Email Field */}
-            <div className="space-y-2">
-              <label className="block text-sm font-semibold text-gray-700">
-                Email Address
-              </label>
-              <div className="relative">
-                <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                  <svg className="h-5 w-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 12a4 4 0 10-8 0 4 4 0 008 0zm0 0v1.5a2.5 2.5 0 005 0V12a9 9 0 10-9 9m4.5-1.206a8.959 8.959 0 01-4.5 1.207" />
-                  </svg>
-                </div>
-                <input
-                  name="emailAddress"
-                  type="email"
-                  placeholder="Enter your email"
-                  onChange={handleChange}
-                  required
-                  className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-xl text-gray-900 bg-white placeholder-gray-500 focus:ring-2 focus:ring-black focus:border-transparent focus:outline-none transition-all duration-200"
-                />
-              </div>
+				<form className="space-y-5" onSubmit={handleSubmit}>
+					{/* Email */}
+					<div>
+						<label className="block mb-1 text-sm font-medium text-black">
+              Email Address
+						</label>
+						<input
+							name="emailAddress"
+							type="email"
+							placeholder="you@example.com"
+							onChange={handleChange}
+							required
+							className="w-full border border-black p-3 rounded-lg text-black bg-white placeholder-gray-400 focus:ring-2 focus:ring-white focus:outline-none"
+						/>
+					</div>
+
+					{/* Password */}
+					<div>
+						<label className="block mb-1 text-sm font-medium text-black">
+              Password
+						</label>
+						<input
+				        name="password"
+							type="password"
+							placeholder="••••••••"
+							onChange={handleChange}
+              				required
+							className="w-full border border-black p-3 rounded-lg text-black bg-white placeholder-gray-400 focus:ring-2 focus:ring-white focus:outline-none"
+						/>
+					</div>
+
+          {/* Error message */}
+          {errorMessage && (
+            <div className="text-red-500 text-sm text-center">
+              {errorMessage}
             </div>
+          )}
 
-            {/* Password Field */}
-            <div className="space-y-2">
-              <label className="block text-sm font-semibold text-gray-700">
-                Password
-              </label>
-              <div className="relative">
-                <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                  <svg className="h-5 w-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
-                  </svg>
-                </div>
-                <input
-                  name="password"
-                  type="password"
-                  placeholder="Enter your password"
-                  onChange={handleChange}
-                  required
-                  className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-xl text-gray-900 bg-white placeholder-gray-500 focus:ring-2 focus:ring-black focus:border-transparent focus:outline-none transition-all duration-200"
-                />
-              </div>
-            </div>
-
-            {/* Error Message */}
-            {errorMessage && (
-              <div className="bg-red-50 border border-red-200 rounded-xl p-4">
-                <div className="flex">
-                  <div className="flex-shrink-0">
-                    <svg className="h-5 w-5 text-red-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-                    </svg>
-                  </div>
-                  <div className="ml-3">
-                    <p className="text-sm text-red-800">{errorMessage}</p>
-                  </div>
-                </div>
-              </div>
-            )}
-
-            {/* Submit Button */}
-            <button
-              type="submit"
-              className="w-full bg-black text-white py-3 px-4 rounded-xl font-semibold hover:bg-gray-800 focus:outline-none focus:ring-2 focus:ring-black focus:ring-offset-2 transition-all duration-200 transform hover:scale-[1.02] active:scale-[0.98]"
-            >
-              Sign In
-            </button>
-          </form>
-
-          {/* Additional Links */}
-          <div className="mt-6 text-center">
-            <p className="text-sm text-gray-600">
-              Don't have an account?{' '}
-              <a href="/register" className="font-semibold text-black hover:text-gray-700 transition-colors duration-200">
-                Sign up here
-              </a>
-            </p>
-          </div>
-        </div>
-      </div>
-    </div>
-  );
+					{/* Submit Button */}
+					<button
+						type="submit"
+						className="w-full bg-black text-white py-3 rounded-lg font-semibold hover:bg-gray-700 "
+					>
+            Login
+					</button>
+				</form>
+			</div>
+		</div>
+	);
 }
 
 export default Login;

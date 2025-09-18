@@ -66,6 +66,12 @@ const Navbar = () => {
               {/* Desktop Nav */}
               <nav className="hidden md:flex space-x-4">
                 <Link
+                  to="/"
+                  className="inline-block py-2 px-4 text-black hover:bg-gray-200 rounded transition"
+                >
+                  Home
+                </Link>
+                <Link
                   to="/browse"
                   className="inline-block py-2 px-4 text-black hover:bg-gray-200 rounded transition"
                 >
@@ -438,6 +444,15 @@ const Navbar = () => {
           </button>
         </div>
         <div className=" flex flex-col">
+          <Link
+            to="/"
+            onClick={() => setShowMobileMenu(false)}
+            className="text-white py-4 border-b border-white/10 hover:bg-white hover:text-black transition text-left px-5 rounded font-medium"
+          >
+            Home
+          </Link>
+         
+       
             <Link
               to="/browse"
               onClick={() => setShowMobileMenu(false)}

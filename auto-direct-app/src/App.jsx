@@ -16,7 +16,6 @@ import HomePage from "./pages/home-page";
 import ProfilePage from "./pages/profile-page";
 import PrivacyPolicyPage from "./pages/privacy-policy-page";
 import GlossaryPage from "./pages/glossary-page";
-import ComplaintsPage from "./pages/complaints-page";
 import SavedCarsPage from "./pages/saved-cars-page";
 import AddVehiclePage from "./pages/add-vehicle-page";
 import ApproveVehiclesPage from "./pages/approve-vehicles-page";
@@ -55,7 +54,6 @@ function App() {
           <Route path="/profile" element={<ProfilePage />} />
           <Route path="/privacy-policy" element={<PrivacyPolicyPage />} />
           <Route path="/glossary" element={<GlossaryPage />} />
-          <Route path="/complaints" element={<ComplaintsPage />} />
 
 {/* Add Vehicle: Only admin */}
             <Route
@@ -192,9 +190,6 @@ function App() {
 				</Link>{" | "}
 				<Link to="/glossary" className="text-blue-700 hover:underline">
 				Glossary
-				</Link>{" | "}
-				<Link to="/complaints" className="text-blue-700 hover:underline">
-				Complaints
 				</Link>
           </footer>
         </div>

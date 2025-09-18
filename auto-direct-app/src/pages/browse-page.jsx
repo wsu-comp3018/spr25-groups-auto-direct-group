@@ -3,21 +3,8 @@ import { Link, useNavigate, useLocation } from "react-router-dom";
 import { Heart } from "lucide-react";
 import Cookies from "js-cookie";
 import api from "../data/api-calls";
-import MakeFilterModal from "../components/MakeFilterModal";
-import PriceFilterModal from "../components/PriceFilterModal";
-import TransmissionFilterModal from "../components/TransmissionFilterModal";
-import BodyTypeFilterModal from "../components/BodyTypeFilterModal";
-import DriveTypeFilterModal from "../components/DriveTypeFilterModal";
-import FuelFilterModal from "../components/FuelFilterModal";
 
 // Hardcoded options for filters (edit these to what you want available by default)
-const PRICE_OPTIONS = [
-  { label: "Under $30,000", value: "30000" },
-  { label: "Under $50,000", value: "50000" },
-  { label: "Under $70,000", value: "70000" },
-  { label: "Under $100,000", value: "100000" },
-  { label: "Above $100,000", value: "above-100000" },
-];
 const TRANSMISSION_OPTIONS = ["Automatic", "Manual"];
 const BODY_TYPE_OPTIONS = [
   "Cab Chassis",
@@ -58,12 +45,6 @@ function BrowsePage() {
   const [makeExpanded, setMakeExpanded] = useState(false);
   const [transmissionExpanded, setTransmissionExpanded] = useState(false);
   const [bodyTypeExpanded, setBodyTypeExpanded] = useState(false);
-  const [isMakeModalOpen, setIsMakeModalOpen] = useState(false);
-  const [isPriceModalOpen, setIsPriceModalOpen] = useState(false);
-  const [isTransmissionModalOpen, setIsTransmissionModalOpen] = useState(false);
-  const [isBodyTypeModalOpen, setIsBodyTypeModalOpen] = useState(false);
-  const [isDriveTypeModalOpen, setIsDriveTypeModalOpen] = useState(false);
-  const [isFuelModalOpen, setIsFuelModalOpen] = useState(false);
 
 
   const [filterOptions, setFilterOptions] = useState({
@@ -77,62 +58,47 @@ function BrowsePage() {
   const [favourites, setFavourites] = useState([]);
 
   const handleToggleFavourite = async (vehicleID) => {
+    if (!token || !userID) {
+      console.log("A user must be signed in to save a car", userID);
+      return;
+    }
+
     const isCurrentlyFavourite = favourites.includes(vehicleID);
+    let route;
+    let method;
+    let bodyData = { userID, vehicleID };
 
-    if (token && userID) {
-      // User is signed in - use API
-      let route;
-      let method;
-      let bodyData = { userID, vehicleID };
-
-      // Handle route depending on if the vehicle is a favourite or not
-      if (isCurrentlyFavourite) {
-        route = api + `/vehicle/save-vehicle/remove`;
-        method = "POST";
-      } else {
-        route = api + `/vehicle/save-vehicle/add`;
-        method = "POST";
-      }
-
-      try {
-        const response = await fetch(route, {
-          method: method,
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: token,
-          },
-          body: JSON.stringify(bodyData),
-        });
-
-        if (!response.ok) {
-          throw new Error("Unable to toggle favourite");
-        }
-
-        setFavourites((prev) =>
-          isCurrentlyFavourite
-            ? prev.filter((x) => x !== vehicleID)
-            : [...prev, vehicleID]
-        );
-        console.log(`Vehicle saved successfully.`);
-      } catch (error) {
-        console.error("Error toggling favourite:", error);
-      }
+    // Handle route dpeending on if the vehicle is a favourite or not
+    if (isCurrentlyFavourite) {
+      route = api + `/vehicle/save-vehicle/remove`;
+      method = "POST";
     } else {
-      // Guest user - use localStorage
-      const guestFavourites = JSON.parse(localStorage.getItem('guestFavourites') || '[]');
-      
-      if (isCurrentlyFavourite) {
-        // Remove from favourites
-        const updatedFavourites = guestFavourites.filter((id) => id !== vehicleID);
-        localStorage.setItem('guestFavourites', JSON.stringify(updatedFavourites));
-        setFavourites(updatedFavourites);
-      } else {
-        // Add to favourites
-        const updatedFavourites = [...guestFavourites, vehicleID];
-        localStorage.setItem('guestFavourites', JSON.stringify(updatedFavourites));
-        setFavourites(updatedFavourites);
+      route = api + `/vehicle/save-vehicle/add`;
+      method = "POST";
+    }
+
+    try {
+      const response = await fetch(route, {
+        method: method,
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: token,
+        },
+        body: JSON.stringify(bodyData),
+      });
+
+      if (!response.ok) {
+        throw new Error("Unable to toggle favourite");
       }
-      console.log(`Vehicle ${isCurrentlyFavourite ? 'removed from' : 'added to'} guest favourites.`);
+
+      setFavourites((prev) =>
+        isCurrentlyFavourite
+          ? prev.filter((x) => x !== vehicleID)
+          : [...prev, vehicleID]
+      );
+      console.log(`Vehicle saved successfully.`);
+    } catch (error) {
+      console.error("Error toggling favourite:", error);
     }
   };
 
@@ -215,33 +181,32 @@ function BrowsePage() {
   // Get the user's favourited vehicles on load
 
   const fetchUserFavourites = useCallback(async () => {
-    if (token && userID) {
-      // User is signed in - fetch from API
-      try {
-        const res = await fetch(api + "/vehicle/saved-vehicles/", {
-          headers: {
-            Authorization: token,
-          },
-        });
+    if (!token || !userID) {
+      // if a user isn't signed in, favourites will be empty
+      setFavourites([]);
+      return;
+    }
 
-        if (!res.ok) {
-          if (res.status === 401 || res.status === 403) {
-            throw new Error("Failed to fetch user favourites");
-          }
+    try {
+      const res = await fetch(api + "/vehicle/saved-vehicles/", {
+        headers: {
+          Authorization: token,
+        },
+      });
+
+      if (!res.ok) {
+        if (res.status === 401 || res.status === 403) {
+          throw new Error("Failed to fetch user favourites");
         }
-        const returnedSaves = await res.json();
-
-        // Pull ID's from the API result to populate favourites
-        const favouriteIDs = returnedSaves.map((car) => car.vehicleID);
-        setFavourites(favouriteIDs);
-      } catch (err) {
-        console.error("Failed to fetch user favourites:", err);
-        setFavourites([]);
       }
-    } else {
-      // Guest user - load from localStorage
-      const guestFavourites = JSON.parse(localStorage.getItem('guestFavourites') || '[]');
-      setFavourites(guestFavourites);
+      const returnedSaves = await res.json();
+
+      // Pull ID's from the API result to populate favourites
+      const favouriteIDs = returnedSaves.map((car) => car.vehicleID);
+      setFavourites(favouriteIDs);
+    } catch (err) {
+      console.error("Failed to fetch user favourites:", err);
+      setFavourites([]);
     }
   }, [token, userID]);
 
@@ -271,91 +236,6 @@ function BrowsePage() {
     navigate(`?${queryParams.toString()}`);
   };
 
-  // Helper to update make filter and URL
-  const handleMakeFilterChange = (newMakeFilter) => {
-    setMakeFilter(newMakeFilter);
-    
-    const queryParams = new URLSearchParams(location.search);
-    if (newMakeFilter.length > 0) {
-      queryParams.set('make', newMakeFilter.join(","));
-    } else {
-      queryParams.delete('make');
-    }
-    
-    // Update the URL according to filters
-    navigate(`?${queryParams.toString()}`);
-  };
-
-  // Helper to update price filter and URL
-  const handlePriceFilterChange = (newPriceFilter) => {
-    setPriceFilter(newPriceFilter);
-    
-    const queryParams = new URLSearchParams(location.search);
-    if (newPriceFilter.length > 0) {
-      queryParams.set('price', newPriceFilter.join(","));
-    } else {
-      queryParams.delete('price');
-    }
-    
-    navigate(`?${queryParams.toString()}`);
-  };
-
-  // Helper to update transmission filter and URL
-  const handleTransmissionFilterChange = (newTransmissionFilter) => {
-    setTransmissionFilter(newTransmissionFilter);
-    
-    const queryParams = new URLSearchParams(location.search);
-    if (newTransmissionFilter.length > 0) {
-      queryParams.set('transmission', newTransmissionFilter.join(","));
-    } else {
-      queryParams.delete('transmission');
-    }
-    
-    navigate(`?${queryParams.toString()}`);
-  };
-
-  // Helper to update body type filter and URL
-  const handleBodyTypeFilterChange = (newBodyTypeFilter) => {
-    setBodyTypeFilter(newBodyTypeFilter);
-    
-    const queryParams = new URLSearchParams(location.search);
-    if (newBodyTypeFilter.length > 0) {
-      queryParams.set('bodyType', newBodyTypeFilter.join(","));
-    } else {
-      queryParams.delete('bodyType');
-    }
-    
-    navigate(`?${queryParams.toString()}`);
-  };
-
-  // Helper to update drive type filter and URL
-  const handleDriveTypeFilterChange = (newDriveTypeFilter) => {
-    setDriveTypeFilter(newDriveTypeFilter);
-    
-    const queryParams = new URLSearchParams(location.search);
-    if (newDriveTypeFilter.length > 0) {
-      queryParams.set('driveType', newDriveTypeFilter.join(","));
-    } else {
-      queryParams.delete('driveType');
-    }
-    
-    navigate(`?${queryParams.toString()}`);
-  };
-
-  // Helper to update fuel filter and URL
-  const handleFuelFilterChange = (newFuelFilter) => {
-    setFuelFilter(newFuelFilter);
-    
-    const queryParams = new URLSearchParams(location.search);
-    if (newFuelFilter.length > 0) {
-      queryParams.set('fuel', newFuelFilter.join(","));
-    } else {
-      queryParams.delete('fuel');
-    }
-    
-    navigate(`?${queryParams.toString()}`);
-  };
-
   // Pagination logic
   const totalPages = Math.ceil(cars.length / itemsPerPage);
   const startIndex = (currentPage - 1) * itemsPerPage;
@@ -372,135 +252,174 @@ function BrowsePage() {
             </h2>
             {/* Make Filter */}
             <div>
-              <button
-                onClick={() => setIsMakeModalOpen(true)}
-                className="w-full flex items-center justify-between p-3 border border-gray-300 rounded-lg hover:border-gray-400 transition-colors bg-white"
-              >
-                <div className="flex flex-col items-start">
-                  <span className="text-sm font-medium text-gray-700">Make</span>
-                  <span className="text-sm text-gray-500">
-                    {makeFilter.length === 0 
-                      ? "All makes" 
-                      : makeFilter.length === 1 
-                        ? makeFilter[0] 
-                        : `${makeFilter.length} selected`
-                    }
-                  </span>
-                </div>
-                <svg className="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
-                </svg>
-              </button>
+              <p className="text-sm font-medium text-gray-700 mb-1">Make</p>
+              <div className="space-y-1 max-h-50 overflow-y-auto">
+                {filterOptions.makes.map((make, idx) => (
+                  <label key={idx} className="flex items-center">
+                    <input
+                      type="checkbox"
+                      className="mr-2"
+                      checked={makeFilter.includes(make)}
+                      onChange={() => toggleFilter(make, "make", makeFilter)}
+                    />
+                    <span className="text-gray-700">{make}</span>
+                  </label>
+                ))}
+              </div>
             </div>
             {/* Price Filter */}
             <div>
-              <button
-                onClick={() => setIsPriceModalOpen(true)}
-                className="w-full flex items-center justify-between p-3 border border-gray-300 rounded-lg hover:border-gray-400 transition-colors bg-white"
-              >
-                <div className="flex flex-col items-start">
-                  <span className="text-sm font-medium text-gray-700">Price</span>
-                  <span className="text-sm text-gray-500">
-                    {priceFilter.length === 0 
-                      ? "All prices" 
-                      : priceFilter.length === 1 
-                        ? PRICE_OPTIONS.find(opt => opt.value === priceFilter[0])?.label || priceFilter[0]
-                        : `${priceFilter.length} selected`
-                    }
-                  </span>
-                </div>
-                <svg className="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
-                </svg>
-              </button>
+              <p className="text-sm font-medium text-gray-700 mb-1">Price</p>
+              <div className="space-y-1 max-h-20 overflow-y-auto">
+                {[
+                  { label: "Under $30,000", value: "30000" },
+                  { label: "Under $50,000", value: "50000" },
+                  { label: "Under $70,000", value: "70000" },
+                ].map((opt, idx) => (
+                  <label key={idx} className="flex items-center">
+                    <input
+                      type="checkbox"
+                      className="mr-2"
+                      checked={priceFilter.includes(opt.value)}
+                      onChange={() =>
+                        toggleFilter(opt.value, "price", priceFilter)
+                      }
+                    />
+                    <span className="text-gray-700">{opt.label}</span>
+                  </label>
+                ))}
+              </div>
             </div>
             {/* Transmission Filter */}
             <div>
-              <button
-                onClick={() => setIsTransmissionModalOpen(true)}
-                className="w-full flex items-center justify-between p-3 border border-gray-300 rounded-lg hover:border-gray-400 transition-colors bg-white"
-              >
-                <div className="flex flex-col items-start">
-                  <span className="text-sm font-medium text-gray-700">Transmission</span>
-                  <span className="text-sm text-gray-500">
-                    {transmissionFilter.length === 0 
-                      ? "All transmissions" 
-                      : transmissionFilter.length === 1 
-                        ? transmissionFilter[0] 
-                        : `${transmissionFilter.length} selected`
-                    }
-                  </span>
-                </div>
-                <svg className="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
-                </svg>
-              </button>
+              <p className="text-sm font-medium text-gray-700 mb-1">
+                Transmission
+              </p>
+                  <div className="space-y-1 max-h-50 overflow-y-auto">
+                    {(transmissionExpanded ? filterOptions.transmissions : filterOptions.transmissions.slice(0, 5)).map((type, idx) => (
+                      <label key={idx} className="flex items-center">
+                        <input
+                          type="checkbox"
+                          className="mr-2"
+                          checked={transmissionFilter.includes(type)}
+                          onChange={() => toggleFilter(type, "transmission", transmissionFilter)}
+                        />
+                        <span className="text-gray-700">{type}</span>
+                      </label>
+                    ))}
+                    {filterOptions.transmissions.length > 5 && (
+                      <button
+                        className="flex items-center text-sm text-blue-600 hover:underline mt-1"
+                        onClick={() => setTransmissionExpanded((prev) => !prev)}
+                        type="button"
+                      >
+                        {transmissionExpanded ? (
+                          <>
+                            Show Less
+                            <svg className="ml-1 w-4 h-4" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
+                              <path strokeLinecap="round" strokeLinejoin="round" d="M19 15l-7-7-7 7" />
+                            </svg>
+                          </>
+                        ) : (
+                          <>
+                            Show More
+                            <svg className="ml-1 w-4 h-4" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
+                              <path strokeLinecap="round" strokeLinejoin="round" d="M19 9l-7 7-7-7" />
+                            </svg>
+                          </>
+                        )}
+                      </button>
+                    )}
+                  </div>
             </div>
             {/* Body Type Filter */}
-            <div>
-              <button
-                onClick={() => setIsBodyTypeModalOpen(true)}
-                className="w-full flex items-center justify-between p-3 border border-gray-300 rounded-lg hover:border-gray-400 transition-colors bg-white"
-              >
-                <div className="flex flex-col items-start">
-                  <span className="text-sm font-medium text-gray-700">Body Type</span>
-                  <span className="text-sm text-gray-500">
-                    {bodyTypeFilter.length === 0 
-                      ? "All body types" 
-                      : bodyTypeFilter.length === 1 
-                        ? bodyTypeFilter[0] 
-                        : `${bodyTypeFilter.length} selected`
+          <div>
+            <p className="text-sm font-medium text-gray-700 mb-1">
+              Body Type
+            </p>
+            <div className="space-y-1 overflow-y-auto">
+              {(bodyTypeExpanded
+                ? filterOptions.bodyTypes
+                : filterOptions.bodyTypes.slice(0, 5)
+              ).map((type, idx) => (
+                <label key={idx} className="flex items-center">
+                  <input
+                    type="checkbox"
+                    className="mr-2"
+                    checked={bodyTypeFilter.includes(type)}
+                    onChange={() =>
+                      toggleFilter(type, "bodyType", bodyTypeFilter)
                     }
-                  </span>
-                </div>
-                <svg className="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
-                </svg>
-              </button>
+                  />
+                  <span className="text-gray-700">{type}</span>
+                </label>
+              ))}
+              {filterOptions.bodyTypes.length > 5 && (
+                <button
+                  className="flex items-center text-sm text-black-600 hover:underline mt-1"
+                  onClick={() => setBodyTypeExpanded((prev) => !prev)}
+                  type="button"
+                >
+                  {bodyTypeExpanded ? (
+                    <>
+                      Show Less
+                      {/* Up Arrow */}
+                      <svg className="ml-1 w-4 h-4" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" d="M19 15l-7-7-7 7" />
+                      </svg>
+                    </>
+                  ) : (
+                    <>
+                      Show More
+                      {/* Down Arrow */}
+                      <svg className="ml-1 w-4 h-4" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" d="M19 9l-7 7-7-7" />
+                      </svg>
+                    </>
+                  )}
+                </button>
+              )}
             </div>
+          </div>
             {/* Drive Type Filter */}
             <div>
-              <button
-                onClick={() => setIsDriveTypeModalOpen(true)}
-                className="w-full flex items-center justify-between p-3 border border-gray-300 rounded-lg hover:border-gray-400 transition-colors bg-white"
-              >
-                <div className="flex flex-col items-start">
-                  <span className="text-sm font-medium text-gray-700">Drive Type</span>
-                  <span className="text-sm text-gray-500">
-                    {driveTypeFilter.length === 0 
-                      ? "All drive types" 
-                      : driveTypeFilter.length === 1 
-                        ? driveTypeFilter[0] 
-                        : `${driveTypeFilter.length} selected`
-                    }
-                  </span>
-                </div>
-                <svg className="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
-                </svg>
-              </button>
+              <p className="text-sm font-medium text-gray-700 mb-1">
+                Drive Type
+              </p>
+              <div className="space-y-1  overflow-y-auto">
+                {filterOptions.driveTypes.map((type, idx) => (
+                  <label key={idx} className="flex items-center">
+                    <input
+                      type="checkbox"
+                      className="mr-2"
+                      checked={driveTypeFilter.includes(type)}
+                      onChange={() =>
+                        toggleFilter(type, "driveType", driveTypeFilter)
+                      }
+                    />
+                    <span className="text-gray-700">{type}</span>
+                  </label>
+                ))}
+              </div>
             </div>
             {/* Fuel Filter */}
             <div>
-              <button
-                onClick={() => setIsFuelModalOpen(true)}
-                className="w-full flex items-center justify-between p-3 border border-gray-300 rounded-lg hover:border-gray-400 transition-colors bg-white"
-              >
-                <div className="flex flex-col items-start">
-                  <span className="text-sm font-medium text-gray-700">Fuel Type</span>
-                  <span className="text-sm text-gray-500">
-                    {fuelFilter.length === 0 
-                      ? "All fuel types" 
-                      : fuelFilter.length === 1 
-                        ? fuelFilter[0] 
-                        : `${fuelFilter.length} selected`
-                    }
-                  </span>
-                </div>
-                <svg className="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
-                </svg>
-              </button>
+              <p className="text-sm font-medium text-gray-700 mb-1">
+                Fuel Type
+              </p>
+              <div className="space-y-1  overflow-y-auto">
+                {filterOptions.fuels.map((type, idx) => (
+                  <label key={idx} className="flex items-center">
+                    <input
+                      type="checkbox"
+                      className="mr-2"
+                      checked={fuelFilter.includes(type)}
+                      onChange={() => toggleFilter(type, "fuel", fuelFilter)}
+                    />
+                    <span className="text-gray-700">{type}</span>
+                  </label>
+                ))}
+              </div>
             </div>
           </div>
         </aside>
@@ -625,55 +544,6 @@ function BrowsePage() {
           )}
         </div>
       </div>
-
-      {/* Filter Modals */}
-      <MakeFilterModal
-        isOpen={isMakeModalOpen}
-        onClose={() => setIsMakeModalOpen(false)}
-        makes={filterOptions.makes}
-        selectedMakes={makeFilter}
-        onSelectionChange={handleMakeFilterChange}
-      />
-      
-      <PriceFilterModal
-        isOpen={isPriceModalOpen}
-        onClose={() => setIsPriceModalOpen(false)}
-        priceOptions={PRICE_OPTIONS}
-        selectedPrices={priceFilter}
-        onSelectionChange={handlePriceFilterChange}
-      />
-      
-      <TransmissionFilterModal
-        isOpen={isTransmissionModalOpen}
-        onClose={() => setIsTransmissionModalOpen(false)}
-        transmissions={filterOptions.transmissions}
-        selectedTransmissions={transmissionFilter}
-        onSelectionChange={handleTransmissionFilterChange}
-      />
-      
-      <BodyTypeFilterModal
-        isOpen={isBodyTypeModalOpen}
-        onClose={() => setIsBodyTypeModalOpen(false)}
-        bodyTypes={filterOptions.bodyTypes}
-        selectedBodyTypes={bodyTypeFilter}
-        onSelectionChange={handleBodyTypeFilterChange}
-      />
-      
-      <DriveTypeFilterModal
-        isOpen={isDriveTypeModalOpen}
-        onClose={() => setIsDriveTypeModalOpen(false)}
-        driveTypes={filterOptions.driveTypes}
-        selectedDriveTypes={driveTypeFilter}
-        onSelectionChange={handleDriveTypeFilterChange}
-      />
-      
-      <FuelFilterModal
-        isOpen={isFuelModalOpen}
-        onClose={() => setIsFuelModalOpen(false)}
-        fuels={filterOptions.fuels}
-        selectedFuels={fuelFilter}
-        onSelectionChange={handleFuelFilterChange}
-      />
     </div>
   );
 }

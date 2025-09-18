@@ -17,49 +17,22 @@ function SavedCarsPage() {
   useEffect(() => {
     const fetchSavedCars = async () => {
       try {
-        if (token && userID) {
-          // User is signed in - fetch from API
-          const res = await fetch(api + "/vehicle/saved-vehicles/", {
-            headers: {
-              'Authorization': token
-            }
-          });
 
-          const data = await res.json();
-          setCars(data);
-          setFavourites(data.map(car => car.vehicleID));
-        } else {
-          // Guest user - fetch cars from localStorage and get full car data
-          const guestFavourites = JSON.parse(localStorage.getItem('guestFavourites') || '[]');
-          setFavourites(guestFavourites);
-          
-          if (guestFavourites.length > 0) {
-            // Fetch full car data for guest favourites
-            const carPromises = guestFavourites.map(vehicleID => 
-              fetch(api + `/vehicle/vehicle-information/${vehicleID}`)
-                .then(res => res.json())
-                .then(data => {
-                  console.log(`Fetched car data for ${vehicleID}:`, data);
-                  // Add mainImage from the first image in the images array
-                  const vehicle = data.vehicle;
-                  if (data.images && data.images.length > 0) {
-                    vehicle.mainImage = data.images[0].path;
-                  }
-                  return vehicle;
-                })
-                .catch(err => {
-                  console.error(`Failed to fetch car ${vehicleID}:`, err);
-                  return null;
-                })
-            );
-            
-            const carsData = await Promise.all(carPromises);
-            console.log('All cars data:', carsData);
-            setCars(carsData.filter(car => car !== null));
-          } else {
-            setCars([]);
-          }
+        if (!token) {
+          setCars([]);
+          return;
         }
+
+        const res = await fetch(api + "/vehicle/saved-vehicles/", {
+          headers: {
+            'Authorization': token
+          }
+        });
+
+        const data = await res.json();
+        setCars(data);
+        setFavourites(data.map(car => car.vehicleID));
+
       } catch (err) {
         console.error("Failed to fetch saved vehicles:", err);
         setCars([]);
@@ -67,50 +40,43 @@ function SavedCarsPage() {
     };
 
     fetchSavedCars();
-  }, [token, userID]);
+  }, []);
 
   // Clicking the heart unsaves the vehicle and reloads the page
 
   const handleToggleFavourite = async (vehicleID) => {
-    const isCurrentlyFavourite = favourites.includes(vehicleID);
+    if (!userID) {
+      console.warn("User ID not found. Cannot remove favourite.");
+      return;
+    }
 
-    if (token && userID) {
-      // User is signed in - use API
-      try {
-        const route = api + `/vehicle/save-vehicle/remove`;
-        const method = 'POST';
+    if (!token) {
+      console.warn("Auth token not found. Cannot remove favourite.");
+      return;
+    }
 
-        const response = await fetch(route, {
-          method: method,
-          headers: {
-            'Content-Type': 'application/json',
-            'Authorization': token
-          },
-          body: JSON.stringify({ userID, vehicleID })
-        });
+    try {
+      const route = api + `/vehicle/save-vehicle/remove`;
+      const method = 'POST';
 
-        if (!response.ok) {
-          throw new Error("Error unsaving vehicle");
-        }
+      const response = await fetch(route, {
+        method: method,
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': token
+        },
+        body: JSON.stringify({ userID, vehicleID })
+      });
 
-        console.log(`Vehicle ${vehicleID} successfully removed.`);
-        window.location.reload();
-
-      } catch (error) {
-        console.error('Error removing favourite:', error);
+      if (!response.ok) {
+        throw new Error("Error unsaving vehicle");
       }
-    } else {
-      // Guest user - use localStorage
-      const guestFavourites = JSON.parse(localStorage.getItem('guestFavourites') || '[]');
-      
-      if (isCurrentlyFavourite) {
-        // Remove from favourites
-        const updatedFavourites = guestFavourites.filter((id) => id !== vehicleID);
-        localStorage.setItem('guestFavourites', JSON.stringify(updatedFavourites));
-        setFavourites(updatedFavourites);
-        setCars(prevCars => prevCars.filter(car => car.vehicleID !== vehicleID));
-        console.log(`Vehicle ${vehicleID} removed from guest favourites.`);
-      }
+
+      console.log(`Vehicle ${vehicleID} successfully removed.`);
+      window.location.reload();
+
+    } catch (error) {
+      console.error('Error removing favourite:', error);
     }
   };
 
@@ -142,13 +108,6 @@ function SavedCarsPage() {
                       src={api + `/vehicle-images/${car.mainImage}`}
                       alt={car.modelName}
                       className="absolute inset-0 w-full h-full object-cover object-center transition-transform duration-500 hover:scale-110"
-                      onError={(e) => {
-                        console.log('Image failed to load:', e.target.src);
-                        console.log('Car data:', car);
-                      }}
-                      onLoad={() => {
-                        console.log('Image loaded successfully:', api + `/vehicle-images/${car.mainImage}`);
-                      }}
                     />
                   </Link>
                   <div className="p-4 flex flex-col flex-grow">
