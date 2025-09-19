@@ -77,6 +77,55 @@ router.get('/get-manufacturers', (req, res) => {
     });
 });
 
+// GET specific manufacturer by ID
+router.get('/manufacturers/:manufacturerID', (req, res) => {
+    const { manufacturerID } = req.params;
+    const query = `SELECT manufacturerID, manufacturerName, manufacturerStatus, ABN, country FROM manufacturers WHERE manufacturerID = ?`;
+    
+    pool.query(query, [manufacturerID], (err, result) => {
+        if (err) {
+            console.error('Error fetching manufacturer by ID:', err);
+            return res.status(500).json({ error: 'Failed to retrieve manufacturer details' });
+        }
+        
+        if (result.length === 0) {
+            return res.status(404).json({ error: 'Manufacturer not found' });
+        }
+        
+        res.status(200).json({ 
+            manufacturer: result[0],
+            message: 'Successfully retrieved manufacturer details'
+        });
+    });
+});
+
+// GET manufacturer details by make ID
+router.get('/manufacturer-by-make/:makeID', (req, res) => {
+    const { makeID } = req.params;
+    const query = `
+        SELECT m.manufacturerID, m.manufacturerName, m.manufacturerStatus, m.ABN, m.country 
+        FROM manufacturers m
+        JOIN makes mk ON m.manufacturerID = mk.manufacturerID
+        WHERE mk.makeID = ?
+    `;
+    
+    pool.query(query, [makeID], (err, result) => {
+        if (err) {
+            console.error('Error fetching manufacturer by make ID:', err);
+            return res.status(500).json({ error: 'Failed to retrieve manufacturer details' });
+        }
+        
+        if (result.length === 0) {
+            return res.status(404).json({ error: 'Manufacturer not found for this make' });
+        }
+        
+        res.status(200).json({ 
+            manufacturer: result[0],
+            message: 'Successfully retrieved manufacturer details'
+        });
+    });
+});
+
 // GET all dealerships
 router.get('/manage', (req, res) => {
     const query = `SELECT * FROM dealers`;
