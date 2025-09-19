@@ -56,6 +56,7 @@ function BrowsePage() {
   });
 
   const [favourites, setFavourites] = useState([]);
+  const [isSavingId, setIsSavingId] = useState(null);
 
   const handleToggleFavourite = async (vehicleID) => {
     if (!token || !userID) {
@@ -88,7 +89,7 @@ function BrowsePage() {
       });
 
       if (!response.ok) {
-        throw new Error("Unable to toggle favourite");
+        console.warn("Toggle favourite returned status:", response.status);
       }
 
       setFavourites((prev) =>
@@ -97,8 +98,50 @@ function BrowsePage() {
           : [...prev, vehicleID]
       );
       console.log(`Vehicle saved successfully.`);
+
+      // Navigate to Saved Cars when the action was a save (not remove)
+      if (!isCurrentlyFavourite) {
+        navigate('/saved-cars');
+      }
     } catch (error) {
       console.error("Error toggling favourite:", error);
+      // If user attempted to save, still navigate; backend may have already saved previously
+      if (!isCurrentlyFavourite) {
+        navigate('/saved-cars');
+      }
+    }
+  };
+
+  // Toggle save/unsave via heart on browse without redirect
+  const handleSaveViaHeart = async (vehicleID) => {
+    if (!token || !userID) {
+      alert("Please sign in to save vehicles.");
+      return;
+    }
+    if (isSavingId) return;
+    setIsSavingId(vehicleID);
+    try {
+      if (favourites.includes(vehicleID)) {
+        const res = await fetch(api + "/vehicle/save-vehicle/remove", {
+          method: "POST",
+          headers: { "Content-Type": "application/json", Authorization: token },
+          body: JSON.stringify({ userID, vehicleID })
+        });
+        if (!res.ok) console.warn("Unsave status:", res.status);
+        setFavourites((prev) => prev.filter((x) => x !== vehicleID));
+      } else {
+        const res = await fetch(api + "/vehicle/save-vehicle/add", {
+          method: "POST",
+          headers: { "Content-Type": "application/json", Authorization: token },
+          body: JSON.stringify({ userID, vehicleID })
+        });
+        if (!res.ok) console.warn("Save status:", res.status);
+        setFavourites((prev) => (prev.includes(vehicleID) ? prev : [...prev, vehicleID]));
+      }
+    } catch (err) {
+      console.error('Save error:', err);
+    } finally {
+      setIsSavingId(null);
     }
   };
 
@@ -472,30 +515,17 @@ function BrowsePage() {
                         }).format(car.price)}
                       </p>
                       <div className="flex items-center space-x-2 px-1">
-                        {/* Favourite button */}
+                        {/* New Save Heart (browse) */}
                         <button
-                          onClick={() => handleToggleFavourite(car.vehicleID)}
-                          className={`p-2
-                                  ${
-                                    favourites.includes(car.vehicleID)
-                                      ? "border-red-400"
-                                      : "border-gray-200"
-                                  }`}
-                          aria-label="Favourite"
+                          onClick={(e) => { e.preventDefault(); e.stopPropagation(); handleSaveViaHeart(car.vehicleID); }}
+                          disabled={isSavingId === car.vehicleID}
+                          className={`p-2 rounded-full border transition ${
+                            favourites.includes(car.vehicleID) ? 'bg-red-100 border-red-400 hover:bg-red-200' : 'bg-gray-100 border-gray-200 hover:bg-gray-200'
+                          } ${isSavingId === car.vehicleID ? 'opacity-50 cursor-not-allowed' : ''}`}
+                          aria-label="Save to favourites"
+                          title={favourites.includes(car.vehicleID) ? 'Saved' : 'Save to favourites'}
                         >
-                          <Heart
-                            className={`w-5 h-5 transition
-                              ${
-                                favourites.includes(car.vehicleID)
-                                  ? "text-red-600 fill-red-600"
-                                  : "text-gray-500"
-                              }`}
-                            fill={
-                              favourites.includes(car.vehicleID)
-                                ? "currentColour"
-                                : "none"
-                            }
-                          />
+                          <Heart className={`w-5 h-5 ${favourites.includes(car.vehicleID) ? 'text-red-600 fill-red-600' : 'text-gray-600'}`} />
                         </button>
                         {/* Test drive button */}
                         <button

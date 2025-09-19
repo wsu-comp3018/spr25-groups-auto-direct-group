@@ -83,6 +83,7 @@ const Navbar = () => {
                 >
                   Saved Cars
                 </Link>
+                {/* Test Drive Requests removed from top menu; accessible via Admin Options slider only */}
               {/* Commenting this out as we haven't gotten it functional
                 <Link
                   to="/contact"
@@ -247,6 +248,18 @@ const Navbar = () => {
             >
               Manage Dealerships
             </button>
+            <button
+              onClick={() => navigate("/test-drive-dashboard")}
+              className="block py-2 px-2 hover:underline hover:bg-white hover:text-black transition rounded"
+            >
+              Test Drive Requests
+            </button>
+            <button
+              onClick={() => navigate("/customer-service-queue")}
+              className="block py-2 px-2 hover:underline hover:bg-white hover:text-black transition rounded"
+            >
+              Customer Service Queue
+            </button>
           </div>
         </div>
         <button
@@ -395,6 +408,24 @@ const Navbar = () => {
                         <button onClick={() => navigate("/manage-dealerships")} className="block py-2 px-2 hover:underline hover:bg-white hover:text-black transition rounded" >
                           Manage Dealerships
                         </button>
+                        )}
+
+                        {user?.roles?.some(role => [ "Administrator"].includes(role) ) && (
+                          <button
+                            onClick={() => navigate("/test-drive-dashboard")}
+                            className="block py-2 px-2 hover:underline hover:bg-white hover:text-black transition rounded"
+                          >
+                            Test Drive Requests
+                          </button>
+                        )}
+
+                        {user?.roles?.some(role => [ "Administrator"].includes(role) ) && (
+                          <button
+                            onClick={() => navigate("/customer-service-queue")}
+                            className="block py-2 px-2 hover:underline hover:bg-white hover:text-black transition rounded"
+                          >
+                            Customer Service Queue
+                          </button>
                         )}
 
                         

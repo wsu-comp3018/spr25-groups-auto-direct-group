@@ -26,6 +26,8 @@ import ManageVehiclesPage from "./pages/manage-vehicles-page";
 import ManageManufacturersPage from "./pages/manage-manufacturers-page";
 import ManageDealershipsPage from "./pages/manage-dealerships-page";
 import ManageMyRequestsPage from "./pages/manage-myrequests-page"; // this is a regular user page to view and manage sent requests and their status
+import TestDriveDashboard from "./pages/test-drive-dashboard";
+import CustomerServiceQueue from "./pages/customer-service-queue";
 import UserManagePurchasesPage from "./pages/user-manage-purchases-page"; // this is a regular user page to view and manage sent requests and their status
 import DbConnectionTestPage from "./pages/db-connection-test-page"; // to be deleted before handover
 
@@ -76,6 +78,22 @@ function App() {
             />
 
             <Route path="/testDrive" element={<BookingTestDrive />} />
+            <Route
+              path="/test-drive-dashboard"
+              element={
+                <ProtectedRoute allowedRoles={["Administrator"]}>
+                  <TestDriveDashboard />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/customer-service-queue"
+              element={
+                <ProtectedRoute allowedRoles={["Administrator"]}>
+                  <CustomerServiceQueue />
+                </ProtectedRoute>
+              }
+            />
 
             {/* Advice Queue: Only admin */}
             <Route

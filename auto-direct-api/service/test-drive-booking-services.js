@@ -5,6 +5,29 @@ const pool = mysql.createPool(connectionConfig);
 const createTestDrive = async ( testDriveNewID, userID, vehicleID, status, notes ) => {
 	try {
 		let createdTime = new Date(Date.now()).toISOString().replace('T', ' ').slice(0, 19);
+		let dealerID = null;
+		
+		// Try to fetch dealerID for the vehicle, but don't let it block the insert
+		try {
+			const dealerQuery = `SELECT dealerID FROM vehicles WHERE vehicleID = ? LIMIT 1`;
+			const dealerResult = await new Promise((resolve, reject) => {
+				pool.query(dealerQuery, [vehicleID], (err, result) => {
+					if (err) return reject(err);
+					resolve(result);
+				});
+			});
+			
+			if (dealerResult && dealerResult.length > 0 && dealerResult[0].dealerID) {
+				dealerID = dealerResult[0].dealerID;
+			} else {
+				console.warn(`No dealerID found for vehicleID ${vehicleID}, using NULL.`);
+				dealerID = null;
+			}
+		} catch (dealerErr) {
+			console.warn(`Error fetching dealerID for vehicleID ${vehicleID}, using NULL:`, dealerErr);
+			dealerID = null;
+		}
+		
 		const query = `INSERT INTO test_drive_bookings (bookingID, userID, vehicleID, dealerID, time, status, customerNotes) VALUES (?, ?, ?, ?, ?, ?, ?);`;
 		return new Promise((resolve, reject) => {
 			pool.query(query, [ testDriveNewID, userID, vehicleID, dealerID, createdTime, status, notes ], 

@@ -7,6 +7,9 @@ const adminRoutes = require('./routes/admin-routes');
 const dealerRoutes = require('./routes/dealer-routes');
 const testDriveBookingRoutes = require('./routes/test-drive-booking-routes');
 const purchasesRoute = require('./routes/purchase-routes');
+const financeRoutes = require('./routes/finance-routes');
+const financeRequestsRoutes = require('./routes/finance-requests-routes');
+const vehicleComparisonRoutes = require('./routes/vehicle-comparison-routes');
 
 const app = express();
 const connectDB = require("./service/databaseConnection");
@@ -26,6 +29,9 @@ app.use('/admin', adminRoutes);
 app.use("/manage-dealerships", dealerRoutes);
 app.use("/test-drive", testDriveBookingRoutes);
 app.use("/purchases", purchasesRoute);
+app.use("/finance", financeRoutes);
+app.use("/finance-requests", financeRequestsRoutes);
+app.use("/vehicle-comparison", vehicleComparisonRoutes);
 
 connectDB();
 
@@ -38,14 +44,12 @@ connectDB();
   app.get('/api/db-connection-test', (req, res) => {
     pool.query('SELECT * from users', (err, results) => {
       if (err) {
-        console.error('Query failed: ${err}');
+        console.error(`Query failed: ${err}`);
         res.status(500).send('Server error');
       }
       else {
         res.json(results);
       }
-
-      pool.destroy();
     });
   });
 
