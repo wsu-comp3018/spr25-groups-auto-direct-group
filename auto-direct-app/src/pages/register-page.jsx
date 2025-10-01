@@ -1,10 +1,12 @@
 // Register component: Renders the registration form for new users
 
-import React, { useState } from "react";
+import React, { useState, useRef } from "react";
 import { useNavigate } from "react-router-dom"; // added navigate
 import Cookies from "js-cookie";
 import { useUser } from "../contexts/UserContext"; 
 import api from "../data/api-calls";
+import ReCAPTCHA from "react-google-recaptcha";
+import toast from "react-hot-toast";
 
 
 //function RegisterPage() {
@@ -15,6 +17,8 @@ const RegisterPage = () => {
 
   // Set the JSON data fields
   const [errorMessage, setErrorMessage] = useState(""); // To display errors
+  const [recaptchaToken, setRecaptchaToken] = useState(null); // reCAPTCHA token
+  const recaptchaRef = useRef(null); // reCAPTCHA ref
   const [formData, setFormData] = useState({
     firstName: "",
     lastName: "",
@@ -34,6 +38,11 @@ const RegisterPage = () => {
   // handleChange will get the form data and plug it into JSON above
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
+  };
+
+  // reCAPTCHA callback function
+  const handleRecaptchaChange = (token) => {
+    setRecaptchaToken(token);
   };
 
   // handleSubmit that handles clicking Register and passing to the API
@@ -61,25 +70,40 @@ const RegisterPage = () => {
       return;
     }
 
+    // Validate reCAPTCHA
+    if (!recaptchaToken) {
+      setErrorMessage("Please complete the reCAPTCHA verification.");
+      return;
+    }
+
     try {
       //  register user
       const { confirmPassword, ...registrationData } = formData;
       const response = await fetch(api + "/user/register", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(registrationData),
+        body: JSON.stringify({
+          ...registrationData,
+          recaptchaToken: recaptchaToken
+        }),
       });
 
       if (!response.ok) {
         console.error("Registration failed");
         const errorData = await response.json();
         const errorMessage = errorData.error || "Registration failed. Please try again.";
-        alert(errorMessage);
+        toast.error(errorMessage);
         setErrorMessage(errorMessage);
+        // Reset reCAPTCHA on error
+        if (recaptchaRef.current) {
+          recaptchaRef.current.reset();
+          setRecaptchaToken(null);
+        }
         return;
       }
 
       console.log("Registration successful");
+      toast.success("Registration successful! Welcome to Auto Direct!");
 
       // login user right after registration
       const loginResponse = await fetch(api + "/user/login", {
@@ -132,13 +156,13 @@ const RegisterPage = () => {
     <div className="min-h-screen pt-24 pb-12 px-4 relative">
       {/* Car image background */}
       <img 
-        src="/assets/LEXUSLFA.jpg" 
+        src="/assets/login-image.png" 
         alt="Car background"
         className="absolute inset-0 w-full h-full object-cover opacity-95"
         style={{ zIndex: 1 }}
         onError={(e) => {
           console.log('Image failed to load:', e.target.src);
-          e.target.src = './assets/LEXUSLFA.jpg';
+          e.target.src = './assets/login-image.png';
         }}
         onLoad={() => {
           console.log('Image loaded successfully');
@@ -391,6 +415,27 @@ const RegisterPage = () => {
                     className="w-full px-4 py-3 border border-gray-300 rounded-xl text-gray-900 bg-white placeholder-gray-500 focus:ring-2 focus:ring-black focus:border-transparent focus:outline-none transition-all duration-200"
                   />
                 </div>
+              </div>
+            </div>
+
+            {/* reCAPTCHA Section */}
+            <div className="space-y-6">
+              <div className="border-b border-gray-200 pb-4">
+                <h3 className="text-lg font-semibold text-black flex items-center">
+                  <svg className="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
+                  </svg>
+                  Security Verification
+                </h3>
+              </div>
+              
+              <div className="flex justify-center">
+                <ReCAPTCHA
+                  ref={recaptchaRef}
+                  sitekey="6LeIxAcTAAAAAJcZVRqyHh71UMIEGNQ_MXjiZKhI"
+                  onChange={handleRecaptchaChange}
+                  theme="light"
+                />
               </div>
             </div>
 

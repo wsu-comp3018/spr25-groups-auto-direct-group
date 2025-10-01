@@ -9,6 +9,7 @@ import TransmissionFilterModal from "../components/TransmissionFilterModal";
 import BodyTypeFilterModal from "../components/BodyTypeFilterModal";
 import DriveTypeFilterModal from "../components/DriveTypeFilterModal";
 import FuelFilterModal from "../components/FuelFilterModal";
+import FilterPills from "../components/FilterPills";
 
 // Hardcoded options for filters (edit these to what you want available by default)
 const PRICE_OPTIONS = [
@@ -356,6 +357,50 @@ function BrowsePage() {
     navigate(`?${queryParams.toString()}`);
   };
 
+  // Individual filter remove functions for pills
+  const removeMakeFilter = (makeToRemove) => {
+    const newMakeFilter = makeFilter.filter(make => make !== makeToRemove);
+    handleMakeFilterChange(newMakeFilter);
+  };
+
+  const removePriceFilter = (priceToRemove) => {
+    const newPriceFilter = priceFilter.filter(price => price !== priceToRemove);
+    handlePriceFilterChange(newPriceFilter);
+  };
+
+  const removeTransmissionFilter = (transmissionToRemove) => {
+    const newTransmissionFilter = transmissionFilter.filter(transmission => transmission !== transmissionToRemove);
+    handleTransmissionFilterChange(newTransmissionFilter);
+  };
+
+  const removeBodyTypeFilter = (bodyTypeToRemove) => {
+    const newBodyTypeFilter = bodyTypeFilter.filter(bodyType => bodyType !== bodyTypeToRemove);
+    handleBodyTypeFilterChange(newBodyTypeFilter);
+  };
+
+  const removeDriveTypeFilter = (driveTypeToRemove) => {
+    const newDriveTypeFilter = driveTypeFilter.filter(driveType => driveType !== driveTypeToRemove);
+    handleDriveTypeFilterChange(newDriveTypeFilter);
+  };
+
+  const removeFuelFilter = (fuelToRemove) => {
+    const newFuelFilter = fuelFilter.filter(fuel => fuel !== fuelToRemove);
+    handleFuelFilterChange(newFuelFilter);
+  };
+
+  // Clear all filters function
+  const clearAllFilters = () => {
+    setMakeFilter([]);
+    setPriceFilter([]);
+    setTransmissionFilter([]);
+    setBodyTypeFilter([]);
+    setDriveTypeFilter([]);
+    setFuelFilter([]);
+    
+    // Clear URL parameters
+    navigate('/browse');
+  };
+
   // Pagination logic
   const totalPages = Math.ceil(cars.length / itemsPerPage);
   const startIndex = (currentPage - 1) * itemsPerPage;
@@ -370,6 +415,24 @@ function BrowsePage() {
             <h2 className="text-xl font-semibold text-gray-900 mb-2">
               Filter Vehicles
             </h2>
+            
+            {/* Filter Pills */}
+            <FilterPills
+              makeFilter={makeFilter}
+              priceFilter={priceFilter}
+              transmissionFilter={transmissionFilter}
+              bodyTypeFilter={bodyTypeFilter}
+              driveTypeFilter={driveTypeFilter}
+              fuelFilter={fuelFilter}
+              onRemoveMake={removeMakeFilter}
+              onRemovePrice={removePriceFilter}
+              onRemoveTransmission={removeTransmissionFilter}
+              onRemoveBodyType={removeBodyTypeFilter}
+              onRemoveDriveType={removeDriveTypeFilter}
+              onRemoveFuel={removeFuelFilter}
+              onClearAll={clearAllFilters}
+            />
+            
             {/* Make Filter */}
             <div>
               <button
