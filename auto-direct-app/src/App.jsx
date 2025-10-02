@@ -17,7 +17,6 @@ import HomePage from "./pages/home-page";
 import ProfilePage from "./pages/profile-page";
 import PrivacyPolicyPage from "./pages/privacy-policy-page";
 import GlossaryPage from "./pages/glossary-page";
-import ComplaintsPage from "./pages/complaints-page";
 import SavedCarsPage from "./pages/saved-cars-page";
 import AddVehiclePage from "./pages/add-vehicle-page";
 import ApproveVehiclesPage from "./pages/approve-vehicles-page";
@@ -28,6 +27,8 @@ import ManageVehiclesPage from "./pages/manage-vehicles-page";
 import ManageManufacturersPage from "./pages/manage-manufacturers-page";
 import ManageDealershipsPage from "./pages/manage-dealerships-page";
 import ManageMyRequestsPage from "./pages/manage-myrequests-page"; // this is a regular user page to view and manage sent requests and their status
+import TestDriveDashboard from "./pages/test-drive-dashboard";
+import CustomerServiceQueue from "./pages/customer-service-queue";
 import UserManagePurchasesPage from "./pages/user-manage-purchases-page"; // this is a regular user page to view and manage sent requests and their status
 import DbConnectionTestPage from "./pages/db-connection-test-page"; // to be deleted before handover
 
@@ -56,7 +57,6 @@ function App() {
           <Route path="/profile" element={<ProfilePage />} />
           <Route path="/privacy-policy" element={<PrivacyPolicyPage />} />
           <Route path="/glossary" element={<GlossaryPage />} />
-          <Route path="/complaints" element={<ComplaintsPage />} />
 
 {/* Add Vehicle: Only admin */}
             <Route
@@ -79,6 +79,22 @@ function App() {
             />
 
             <Route path="/testDrive" element={<BookingTestDrive />} />
+            <Route
+              path="/test-drive-dashboard"
+              element={
+                <ProtectedRoute allowedRoles={["Administrator"]}>
+                  <TestDriveDashboard />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/customer-service-queue"
+              element={
+                <ProtectedRoute allowedRoles={["Administrator"]}>
+                  <CustomerServiceQueue />
+                </ProtectedRoute>
+              }
+            />
 
             {/* Advice Queue: Only admin */}
             <Route
@@ -193,9 +209,6 @@ function App() {
 				</Link>{" | "}
 				<Link to="/glossary" className="text-blue-700 hover:underline">
 				Glossary
-				</Link>{" | "}
-				<Link to="/complaints" className="text-blue-700 hover:underline">
-				Complaints
 				</Link>
           </footer>
         </div>

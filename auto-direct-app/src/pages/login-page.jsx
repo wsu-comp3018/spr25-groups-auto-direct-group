@@ -199,28 +199,17 @@ function Login() {
               </div>
             )}
 
-            {/* Submit Button */}
-            <button
-              type="submit"
-              className="w-full bg-black text-white py-3 px-4 rounded-xl font-semibold hover:bg-gray-800 focus:outline-none focus:ring-2 focus:ring-black focus:ring-offset-2 transition-all duration-200 transform hover:scale-[1.02] active:scale-[0.98]"
-            >
-              Sign In
-            </button>
-          </form>
-
-          {/* Additional Links */}
-          <div className="mt-6 text-center">
-            <p className="text-sm text-gray-600">
-              Don't have an account?{' '}
-              <a href="/register" className="font-semibold text-black hover:text-gray-700 transition-colors duration-200">
-                Sign up here
-              </a>
-            </p>
-          </div>
-        </div>
-      </div>
-    </div>
-  );
+					{/* Submit Button */}
+					<button
+						type="submit"
+						className="w-full bg-black text-white py-3 rounded-lg font-semibold hover:bg-gray-700 "
+					>
+            Login
+					</button>
+				</form>
+			</div>
+		</div>
+	);
 }
 
 export default Login;

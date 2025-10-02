@@ -1,7 +1,3 @@
-const getImageUrl = (path) => {
-  if (!path) return "/assets/react.svg";
-  
-  return path.replace("../../public", "").replace("../assets", "/assets");
-};
+const getImageUrl = (path) => new URL(`${path}`, import.meta.url).href;
 
 export default getImageUrl;

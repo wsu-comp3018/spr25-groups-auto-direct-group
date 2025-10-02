@@ -66,6 +66,12 @@ const Navbar = () => {
               {/* Desktop Nav */}
               <nav className="hidden md:flex space-x-4">
                 <Link
+                  to="/"
+                  className="inline-block py-2 px-4 text-black hover:bg-gray-200 rounded transition"
+                >
+                  Home
+                </Link>
+                <Link
                   to="/browse"
                   className="inline-block py-2 px-4 text-black hover:bg-gray-200 rounded transition"
                 >
@@ -77,6 +83,7 @@ const Navbar = () => {
                 >
                   Saved Cars
                 </Link>
+                {/* Test Drive Requests removed from top menu; accessible via Admin Options slider only */}
               {/* Commenting this out as we haven't gotten it functional
                 <Link
                   to="/contact"
@@ -241,6 +248,18 @@ const Navbar = () => {
             >
               Manage Dealerships
             </button>
+            <button
+              onClick={() => navigate("/test-drive-dashboard")}
+              className="block py-2 px-2 hover:underline hover:bg-white hover:text-black transition rounded"
+            >
+              Test Drive Requests
+            </button>
+            <button
+              onClick={() => navigate("/customer-service-queue")}
+              className="block py-2 px-2 hover:underline hover:bg-white hover:text-black transition rounded"
+            >
+              Customer Service Queue
+            </button>
           </div>
         </div>
         <button
@@ -391,6 +410,24 @@ const Navbar = () => {
                         </button>
                         )}
 
+                        {user?.roles?.some(role => [ "Administrator"].includes(role) ) && (
+                          <button
+                            onClick={() => navigate("/test-drive-dashboard")}
+                            className="block py-2 px-2 hover:underline hover:bg-white hover:text-black transition rounded"
+                          >
+                            Test Drive Requests
+                          </button>
+                        )}
+
+                        {user?.roles?.some(role => [ "Administrator"].includes(role) ) && (
+                          <button
+                            onClick={() => navigate("/customer-service-queue")}
+                            className="block py-2 px-2 hover:underline hover:bg-white hover:text-black transition rounded"
+                          >
+                            Customer Service Queue
+                          </button>
+                        )}
+
                         
                     </div>
                   </div>
@@ -438,6 +475,15 @@ const Navbar = () => {
           </button>
         </div>
         <div className=" flex flex-col">
+          <Link
+            to="/"
+            onClick={() => setShowMobileMenu(false)}
+            className="text-white py-4 border-b border-white/10 hover:bg-white hover:text-black transition text-left px-5 rounded font-medium"
+          >
+            Home
+          </Link>
+         
+       
             <Link
               to="/browse"
               onClick={() => setShowMobileMenu(false)}

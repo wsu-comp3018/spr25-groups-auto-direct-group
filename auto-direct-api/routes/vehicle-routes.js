@@ -257,29 +257,9 @@ router.get('/browse-vehicles', (req, res) => {
         const placeholders = paramArray.map(() => '?').join(', ');
 
         if (columnName === 'v.price' && isNumber) {
-          // Handle price filtering with both "under" and "above" ranges
-          const underPrices = paramArray.filter(price => !price.startsWith('above-')).map(Number);
-          const abovePrices = paramArray.filter(price => price.startsWith('above-')).map(price => Number(price.replace('above-', '')));
-          
-          let priceConditions = [];
-          
-          // Add "under" conditions
-          if (underPrices.length > 0) {
-            const maxUnderPrice = Math.max(...underPrices);
-            priceConditions.push(`${columnName} <= ?`);
-            values.push(maxUnderPrice);
-          }
-          
-          // Add "above" conditions
-          if (abovePrices.length > 0) {
-            const minAbovePrice = Math.min(...abovePrices);
-            priceConditions.push(`${columnName} > ?`);
-            values.push(minAbovePrice);
-          }
-          
-          if (priceConditions.length > 0) {
-            browseQuery += ` AND (${priceConditions.join(' OR ')})`;
-          }
+          const maxPrice = Math.max(...paramArray.map(Number));
+          browseQuery += ` AND ${columnName} <= ?`;
+          values.push(maxPrice);
 
         } else {
           
@@ -589,12 +569,11 @@ router.get('/saved-vehicles/', [ verifyToken, authorizeUser ], async (req, res) 
                 SELECT vehicleID, path FROM vehicle_images WHERE imageOrder = 1
             ) vi ON v.vehicleID = vi.vehicleID
             JOIN Makes m ON v.makeID = m.makeID
-            JOIN saved_vehicle sv ON v.vehicleID = sv.vehicleID
             WHERE v.vehicleID IN (${placeholders}) AND v.approvalStatus = 'Approved' AND v.deletedStatus != 'Deleted'
-            ORDER BY sv.savedAt DESC
+            ORDER BY CASE ${vehicleIDs.map((id, index) => `WHEN v.vehicleID = ? THEN ${index}`).join(' ')} END
         `;
 
-        const [savedVehicleDetails] = await pool.promise().query(vehicleDetailsQuery, vehicleIDs);
+        const [savedVehicleDetails] = await pool.promise().query(vehicleDetailsQuery, [...vehicleIDs, ...vehicleIDs]);
 
         res.status(200).json(savedVehicleDetails);
 

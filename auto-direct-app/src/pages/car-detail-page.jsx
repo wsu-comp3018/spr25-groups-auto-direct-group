@@ -8,6 +8,7 @@ import { Heart } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import api from "../data/api-calls";
 
+import BookingTestDrive from "./booking-test-drive";
 
 function CarDetailPage() {
   const { id } = useParams();
@@ -19,85 +20,56 @@ function CarDetailPage() {
   const token = Cookies.get("auto-direct-token");
   const [isLightboxOpen, setIsLightboxOpen] = useState(false);
   const [favourites, setFavourites] = useState([]);
+  const [isSaving, setIsSaving] = useState(false);
   const navigate = useNavigate();
 
-  // Process the heart icon based for save and unsave
-  const handleToggleFavourite = async (vehicleID) => {
-    const isCurrentlyFavourite = favourites.includes(vehicleID);
-
-    if (token && userID) {
-      // User is signed in - use API
-      let route;
-      let method;
-      let bodyData = { userID, vehicleID };
-
-      // Handle route depending on if the vehicle is a favourite or not
-      if (isCurrentlyFavourite) {
-        route = api + `/vehicle/save-vehicle/remove`;
-        method = "POST";
-      } else {
-        route = api + `/vehicle/save-vehicle/add`;
-        method = "POST";
-      }
-
-      try {
-        const response = await fetch(route, {
-          method: method,
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: token,
-          },
-          body: JSON.stringify(bodyData),
+  // Toggle save/unsave via heart, silent and without redirect
+  const handleSaveViaHeart = async () => {
+    if (!token || !userID) {
+      window.alert('Please sign in to save vehicles.');
+      return;
+    }
+    if (!car?.vehicleID || isSaving) return;
+    setIsSaving(true);
+    try {
+      if (favourites.includes(car.vehicleID)) {
+        // Unsave
+        const res = await fetch(api + `/vehicle/save-vehicle/remove`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json', 'Authorization': token },
+          body: JSON.stringify({ userID, vehicleID: car.vehicleID })
         });
-
-        if (!response.ok) {
-          throw new Error("Unable to toggle favourite");
+        if (!res.ok) {
+          console.warn('Unsave response status:', res.status);
         }
-
-        setFavourites((prev) =>
-          isCurrentlyFavourite
-            ? prev.filter((x) => x !== vehicleID)
-            : [...prev, vehicleID]
-        );
-        console.log(`Vehicle saved successfully.`);
-      } catch (error) {
-        console.error("Error toggling favourite:", error);
-      }
-    } else {
-      // Guest user - use localStorage
-      const guestFavourites = JSON.parse(localStorage.getItem('guestFavourites') || '[]');
-      
-      if (isCurrentlyFavourite) {
-        // Remove from favourites
-        const updatedFavourites = guestFavourites.filter((id) => id !== vehicleID);
-        localStorage.setItem('guestFavourites', JSON.stringify(updatedFavourites));
-        setFavourites(updatedFavourites);
+        setFavourites((prev) => prev.filter((x) => x !== car.vehicleID));
       } else {
-        // Add to favourites
-        const updatedFavourites = [...guestFavourites, vehicleID];
-        localStorage.setItem('guestFavourites', JSON.stringify(updatedFavourites));
-        setFavourites(updatedFavourites);
+        // Save
+        const res = await fetch(api + `/vehicle/save-vehicle/add`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json', 'Authorization': token },
+          body: JSON.stringify({ userID, vehicleID: car.vehicleID })
+        });
+        if (!res.ok) {
+          console.warn('Save response status:', res.status);
+        }
+        setFavourites((prev) => (prev.includes(car.vehicleID) ? prev : [...prev, car.vehicleID]));
       }
-      console.log(`Vehicle ${isCurrentlyFavourite ? 'removed from' : 'added to'} guest favourites.`);
+    } catch (err) {
+      console.error('Save error:', err);
+    } finally {
+      setIsSaving(false);
     }
   };
 
   // State for modals
   const [showBookingForm, setShowBookingForm] = useState(false);
-  const [bookingForm, setBookingForm] = useState({
-    name: "",
-    email: "",
-    phone: "",
-    customerNotes: "",
-    date: "",
-  });
   const [showAdviceForm, setShowAdviceForm] = useState(false);
   const [adviceForm, setAdviceForm] = useState({
     message: "",
   });
   const [showPurchaseForm, setShowPurchaseForm] = useState(false);
   const [purchaseForm, setPurchaseForm] = useState({ email: "", notes: "" });
-
 
   // Fetch car info on mount or when ID changes
   useEffect(() => {
@@ -114,7 +86,7 @@ function CarDetailPage() {
   useEffect(() => {
     const fetchSavedVehicles = async () => {
       if (token && userID) {
-        // User is signed in - fetch from API
+        // Only fetch if user is logged in and userID is available
         try {
           const savedVehiclesRes = await fetch(
             api + `/vehicle/saved-vehicles/`,
@@ -142,9 +114,7 @@ function CarDetailPage() {
           setFavourites([]);
         }
       } else {
-        // Guest user - load from localStorage
-        const guestFavourites = JSON.parse(localStorage.getItem('guestFavourites') || '[]');
-        setFavourites(guestFavourites);
+        setFavourites([]); // No user, no token, or no userID, so no favorites
       }
     };
 
@@ -190,22 +160,14 @@ function CarDetailPage() {
     setCurrentImageIndex((prev) => (prev === images.length - 1 ? 0 : prev + 1));
   const handleThumbnailClick = (i) => setCurrentImageIndex(i);
 
+  // Removed separate Save button - heart icon handles save and navigation
+
   // Open lightbox when clicking main image
   const handleImageClick = () => {
     setIsLightboxOpen(true);
   };
 
-  // Booking handlers
-  const handleBookingChange = (e) => {
-    const { name, value } = e.target;
-    setBookingForm((p) => ({ ...p, [name]: value }));
-  };
-  const handleBookingSubmit = (e) => {
-    e.preventDefault();
-    alert("Thank you! Your test drive has been booked.");
-    setBookingForm({ name: "", email: "", phone: "", customerNotes: "" });
-    setShowBookingForm(false);
-  };
+  // Removed old booking handlers, will use booking-test-drive component
 
   // Advice handlers
   const handleAdviceChange = (e) => {
@@ -265,7 +227,6 @@ function CarDetailPage() {
     .filter((c) => c.id !== car.id)
     .sort(() => 0.5 - Math.random())
     .slice(0, 3);
-
 
   return (
     <div className="p-8 max-w-6xl mx-auto pt-20 space-y-16">
@@ -350,31 +311,20 @@ function CarDetailPage() {
         {/* Car Info + Actions */}
         <div className="pt-4 space-y-4 text-left">
           <div className="flex items-center justify-between">
-            {/* Favourite button */}
+            {/* Title */}
             <h2 className="text-4xl font-bold text-gray-900">
               {`${car.makeName} ${car.modelName}`}
             </h2>
+            {/* New Save Heart */}
             <button
-              onClick={() => handleToggleFavourite(car.vehicleID)}
-              className={`p-2 rounded-full border transition
-                  ${
-                    favourites.includes(car.vehicleID)
-                      ? "bg-red-100 border-red-400 hover:bg-red-200"
-                      : "bg-gray-100 border-gray-200 hover:bg-gray-200"
-                  }`}
-              aria-label="Favourite"
+              onClick={handleSaveViaHeart}
+              disabled={isSaving}
+              type="button"
+              className={`p-2 rounded-full border transition ${isSaving ? 'opacity-50 cursor-not-allowed' : 'hover:bg-gray-100'} ${favourites.includes(car.vehicleID) ? 'bg-red-100 border-red-400' : 'border-gray-200'}`}
+              aria-label="Save to favourites"
+              title="Save to favourites"
             >
-              <Heart
-                className={`w-6 h-6 transition
-                    ${
-                      favourites.includes(car.vehicleID)
-                        ? "text-red-600 fill-red-600"
-                        : "text-gray-500"
-                    }`}
-                fill={
-                  favourites.includes(car.vehicleID) ? "currentColor" : "none"
-                }
-              />
+              <Heart className={`w-6 h-6 ${favourites.includes(car.vehicleID) ? 'text-red-600 fill-red-600' : 'text-gray-700'}`}/>
             </button>
           </div>
 
@@ -399,9 +349,15 @@ function CarDetailPage() {
             ))}
           </div>
 
-          <div className="mt-8 flex gap-1">
+          <div className="mt-8 flex gap-1 flex-wrap">
             <button
-              onClick={() => setShowBookingForm(true)}
+              onClick={() => {
+                // Set vehicle field to car's full name before opening modal
+                if (car) {
+                  window.selectedCarName = `${car.makeName || ""} ${car.modelName || ""}`.trim();
+                }
+                setShowBookingForm(true);
+              }}
               className="bg-transparent border-2 border-black text-black font-semibold py-2 px-6 rounded-lg  transition hover:bg-black hover:text-white flex-1"
             >
               Book Test Drive
@@ -572,130 +528,19 @@ function CarDetailPage() {
         </div>
       </div>
 
-      {/* Similar Vehicles 
-      <div className="mt-16">
-        <h3 className="text-2xl font-bold text-gray-800 mb-6">
-          Explore Vehicles
-        </h3>
-        <div className="grid sm:grid-cols-2 md:grid-cols-3 gap-6">
-          {similarCars.map((c) => (
-            <Link
-              key={c.id}
-              to={`/car/${c.id}`}
-              className="bg-white rounded-xl shadow-sm hover:shadow-lg transition flex flex-col"
-            >
-              <div className="relative h-48 overflow-hidden">
-                <img
-                  src={getImageUrl(`../../public/assets/${c.image[0]}`)}
-                  alt={c.name}
-                  className="absolute inset-0 w-full h-full object-cover transition-transform hover:scale-110"
-                />
-              </div>
-              <div className="p-4 flex flex-col">
-                <h4 className="text-lg font-semibold text-gray-900">
-                  {c.modelName} {c.make}
-                </h4>
-                <p className="text-sm text-gray-500 mb-2">{c.bodyType}</p>
-                <p className="text-black font-bold mt-auto">
-                  {new Intl.NumberFormat("en-AU", {
-                    style: "currency",
-                    currency: "AUD",
-                  }).format(c.price)}
-                </p>
-              </div>
-            </Link>
-          ))}
-        </div>
-      </div>
-      */}
+      {/* Test Drive Booking Modal */}
 
-      {/* Booking Modal */}
+      {/* Booking Modal - replaced with booking-test-drive component */}
       {showBookingForm && (
-        <div
-          className="fixed inset-0 flex items-center justify-center z-50 bg-black/30 backdrop-blur-sm"
-          onClick={() => setShowBookingForm(false)}
-        >
-          <div
-            className="bg-white p-8 rounded-lg shadow-lg w-full max-w-3xl"
-            onClick={(e) => e.stopPropagation()}
-          >
-            <h3 className="text-3xl font-semibold text-center mb-8">
-              Book a Test Drive
-            </h3>
-            <form onSubmit={handleBookingSubmit} className="space-y-5">
-              <div className="grid grid-cols- md:grid-cols-2 gap-4">
-                <input
-                  type="text"
-                  name="name"
-                  placeholder="Name*"
-                  required
-                  value={bookingForm.name}
-                  onChange={handleBookingChange}
-                  className="border rounded p-3 w-full"
-                />
-                <input
-                  type="email"
-                  name="email"
-                  placeholder="Email*"
-                  required
-                  value={bookingForm.email}
-                  onChange={handleBookingChange}
-                  className="border rounded p-3 w-full"
-                />
-              </div>
-              <div>
-                <input
-                  type="tel"
-                  name="phone"
-                  placeholder="Phone*"
-                  required
-                  value={bookingForm.phone}
-                  onChange={handleBookingChange}
-                  className="border rounded p-3 w-full"
-                />
-              </div>
-              <div>
-                <input
-                  type="date"
-                  name="date"
-                  required
-                  value={bookingForm.date}
-                  onChange={handleBookingChange}
-                  className="border rounded p-3 w-full"
-                />
-              </div>
-              <textarea
-                name="customerNotes"
-                rows={4}
-                value={bookingForm.customerNotes}
-                onChange={handleBookingChange}
-                className="border rounded p-3 w-full"
-                placeholder="Enter text here"
+        <div className="fixed inset-0 flex items-center justify-center z-50 bg-black/30 px-3" onClick={() => setShowBookingForm(false)}>
+          <div className="bg-transparent w-full max-w-3xl max-h-[85vh] overflow-y-auto" onClick={(e) => e.stopPropagation()}>
+            {/* Integrate booking-test-drive component, pass car and thumbnail */}
+            <div className="bg-white rounded-2xl border border-gray-100 shadow-none">
+              <BookingTestDrive
+                car={car}
+                thumbnailPath={images[currentImageIndex]?.path || images[0]?.path}
+                onClose={() => setShowBookingForm(false)}
               />
-              <div className="flex justify-end gap-2">
-                <button
-                  type="button"
-                  onClick={() => setShowBookingForm(false)}
-                  className="bg-gray-300 px-4 py-2 rounded hover:bg-gray-400"
-                >
-                  Cancel
-                </button>
-                <button
-                  type="submit"
-                  className="bg-black text-white px-6 py-2 rounded hover:bg-white hover:text-black border font-semibold text-lg"
-                >
-                  Send
-                </button>
-              </div>
-            </form>
-            <div className="text-xs text-gray-500 mt-4">
-              Disclaimer: By clicking the 'Send' button you acknowledge you have
-              read and agree to abide by the Auto Direct&nbsp;
-              <Link to="#" className="text-blue-600 underline">
-                Privacy Policy
-              </Link>
-              . When you use this enquiry form your contact details will be
-              forwarded to the seller so they can contact you directly.
             </div>
           </div>
         </div>

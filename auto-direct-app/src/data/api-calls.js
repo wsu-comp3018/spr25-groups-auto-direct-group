@@ -1,4 +1,3 @@
-// Single base path works in dev (proxied by Vite) and in production (same origin)
-const api = '/api';
+const api = "http://localhost:3000";
 
 export default api;

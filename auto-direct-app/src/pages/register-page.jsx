@@ -24,7 +24,6 @@ const RegisterPage = () => {
     lastName: "",
     emailAddress: "",
     password: "",
-    confirmPassword: "",
     phoneNumber: "",
     streetNo: "",
     streetName: "",
@@ -78,7 +77,6 @@ const RegisterPage = () => {
 
     try {
       //  register user
-      const { confirmPassword, ...registrationData } = formData;
       const response = await fetch(api + "/user/register", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -178,9 +176,6 @@ const RegisterPage = () => {
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M18 9v3m0 0v3m0-3h3m-3 0h-3m-2-5a4 4 0 11-8 0 4 4 0 018 0zM3 20a6 6 0 0112 0v1H3v-1z" />
             </svg>
           </div>
-          <h1 className="text-3xl font-bold text-white mb-2">Create Your Account</h1>
-          <p className="text-gray-200">Join us today and start your journey with Auto Direct</p>
-        </div>
 
         {/* Registration Form */}
         <div className="bg-white bg-opacity-95 backdrop-blur-sm rounded-2xl shadow-xl border border-gray-200 p-8">
@@ -475,7 +470,129 @@ const RegisterPage = () => {
               </a>
             </p>
           </div>
-        </div>
+
+          {/* Email */}
+          <div>
+            <label className="block mb-1 text-sm font-medium text-black">
+              Email Address
+            </label>
+            <input
+              name="emailAddress"
+              type="email"
+              placeholder="you@example.com"
+              onChange={handleChange}
+              className="w-full border border-black p-3 rounded text-black bg-white placeholder-gray-500 focus:ring-2 focus:ring-black focus:outline-none"
+            />
+          </div>
+
+          {/* Password */}
+          <div>
+            <label className="block mb-1 text-sm font-medium text-black">
+              Password
+            </label>
+            <input
+              name="password"
+              type="password"
+              placeholder="••••••••"
+              onChange={handleChange}
+              className="w-full border border-black p-3 rounded text-black bg-white placeholder-gray-500 focus:ring-2 focus:ring-black focus:outline-none"
+            />
+          </div>
+
+          {/* Confirm Password */}
+          <div>
+            <label className="block mb-1 text-sm font-medium text-black">
+              Confirm Password
+            </label>
+            <input
+              name="confirmPassword"
+              type="password"
+              placeholder="••••••••"
+              className="w-full border border-black p-3 rounded text-black bg-white placeholder-gray-500 focus:ring-2 focus:ring-black focus:outline-none"
+            />
+          </div>
+
+          {/* Phone Number */}
+          <div>
+            <label className="block mb-1 text-sm font-medium text-black">
+              Phone Number
+            </label>
+            <input
+              name="phoneNumber"
+              type="text"
+              placeholder="04########"
+              onChange={handleChange}
+              className="w-full border border-black p-3 rounded text-black bg-white placeholder-gray-500 focus:ring-2 focus:ring-black focus:outline-none"
+            />
+          </div>
+
+          {/* Street Number */}
+          <div>
+            <label className="block mb-1 text-sm font-medium text-black">
+              Street Number
+            </label>
+            <input
+              name="streetNo"
+              type="text"
+              placeholder="222"
+              onChange={handleChange}
+              className="w-full border border-black p-3 rounded text-black bg-white placeholder-gray-500 focus:ring-2 focus:ring-black focus:outline-none"
+            />
+          </div>
+
+          {/* Street Name */}
+          <div>
+            <label className="block mb-1 text-sm font-medium text-black">
+              Street Name
+            </label>
+            <input
+              name="streetName"
+              type="text"
+              placeholder="Pitt Street"
+              onChange={handleChange}
+              className="w-full border border-black p-3 rounded text-black bg-white placeholder-gray-500 focus:ring-2 focus:ring-black focus:outline-none"
+            />
+          </div>
+
+          {/* Suburb */}
+          <div>
+            <label className="block mb-1 text-sm font-medium text-black">
+              Suburb
+            </label>
+            <input
+              name="suburb"
+              type="text"
+              placeholder="Sydney"
+              onChange={handleChange}
+              className="w-full border border-black p-3 rounded text-black bg-white placeholder-gray-500 focus:ring-2 focus:ring-black focus:outline-none"
+            />
+          </div>
+
+          {/* Postcode */}
+          <div>
+            <label className="block mb-1 text-sm font-medium text-black">
+              Postcode
+            </label>
+            <input
+              name="postcode"
+              type="number"
+              placeholder="2000"
+              onChange={handleChange}
+              className="w-full border border-black p-3 rounded text-black bg-white placeholder-gray-500 focus:ring-2 focus:ring-black focus:outline-none"
+            />
+          </div>
+          {errorMessage && (
+            <div className="text-red-600 text-sm text-center">{errorMessage}</div>
+          )}
+
+          {/* Submit Button */}
+          <button
+            type="submit"
+            className="w-full bg-black text-white py-3 rounded font-semibold hover:bg-gray-900 transition"
+          >
+            Register
+          </button>
+        </form>
       </div>
     </div>
   );
