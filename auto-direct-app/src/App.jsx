@@ -27,10 +27,16 @@ import ManageVehiclesPage from "./pages/manage-vehicles-page";
 import ManageManufacturersPage from "./pages/manage-manufacturers-page";
 import ManageDealershipsPage from "./pages/manage-dealerships-page";
 import ManageMyRequestsPage from "./pages/manage-myrequests-page"; // this is a regular user page to view and manage sent requests and their status
-import TestDriveDashboard from "./pages/test-drive-dashboard";
-import CustomerServiceQueue from "./pages/customer-service-queue";
 import UserManagePurchasesPage from "./pages/user-manage-purchases-page"; // this is a regular user page to view and manage sent requests and their status
 import DbConnectionTestPage from "./pages/db-connection-test-page"; // to be deleted before handover
+import OrderManagementPage from "./pages/OrderManagementPage"; // Admin-only order management dashboard
+import ProfessionalOrderManagementPage from "./pages/ProfessionalOrderManagementPage"; // Enhanced professional order management
+import LogisticsDashboard from "./pages/LogisticsDashboard"; // Logistics coordination dashboard
+import PurchaseVehiclePage from "./pages/PurchaseVehiclePage"; // Purchase vehicle form page
+import PaymentInstructionsPage from "./pages/PaymentInstructionsPage"; // Payment instructions page
+import PaymentDetailsPage from "./pages/PaymentDetailsPage"; // Payment details page
+import TestDriveDashboard from "./pages/test-drive-dashboard";
+import CustomerServiceQueue from "./pages/customer-service-queue";
 
 import ProtectedRoute from "./components/ProtectedRoute";
 import { UserProvider } from "./contexts/UserContext"; // path may change based on your setup
@@ -148,6 +154,36 @@ function App() {
               }
             />
 
+            {/* Order Management: Only admin */}
+            <Route
+              path="/order-management"
+              element={
+                <ProtectedRoute allowedRoles={["Administrator"]}>
+                  <OrderManagementPage />
+                </ProtectedRoute>
+              }
+            />
+
+            {/* Professional Order Management: Only admin */}
+            <Route
+              path="/professional-order-management"
+              element={
+                <ProtectedRoute allowedRoles={["Administrator"]}>
+                  <ProfessionalOrderManagementPage />
+                </ProtectedRoute>
+              }
+            />
+
+            {/* Logistics Dashboard: Only admin */}
+            <Route
+              path="/logistics-dashboard"
+              element={
+                <ProtectedRoute allowedRoles={["Administrator"]}>
+                  <LogisticsDashboard />
+                </ProtectedRoute>
+              }
+            />
+
             {/* Placeholder/Admin-Only Routes */}
             <Route
               path="/add-vehicle"
@@ -191,6 +227,9 @@ function App() {
             />
 
             {/* Unprotected/other placeholder routes */}
+            <Route path="/purchase-vehicle" element={<PurchaseVehiclePage />} />
+            <Route path="/payment-instructions" element={<PaymentInstructionsPage />} />
+            <Route path="/payment-details" element={<PaymentDetailsPage />} />
             <Route path="/bookings" element={<Placeholder text="Customer Booked Test Drives Placeholder" />} />
             <Route path="/received-bookings" element={<Placeholder text="Manufacturer Received Bookings Placeholder" />} />
             <Route path="/dealer-locator" element={<Placeholder text="Dealer Locator Placeholder" />} />

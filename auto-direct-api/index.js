@@ -7,6 +7,7 @@ const adminRoutes = require('./routes/admin-routes');
 const dealerRoutes = require('./routes/dealer-routes');
 const testDriveBookingRoutes = require('./routes/test-drive-booking-routes');
 const purchasesRoute = require('./routes/purchase-routes');
+const orderProcessingRoutes = require('./routes/order-processing-routes');
 const financeRoutes = require('./routes/finance-routes');
 const financeRequestsRoutes = require('./routes/finance-requests-routes');
 const vehicleComparisonRoutes = require('./routes/vehicle-comparison-routes');
@@ -29,6 +30,7 @@ app.use('/admin', adminRoutes);
 app.use("/manage-dealerships", dealerRoutes);
 app.use("/test-drive", testDriveBookingRoutes);
 app.use("/purchases", purchasesRoute);
+app.use("/order-processing", orderProcessingRoutes);
 app.use("/finance", financeRoutes);
 app.use("/finance-requests", financeRequestsRoutes);
 app.use("/vehicle-comparison", vehicleComparisonRoutes);
@@ -50,6 +52,8 @@ connectDB();
       else {
         res.json(results);
       }
+
+      pool.destroy();
     });
   });
 
