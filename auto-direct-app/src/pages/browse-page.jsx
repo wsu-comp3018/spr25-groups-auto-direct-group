@@ -3,6 +3,13 @@ import { Link, useNavigate, useLocation } from "react-router-dom";
 import { Heart } from "lucide-react";
 import Cookies from "js-cookie";
 import api from "../data/api-calls";
+import MakeFilterModal from "../components/MakeFilterModal";
+import PriceFilterModal from "../components/PriceFilterModal";
+import TransmissionFilterModal from "../components/TransmissionFilterModal";
+import BodyTypeFilterModal from "../components/BodyTypeFilterModal";
+import DriveTypeFilterModal from "../components/DriveTypeFilterModal";
+import FuelFilterModal from "../components/FuelFilterModal";
+import FilterPills from "../components/FilterPills";
 
 // Hardcoded options for filters (edit these to what you want available by default)
 const TRANSMISSION_OPTIONS = ["Automatic", "Manual"];
@@ -279,6 +286,135 @@ function BrowsePage() {
     navigate(`?${queryParams.toString()}`);
   };
 
+  // Helper to update make filter and URL
+  const handleMakeFilterChange = (newMakeFilter) => {
+    setMakeFilter(newMakeFilter);
+    
+    const queryParams = new URLSearchParams(location.search);
+    if (newMakeFilter.length > 0) {
+      queryParams.set('make', newMakeFilter.join(","));
+    } else {
+      queryParams.delete('make');
+    }
+    
+    // Update the URL according to filters
+    navigate(`?${queryParams.toString()}`);
+  };
+
+  // Helper to update price filter and URL
+  const handlePriceFilterChange = (newPriceFilter) => {
+    setPriceFilter(newPriceFilter);
+    
+    const queryParams = new URLSearchParams(location.search);
+    if (newPriceFilter.length > 0) {
+      queryParams.set('price', newPriceFilter.join(","));
+    } else {
+      queryParams.delete('price');
+    }
+    
+    navigate(`?${queryParams.toString()}`);
+  };
+
+  // Helper to update transmission filter and URL
+  const handleTransmissionFilterChange = (newTransmissionFilter) => {
+    setTransmissionFilter(newTransmissionFilter);
+    
+    const queryParams = new URLSearchParams(location.search);
+    if (newTransmissionFilter.length > 0) {
+      queryParams.set('transmission', newTransmissionFilter.join(","));
+    } else {
+      queryParams.delete('transmission');
+    }
+    
+    navigate(`?${queryParams.toString()}`);
+  };
+
+  // Helper to update body type filter and URL
+  const handleBodyTypeFilterChange = (newBodyTypeFilter) => {
+    setBodyTypeFilter(newBodyTypeFilter);
+    
+    const queryParams = new URLSearchParams(location.search);
+    if (newBodyTypeFilter.length > 0) {
+      queryParams.set('bodyType', newBodyTypeFilter.join(","));
+    } else {
+      queryParams.delete('bodyType');
+    }
+    
+    navigate(`?${queryParams.toString()}`);
+  };
+
+  // Helper to update drive type filter and URL
+  const handleDriveTypeFilterChange = (newDriveTypeFilter) => {
+    setDriveTypeFilter(newDriveTypeFilter);
+    
+    const queryParams = new URLSearchParams(location.search);
+    if (newDriveTypeFilter.length > 0) {
+      queryParams.set('driveType', newDriveTypeFilter.join(","));
+    } else {
+      queryParams.delete('driveType');
+    }
+    
+    navigate(`?${queryParams.toString()}`);
+  };
+
+  // Helper to update fuel filter and URL
+  const handleFuelFilterChange = (newFuelFilter) => {
+    setFuelFilter(newFuelFilter);
+    
+    const queryParams = new URLSearchParams(location.search);
+    if (newFuelFilter.length > 0) {
+      queryParams.set('fuel', newFuelFilter.join(","));
+    } else {
+      queryParams.delete('fuel');
+    }
+    
+    navigate(`?${queryParams.toString()}`);
+  };
+
+  // Individual filter remove functions for pills
+  const removeMakeFilter = (makeToRemove) => {
+    const newMakeFilter = makeFilter.filter(make => make !== makeToRemove);
+    handleMakeFilterChange(newMakeFilter);
+  };
+
+  const removePriceFilter = (priceToRemove) => {
+    const newPriceFilter = priceFilter.filter(price => price !== priceToRemove);
+    handlePriceFilterChange(newPriceFilter);
+  };
+
+  const removeTransmissionFilter = (transmissionToRemove) => {
+    const newTransmissionFilter = transmissionFilter.filter(transmission => transmission !== transmissionToRemove);
+    handleTransmissionFilterChange(newTransmissionFilter);
+  };
+
+  const removeBodyTypeFilter = (bodyTypeToRemove) => {
+    const newBodyTypeFilter = bodyTypeFilter.filter(bodyType => bodyType !== bodyTypeToRemove);
+    handleBodyTypeFilterChange(newBodyTypeFilter);
+  };
+
+  const removeDriveTypeFilter = (driveTypeToRemove) => {
+    const newDriveTypeFilter = driveTypeFilter.filter(driveType => driveType !== driveTypeToRemove);
+    handleDriveTypeFilterChange(newDriveTypeFilter);
+  };
+
+  const removeFuelFilter = (fuelToRemove) => {
+    const newFuelFilter = fuelFilter.filter(fuel => fuel !== fuelToRemove);
+    handleFuelFilterChange(newFuelFilter);
+  };
+
+  // Clear all filters function
+  const clearAllFilters = () => {
+    setMakeFilter([]);
+    setPriceFilter([]);
+    setTransmissionFilter([]);
+    setBodyTypeFilter([]);
+    setDriveTypeFilter([]);
+    setFuelFilter([]);
+    
+    // Clear URL parameters
+    navigate('/browse');
+  };
+
   // Pagination logic
   const totalPages = Math.ceil(cars.length / itemsPerPage);
   const startIndex = (currentPage - 1) * itemsPerPage;
@@ -293,6 +429,24 @@ function BrowsePage() {
             <h2 className="text-xl font-semibold text-gray-900 mb-2">
               Filter Vehicles
             </h2>
+            
+            {/* Filter Pills */}
+            <FilterPills
+              makeFilter={makeFilter}
+              priceFilter={priceFilter}
+              transmissionFilter={transmissionFilter}
+              bodyTypeFilter={bodyTypeFilter}
+              driveTypeFilter={driveTypeFilter}
+              fuelFilter={fuelFilter}
+              onRemoveMake={removeMakeFilter}
+              onRemovePrice={removePriceFilter}
+              onRemoveTransmission={removeTransmissionFilter}
+              onRemoveBodyType={removeBodyTypeFilter}
+              onRemoveDriveType={removeDriveTypeFilter}
+              onRemoveFuel={removeFuelFilter}
+              onClearAll={clearAllFilters}
+            />
+            
             {/* Make Filter */}
             <div>
               <p className="text-sm font-medium text-gray-700 mb-1">Make</p>
