@@ -253,6 +253,18 @@ const Navbar = () => {
             >
               Order Management
             </button>
+            <button
+              onClick={() => navigate("/test-drive-dashboard")}
+              className="block py-2 px-2 hover:underline hover:bg-white hover:text-black transition rounded"
+            >
+              Test Drive Requests
+            </button>
+            <button
+              onClick={() => navigate("/customer-service-queue")}
+              className="block py-2 px-2 hover:underline hover:bg-white hover:text-black transition rounded"
+            >
+              Customer Service Queue
+            </button>
           </div>
         </div>
         <button
@@ -414,6 +426,24 @@ const Navbar = () => {
                           Logistics Dashboard
                         </button>
                         )}
+                        {user?.roles?.some(role => [ "Administrator"].includes(role) ) && (
+                          <button
+                            onClick={() => navigate("/test-drive-dashboard")}
+                            className="block py-2 px-2 hover:underline hover:bg-white hover:text-black transition rounded"
+                          >
+                            Test Drive Requests
+                          </button>
+                        )}
+
+                        {user?.roles?.some(role => [ "Administrator"].includes(role) ) && (
+                          <button
+                            onClick={() => navigate("/customer-service-queue")}
+                            className="block py-2 px-2 hover:underline hover:bg-white hover:text-black transition rounded"
+                          >
+                            Customer Service Queue
+                          </button>
+                          )}
+                        
 
                         
                     </div>

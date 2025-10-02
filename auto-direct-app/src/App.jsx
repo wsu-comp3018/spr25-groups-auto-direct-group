@@ -3,6 +3,7 @@
 
 import { createContext, useContext } from "react";
 import { BrowserRouter as Router, Route, Routes, Link } from "react-router-dom";
+import { Toaster } from "react-hot-toast";
 
 import Navbar from "./components/Navbar";
 import Dropzone from "./components/Dropzone";
@@ -34,6 +35,8 @@ import LogisticsDashboard from "./pages/LogisticsDashboard"; // Logistics coordi
 import PurchaseVehiclePage from "./pages/PurchaseVehiclePage"; // Purchase vehicle form page
 import PaymentInstructionsPage from "./pages/PaymentInstructionsPage"; // Payment instructions page
 import PaymentDetailsPage from "./pages/PaymentDetailsPage"; // Payment details page
+import TestDriveDashboard from "./pages/test-drive-dashboard";
+import CustomerServiceQueue from "./pages/customer-service-queue";
 
 import ProtectedRoute from "./components/ProtectedRoute";
 import { UserProvider } from "./contexts/UserContext"; // path may change based on your setup
@@ -82,6 +85,22 @@ function App() {
             />
 
             <Route path="/testDrive" element={<BookingTestDrive />} />
+            <Route
+              path="/test-drive-dashboard"
+              element={
+                <ProtectedRoute allowedRoles={["Administrator"]}>
+                  <TestDriveDashboard />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/customer-service-queue"
+              element={
+                <ProtectedRoute allowedRoles={["Administrator"]}>
+                  <CustomerServiceQueue />
+                </ProtectedRoute>
+              }
+            />
 
             {/* Advice Queue: Only admin */}
             <Route
@@ -232,6 +251,30 @@ function App() {
 				</Link>
           </footer>
         </div>
+        <Toaster 
+          position="top-right"
+          toastOptions={{
+            duration: 4000,
+            style: {
+              background: '#363636',
+              color: '#fff',
+            },
+            success: {
+              duration: 3000,
+              style: {
+                background: '#10B981',
+                color: '#fff',
+              },
+            },
+            error: {
+              duration: 4000,
+              style: {
+                background: '#EF4444',
+                color: '#fff',
+              },
+            },
+          }}
+        />
       </Router>
     </UserProvider>
   );
