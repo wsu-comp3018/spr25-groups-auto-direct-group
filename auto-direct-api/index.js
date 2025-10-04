@@ -10,6 +10,7 @@ const purchasesRoute = require('./routes/purchase-routes');
 const financeRoutes = require('./routes/finance-routes');
 const financeRequestsRoutes = require('./routes/finance-requests-routes');
 const vehicleComparisonRoutes = require('./routes/vehicle-comparison-routes');
+const complaintsRoutes = require('./routes/complaints-routes');
 
 const app = express();
 const connectDB = require("./service/databaseConnection");
@@ -32,6 +33,7 @@ app.use("/purchases", purchasesRoute);
 app.use("/finance", financeRoutes);
 app.use("/finance-requests", financeRequestsRoutes);
 app.use("/vehicle-comparison", vehicleComparisonRoutes);
+app.use("/api/complaints", complaintsRoutes);
 
 connectDB();
 
