@@ -198,7 +198,7 @@ function Login() {
                 </div>
               </div>
             )}
-
+            
 					{/* Submit Button */}
 					<button
 						type="submit"
@@ -208,6 +208,7 @@ function Login() {
 					</button>
 				</form>
 			</div>
+		</div>
 		</div>
 	);
 }

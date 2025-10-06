@@ -50,8 +50,11 @@ function BrowsePage() {
   const userID = Cookies.get("auto-direct-userID");
   const token = Cookies.get("auto-direct-token");
   const [makeExpanded, setMakeExpanded] = useState(false);
+  const [priceExpanded, setPriceExpanded] = useState(false);
   const [transmissionExpanded, setTransmissionExpanded] = useState(false);
   const [bodyTypeExpanded, setBodyTypeExpanded] = useState(false);
+  const [driveTypeExpanded, setDriveTypeExpanded] = useState(false);
+  const [fuelExpanded, setFuelExpanded] = useState(false);
 
 
   const [filterOptions, setFilterOptions] = useState({
@@ -182,31 +185,31 @@ function BrowsePage() {
       })
       .then((data) => {
         setFilterOptions({
-          makes: [...new Set(data.map((car) => car.makeName))],
+          makes: [...new Set(data.map((car) => car.makeName))].sort(),
           transmissions: [
             ...new Set([
               ...TRANSMISSION_OPTIONS,
               ...data.map((car) => car.transmission).filter(Boolean),
             ]),
-          ],
+          ].sort(),
           bodyTypes: [
             ...new Set([
               ...BODY_TYPE_OPTIONS,
               ...data.map((car) => car.bodyType).filter(Boolean),
             ]),
-          ],
+          ].sort(),
           fuels: [
             ...new Set([
               ...FUEL_OPTIONS,
               ...data.map((car) => car.fuel).filter(Boolean),
             ]),
-          ],
+          ].sort(),
           driveTypes: [
             ...new Set([
               ...DRIVE_TYPE_OPTIONS,
               ...data.map((car) => car.driveType).filter(Boolean),
             ]),
-          ],
+          ].sort(),
         });
       })
       .catch((err) =>
@@ -447,176 +450,110 @@ function BrowsePage() {
               onClearAll={clearAllFilters}
             />
             
-            {/* Make Filter */}
+            {/* Make Filter - Popup Trigger */}
             <div>
-              <p className="text-sm font-medium text-gray-700 mb-1">Make</p>
-              <div className="space-y-1 max-h-50 overflow-y-auto">
-                {filterOptions.makes.map((make, idx) => (
-                  <label key={idx} className="flex items-center">
-                    <input
-                      type="checkbox"
-                      className="mr-2"
-                      checked={makeFilter.includes(make)}
-                      onChange={() => toggleFilter(make, "make", makeFilter)}
-                    />
-                    <span className="text-gray-700">{make}</span>
-                  </label>
-                ))}
-              </div>
-            </div>
-            {/* Price Filter */}
-            <div>
-              <p className="text-sm font-medium text-gray-700 mb-1">Price</p>
-              <div className="space-y-1 max-h-20 overflow-y-auto">
-                {[
-                  { label: "Under $30,000", value: "30000" },
-                  { label: "Under $50,000", value: "50000" },
-                  { label: "Under $70,000", value: "70000" },
-                ].map((opt, idx) => (
-                  <label key={idx} className="flex items-center">
-                    <input
-                      type="checkbox"
-                      className="mr-2"
-                      checked={priceFilter.includes(opt.value)}
-                      onChange={() =>
-                        toggleFilter(opt.value, "price", priceFilter)
-                      }
-                    />
-                    <span className="text-gray-700">{opt.label}</span>
-                  </label>
-                ))}
-              </div>
-            </div>
-            {/* Transmission Filter */}
-            <div>
-              <p className="text-sm font-medium text-gray-700 mb-1">
-                Transmission
-              </p>
-                  <div className="space-y-1 max-h-50 overflow-y-auto">
-                    {(transmissionExpanded ? filterOptions.transmissions : filterOptions.transmissions.slice(0, 5)).map((type, idx) => (
-                      <label key={idx} className="flex items-center">
-                        <input
-                          type="checkbox"
-                          className="mr-2"
-                          checked={transmissionFilter.includes(type)}
-                          onChange={() => toggleFilter(type, "transmission", transmissionFilter)}
-                        />
-                        <span className="text-gray-700">{type}</span>
-                      </label>
-                    ))}
-                    {filterOptions.transmissions.length > 5 && (
-                      <button
-                        className="flex items-center text-sm text-blue-600 hover:underline mt-1"
-                        onClick={() => setTransmissionExpanded((prev) => !prev)}
-                        type="button"
-                      >
-                        {transmissionExpanded ? (
-                          <>
-                            Show Less
-                            <svg className="ml-1 w-4 h-4" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
-                              <path strokeLinecap="round" strokeLinejoin="round" d="M19 15l-7-7-7 7" />
-                            </svg>
-                          </>
-                        ) : (
-                          <>
-                            Show More
-                            <svg className="ml-1 w-4 h-4" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
-                              <path strokeLinecap="round" strokeLinejoin="round" d="M19 9l-7 7-7-7" />
-                            </svg>
-                          </>
-                        )}
-                      </button>
-                    )}
-                  </div>
-            </div>
-            {/* Body Type Filter */}
-          <div>
-            <p className="text-sm font-medium text-gray-700 mb-1">
-              Body Type
-            </p>
-            <div className="space-y-1 overflow-y-auto">
-              {(bodyTypeExpanded
-                ? filterOptions.bodyTypes
-                : filterOptions.bodyTypes.slice(0, 5)
-              ).map((type, idx) => (
-                <label key={idx} className="flex items-center">
-                  <input
-                    type="checkbox"
-                    className="mr-2"
-                    checked={bodyTypeFilter.includes(type)}
-                    onChange={() =>
-                      toggleFilter(type, "bodyType", bodyTypeFilter)
-                    }
-                  />
-                  <span className="text-gray-700">{type}</span>
-                </label>
-              ))}
-              {filterOptions.bodyTypes.length > 5 && (
-                <button
-                  className="flex items-center text-sm text-black-600 hover:underline mt-1"
-                  onClick={() => setBodyTypeExpanded((prev) => !prev)}
-                  type="button"
-                >
-                  {bodyTypeExpanded ? (
-                    <>
-                      Show Less
-                      {/* Up Arrow */}
-                      <svg className="ml-1 w-4 h-4" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" d="M19 15l-7-7-7 7" />
-                      </svg>
-                    </>
-                  ) : (
-                    <>
-                      Show More
-                      {/* Down Arrow */}
-                      <svg className="ml-1 w-4 h-4" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" d="M19 9l-7 7-7-7" />
-                      </svg>
-                    </>
+              <button
+                onClick={() => setMakeExpanded(true)}
+                className="w-full flex items-center justify-between p-3 border border-gray-200 rounded-lg hover:border-gray-300 transition-colors"
+              >
+                <span className="text-sm font-medium text-gray-900">Make</span>
+                <div className="flex items-center space-x-2">
+
+                  {makeFilter.length > 0 && (
+                    <span className="text-xs text-gray-500">{makeFilter.length}</span>
                   )}
-                </button>
-              )}
+                  <svg className="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                  </svg>
+                
+                </div>
+              </button>
             </div>
-          </div>
-            {/* Drive Type Filter */}
+            {/* Price Filter - Popup Trigger */}
             <div>
-              <p className="text-sm font-medium text-gray-700 mb-1">
-                Drive Type
-              </p>
-              <div className="space-y-1  overflow-y-auto">
-                {filterOptions.driveTypes.map((type, idx) => (
-                  <label key={idx} className="flex items-center">
-                    <input
-                      type="checkbox"
-                      className="mr-2"
-                      checked={driveTypeFilter.includes(type)}
-                      onChange={() =>
-                        toggleFilter(type, "driveType", driveTypeFilter)
-                      }
-                    />
-                    <span className="text-gray-700">{type}</span>
-                  </label>
-                ))}
-              </div>
+              <button
+                onClick={() => setPriceExpanded(true)}
+                className="w-full flex items-center justify-between p-3 border border-gray-200 rounded-lg hover:border-gray-300 transition-colors"
+              >
+                <span className="text-sm font-medium text-gray-900">Price</span>
+                <div className="flex items-center space-x-2">
+                  {priceFilter.length > 0 && (
+                    <span className="text-xs text-gray-500">{priceFilter.length}</span>
+                  )}
+                  <svg className="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                  </svg>
+                </div>
+              </button>
             </div>
-            {/* Fuel Filter */}
+            {/* Transmission Filter - Popup Trigger */}
             <div>
-              <p className="text-sm font-medium text-gray-700 mb-1">
-                Fuel Type
-              </p>
-              <div className="space-y-1  overflow-y-auto">
-                {filterOptions.fuels.map((type, idx) => (
-                  <label key={idx} className="flex items-center">
-                    <input
-                      type="checkbox"
-                      className="mr-2"
-                      checked={fuelFilter.includes(type)}
-                      onChange={() => toggleFilter(type, "fuel", fuelFilter)}
-                    />
-                    <span className="text-gray-700">{type}</span>
-                  </label>
-                ))}
-              </div>
+              <button
+                onClick={() => setTransmissionExpanded(true)}
+                className="w-full flex items-center justify-between p-3 border border-gray-200 rounded-lg hover:border-gray-300 transition-colors"
+              >
+                <span className="text-sm font-medium text-gray-900">Transmission</span>
+                <div className="flex items-center space-x-2">
+                  {transmissionFilter.length > 0 && (
+                    <span className="text-xs text-gray-500">{transmissionFilter.length}</span>
+                  )}
+                  <svg className="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                  </svg>
+                </div>
+              </button>
+            </div>
+            {/* Body Type Filter - Popup Trigger */}
+            <div>
+              <button
+                onClick={() => setBodyTypeExpanded(true)}
+                className="w-full flex items-center justify-between p-3 border border-gray-200 rounded-lg hover:border-gray-300 transition-colors"
+              >
+                <span className="text-sm font-medium text-gray-900">Body Type</span>
+                <div className="flex items-center space-x-2">
+                  {bodyTypeFilter.length > 0 && (
+                  <span className="text-xs text-gray-500">{bodyTypeFilter.length}</span>
+                  )}
+                  <svg className="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                  </svg>
+                </div>
+              </button>
+            </div>
+            {/* Drive Type Filter - Popup Trigger */}
+            <div>
+              <button
+                onClick={() => setDriveTypeExpanded(true)}
+                className="w-full flex items-center justify-between p-3 border border-gray-200 rounded-lg hover:border-gray-300 transition-colors"
+              >
+                <span className="text-sm font-medium text-gray-900">Drive Type</span>
+                <div className="flex items-center space-x-2">
+                  {driveTypeFilter.length > 0 && (
+                    <span className="text-xs text-gray-500">{driveTypeFilter.length}</span>
+                  )}
+                  <svg className="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                  </svg>
+                </div>
+              </button>
+            </div>
+            
+            {/* Fuel Filter - Popup Trigger */}
+            <div>
+              <button
+                onClick={() => setFuelExpanded(true)}
+                className="w-full flex items-center justify-between p-3 border border-gray-200 rounded-lg hover:border-gray-300 transition-colors"
+              >
+                <span className="text-sm font-medium text-gray-900">Fuel Type</span>
+                <div className="flex items-center space-x-2">
+                  {fuelFilter.length > 0 && (
+                    <span className="text-xs text-gray-500">{fuelFilter.length}</span>
+                  )}
+                  <svg className="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                  </svg>
+                </div>
+              </button>
             </div>
           </div>
         </aside>
@@ -631,8 +568,21 @@ function BrowsePage() {
               paginatedCars.map((car) => (
                 <div
                   key={car.vehicleID}
-                  className="bg-white rounded-xl overflow-hidden border border-gray-200 hover:shadow-md transform hover:scale-[1.02] transition duration-300 flex flex-col h-[370px]"
+                  className="bg-white rounded-xl overflow-hidden border border-gray-200 hover:shadow-md transform hover:scale-[1.02] transition duration-300 flex flex-col h-[370px] relative"
                 >
+                  {/* Heart icon in upper right */}
+                  <button
+                    onClick={(e) => { e.preventDefault(); e.stopPropagation(); handleSaveViaHeart(car.vehicleID); }}
+                    disabled={isSavingId === car.vehicleID}
+                    className={`absolute top-3 right-3 z-10 p-2 rounded-full border transition ${
+                      favourites.includes(car.vehicleID) ? 'bg-red-100 border-red-400 hover:bg-red-200' : 'bg-white border-gray-200 hover:bg-gray-100'
+                    } ${isSavingId === car.vehicleID ? 'opacity-50 cursor-not-allowed' : ''}`}
+                    aria-label="Save to favourites"
+                    title={favourites.includes(car.vehicleID) ? 'Saved' : 'Save to favourites'}
+                  >
+                    <Heart className={`w-5 h-5 ${favourites.includes(car.vehicleID) ? 'text-red-600 fill-red-600' : 'text-gray-600'}`} />
+                  </button>
+                  
                   <Link
                     to={`/car/${car.vehicleID}`}
                     className="relative w-full h-56 overflow-hidden"
@@ -668,31 +618,17 @@ function BrowsePage() {
                           currency: "AUD",
                         }).format(car.price)}
                       </p>
-                      <div className="flex items-center space-x-2 px-1">
-                        {/* New Save Heart (browse) */}
-                        <button
-                          onClick={(e) => { e.preventDefault(); e.stopPropagation(); handleSaveViaHeart(car.vehicleID); }}
-                          disabled={isSavingId === car.vehicleID}
-                          className={`p-2 rounded-full border transition ${
-                            favourites.includes(car.vehicleID) ? 'bg-red-100 border-red-400 hover:bg-red-200' : 'bg-gray-100 border-gray-200 hover:bg-gray-200'
-                          } ${isSavingId === car.vehicleID ? 'opacity-50 cursor-not-allowed' : ''}`}
-                          aria-label="Save to favourites"
-                          title={favourites.includes(car.vehicleID) ? 'Saved' : 'Save to favourites'}
-                        >
-                          <Heart className={`w-5 h-5 ${favourites.includes(car.vehicleID) ? 'text-red-600 fill-red-600' : 'text-gray-600'}`} />
-                        </button>
-                        {/* Test drive button */}
-                        <button
-                          onClick={() =>
-                            navigate(`/car/${car.vehicleID}`, {
-                              state: { car, testDriveClicked: true },
-                            })
-                          }
-                          className="bg-black text-white hover:bg-white hover:text-black text-sm px-3 py-1 rounded shadow-sm flex items-center"
-                        >
-                          Test Drive
-                        </button>
-                      </div>
+                      {/* Test drive button */}
+                      <button
+                        onClick={() =>
+                          navigate(`/car/${car.vehicleID}`, {
+                            state: { car, testDriveClicked: true },
+                          })
+                        }
+                        className="bg-black text-white hover:bg-white hover:text-black text-sm px-3 py-1 rounded shadow-sm flex items-center"
+                      >
+                        Test Drive
+                      </button>
                     </div>
                   </div>
                 </div>
@@ -728,6 +664,509 @@ function BrowsePage() {
           )}
         </div>
       </div>
+
+      {/* Make Filter Popup Modal */}
+      {makeExpanded && (
+        <div 
+          className="fixed inset-0 z-50 overflow-auto"
+          style={{
+            background: 'rgba(0, 0, 0, 0.15)',
+            backdropFilter: 'blur(2px)',
+            WebkitBackdropFilter: 'blur(2px)'
+          }}
+        >
+          <div className="flex items-center justify-center min-h-screen p-4">
+            <div className="bg-white rounded-xl shadow-2xl max-w-md w-full max-h-[80vh] overflow-hidden">
+              {/* Header */}
+              <div className="flex items-center justify-between p-4 border-b border-gray-200">
+                <h3 className="text-lg font-semibold text-gray-900">Make</h3>
+                <button
+                  onClick={() => setMakeExpanded(false)}
+                  className="text-gray-400 hover:text-gray-600 transition-colors"
+                >
+                  <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                  </svg>
+                </button>
+              </div>
+              
+              {/* Search bar */}
+              <div className="p-4 border-b border-gray-200">
+                <div className="relative">
+                  <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                    <svg className="h-5 w-5 text-gray-400" stroke="currentColor" fill="none" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="m21 21-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                    </svg>
+                  </div>
+                  <input
+                    type="text"
+                    placeholder="Search make..."
+                    className="block w-full pl-10 pr-3 py-2 border border-gray-300 rounded-md leading-5 bg-white placeholder-gray-500 focus:outline-none focus:placeholder-gray-400 focus:ring-1 focus:ring-black focus:border-black sm:text-sm"
+                  />
+                </div>
+              </div>
+              
+                  {/* Options list */}
+                  <div className="max-h-80 overflow-y-auto">
+                    {(() => {
+                      // Group makes by first letter
+                      const groupedMakes = filterOptions.makes.reduce((acc, make) => {
+                        const firstLetter = make.charAt(0).toUpperCase();
+                        if (!acc[firstLetter]) {
+                          acc[firstLetter] = [];
+                        }
+                        acc[firstLetter].push(make);
+                        return acc;
+                      }, {});
+
+                      // Sort the letters
+                      const sortedLetters = Object.keys(groupedMakes).sort();
+
+                      return sortedLetters.map((letter) => (
+                        <div key={letter}>
+                          {/* Letter heading */}
+                          <div className="px-4 py-2 bg-gray-100 border-b border-gray-200">
+                            <h4 className="text-sm font-semibold text-gray-700 text-left">({letter})</h4>
+                          </div>
+                          
+                          {/* Makes for this letter */}
+                          {groupedMakes[letter].map((make, idx) => (
+                            <button
+                              key={idx}
+                              onClick={() => toggleFilter(make, "make", makeFilter)}
+                              className="w-full flex items-center justify-between p-4 hover:bg-gray-50 transition-colors border-b border-gray-100 last:border-b-0"
+                            >
+                              <div className="flex items-center space-x-3">
+                                <div className={`w-5 h-5 border-2 rounded ${
+                                  makeFilter.includes(make) 
+                                    ? 'bg-black border-black' 
+                                    : 'border-gray-300'
+                                } flex items-center justify-center`}>
+                                  {makeFilter.includes(make) && (
+                                    <svg className="w-3 h-3 text-white" fill="currentColor" viewBox="0 0 20 20">
+                                      <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd"/>
+                                    </svg>
+                                  )}
+                                </div>
+                                <span className="text-sm font-medium text-gray-900">{make}</span>
+                              </div>
+                              <button className="w-6 h-6 bg-black text-white rounded-full hover:bg-gray-800 transition-colors flex items-center justify-center">
+                                <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                                </svg>
+                              </button>
+                            </button>
+                          ))}
+                        </div>
+                      ));
+                    })()}
+                  </div>
+              
+              {/* Footer */}
+              <div className="flex items-center justify-between p-4 border-t border-gray-200 bg-gray-50">
+                <button
+                  onClick={() => handleMakeFilterChange([])}
+                  className="text-sm text-black hover:text-gray-700 font-medium"
+                >
+                  Clear
+                </button>
+                <button
+                  onClick={() => setMakeExpanded(false)}
+                  className="px-6 py-2 bg-black text-white text-sm font-medium rounded-md hover:bg-gray-800 transition-colors"
+                >
+                  Search
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Price Filter Popup Modal */}
+      {priceExpanded && (
+        <div 
+          className="fixed inset-0 z-50 overflow-auto"
+          style={{
+            background: 'rgba(0, 0, 0, 0.15)',
+            backdropFilter: 'blur(2px)',
+            WebkitBackdropFilter: 'blur(2px)'
+          }}
+        >
+          <div className="flex items-center justify-center min-h-screen p-4">
+            <div className="bg-white rounded-xl shadow-2xl max-w-md w-full max-h-[80vh] overflow-hidden">
+              {/* Header */}
+              <div className="flex items-center justify-between p-4 border-b border-gray-200">
+                <h3 className="text-lg font-semibold text-gray-900">Price</h3>
+                <button
+                  onClick={() => setPriceExpanded(false)}
+                  className="text-gray-400 hover:text-gray-600 transition-colors"
+                >
+                  <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                  </svg>
+                </button>
+              </div>
+              
+              {/* Options list */}
+              <div className="max-h-80 overflow-y-auto">
+                {[
+                  { label: "Under $30,000", value: "30000" },
+                  { label: "Under $50,000", value: "50000" },
+                  { label: "Under $70,000", value: "70000" },
+                  { label: "Under $100,000", value: "100000" },
+                  { label: "Above $100,000", value: "above100000" },
+                ].map((opt, idx) => (
+                  <button
+                    key={idx}
+                    onClick={() => toggleFilter(opt.value, "price", priceFilter)}
+                    className="w-full flex items-center justify-between p-4 hover:bg-gray-50 transition-colors border-b border-gray-100 last:border-b-0"
+                  >
+                    <div className="flex items-center space-x-3">
+                      <div className={`w-5 h-5 border-2 rounded ${
+                        priceFilter.includes(opt.value) 
+                          ? 'bg-black border-black' 
+                          : 'border-gray-300'
+                      } flex items-center justify-center`}>
+                        {priceFilter.includes(opt.value) && (
+                          <svg className="w-3 h-3 text-white" fill="currentColor" viewBox="0 0 20 20">
+                            <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd"/>
+                          </svg>
+                        )}
+                      </div>
+                      <span className="text-sm font-medium text-gray-900">{opt.label}</span>
+                    </div>
+                    <button className="w-6 h-6 bg-black text-white rounded-full hover:bg-gray-800 transition-colors flex items-center justify-center">
+                      <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                      </svg>
+                    </button>
+                  </button>
+                ))}
+              </div>
+              
+              {/* Footer */}
+              <div className="flex items-center justify-between p-4 border-t border-gray-200 bg-gray-50">
+                <button
+                  onClick={() => setPriceFilter([])}
+                  className="text-sm text-black hover:text-gray-700 font-medium"
+                >
+                  Clear
+                </button>
+                <button
+                  onClick={() => setPriceExpanded(false)}
+                  className="px-6 py-2 bg-black text-white text-sm font-medium rounded-md hover:bg-gray-800 transition-colors"
+                >
+                  Search
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Transmission Filter Popup Modal */}
+      {transmissionExpanded && (
+        <div 
+          className="fixed inset-0 z-50 overflow-auto"
+          style={{
+            background: 'rgba(0, 0, 0, 0.15)',
+            backdropFilter: 'blur(2px)',
+            WebkitBackdropFilter: 'blur(2px)'
+          }}
+        >
+          <div className="flex items-center justify-center min-h-screen p-4">
+            <div className="bg-white rounded-xl shadow-2xl max-w-md w-full max-h-[80vh] overflow-hidden">
+              {/* Header */}
+              <div className="flex items-center justify-between p-4 border-b border-gray-200">
+                <h3 className="text-lg font-semibold text-gray-900">Transmission</h3>
+                <button
+                  onClick={() => setTransmissionExpanded(false)}
+                  className="text-gray-400 hover:text-gray-600 transition-colors"
+                >
+                  <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                  </svg>
+                </button>
+              </div>
+              
+              {/* Options list */}
+              <div className="max-h-80 overflow-y-auto">
+                {filterOptions.transmissions.map((transmission, idx) => (
+                  <button
+                    key={idx}
+                    onClick={() => toggleFilter(transmission, "transmission", transmissionFilter)}
+                    className="w-full flex items-center justify-between p-4 hover:bg-gray-50 transition-colors border-b border-gray-100 last:border-b-0"
+                  >
+                    <div className="flex items-center space-x-3">
+                      <div className={`w-5 h-5 border-2 rounded ${
+                        transmissionFilter.includes(transmission) 
+                          ? 'bg-black border-black' 
+                          : 'border-gray-300'
+                      } flex items-center justify-center`}>
+                        {transmissionFilter.includes(transmission) && (
+                          <svg className="w-3 h-3 text-white" fill="currentColor" viewBox="0 0 20 20">
+                            <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd"/>
+                          </svg>
+                        )}
+                      </div>
+                      <span className="text-sm font-medium text-gray-900">{transmission}</span>
+                    </div>
+                    <button className="w-6 h-6 bg-black text-white rounded-full hover:bg-gray-800 transition-colors flex items-center justify-center">
+                      <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                      </svg>
+                    </button>
+                  </button>
+                ))}
+              </div>
+              
+              {/* Footer */}
+              <div className="flex items-center justify-between p-4 border-t border-gray-200 bg-gray-50">
+                <button
+                  className="text-sm text-black hover:text-gray-700 font-medium"
+                  onClick={() => setTransmissionFilter([])}
+                >
+                  Clear
+                </button>
+                <button
+                  onClick={() => setTransmissionExpanded(false)}
+                  className="px-6 py-2 bg-black text-white text-sm font-medium rounded-md hover:bg-gray-800 transition-colors"
+                >
+                  Search
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Body Type Filter Popup Modal */}
+      {bodyTypeExpanded && (
+        <div 
+          className="fixed inset-0 z-50 overflow-auto"
+          style={{
+            background: 'rgba(0, 0, 0, 0.15)',
+            backdropFilter: 'blur(2px)',
+            WebkitBackdropFilter: 'blur(2px)'
+          }}
+        >
+          <div className="flex items-center justify-center min-h-screen p-4">
+            <div className="bg-white rounded-xl shadow-2xl max-w-md w-full max-h-[80vh] overflow-hidden">
+              {/* Header */}
+              <div className="flex items-center justify-between p-4 border-b border-gray-200">
+                <h3 className="text-lg font-medium text-gray-900">Body Type</h3>
+                <button
+                  onClick={() => setBodyTypeExpanded(false)}
+                  className="text-gray-400 hover:text-gray-600 transition-colors"
+                >
+                  <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                  </svg>
+                </button>
+              </div>
+              
+              {/* Options list */}
+              <div className="max-h-80 overflow-y-auto">
+                {filterOptions.bodyTypes.map((bodyType, idx) => (
+                  <button
+                    key={idx}
+                    onClick={() => toggleFilter(bodyType, "bodyType", bodyTypeFilter)}
+                    className="w-full flex items-center justify-between p-4 hover:bg-gray-50 transition-colors border-b border-gray-100 last:border-b-0"
+                  >
+                    <div className="flex items-center space-x-3">
+                      <div className={`w-5 h-5 border-2 rounded ${
+                        bodyTypeFilter.includes(bodyType) 
+                          ? 'bg-black border-black' 
+                          : 'border-gray-300'
+                      } flex items-center justify-center`}>
+                        {bodyTypeFilter.includes(bodyType) && (
+                          <svg className="w-3 h-3 text-white" fill="currentColor" viewBox="0 0 20 20">
+                            <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd"/>
+                          </svg>
+                        )}
+                      </div>
+                      <span className="text-sm font-medium text-gray-900">{bodyType}</span>
+                    </div>
+                    <button className="w-6 h-6 bg-black text-white rounded-full hover:bg-gray-800 transition-colors flex items-center justify-center">
+                      <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                      </svg>
+                    </button>
+                  </button>
+                ))}
+              </div>
+              
+              {/* Footer */}
+              <div className="flex items-center justify-between p-4 border-t border-gray-200 bg-gray-50">
+                <button
+                  onClick={() => setBodyTypeFilter([])}
+                  className="text-sm text-black hover:text-gray-700 font-medium"
+                >
+                  Clear
+                </button>
+                <button
+                  onClick={() => setBodyTypeExpanded(false)}
+                  className="px-6 py-2 bg-black text-white text-sm font-medium rounded-md hover:bg-gray-800 transition-colors"
+                >
+                  Search
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Drive Type Filter Popup Modal */}
+      {driveTypeExpanded && (
+        <div 
+          className="fixed inset-0 z-50 overflow-auto"
+          style={{
+            background: 'rgba(0, 0, 0, 0.15)',
+            backdropFilter: 'blur(2px)',
+            WebkitBackdropFilter: 'blur(2px)'
+          }}
+        >
+          <div className="flex items-center justify-center min-h-screen p-4">
+            <div className="bg-white rounded-xl shadow-2xl max-w-md w-full max-h-[80vh] overflow-hidden">
+              {/* Header */}
+              <div className="flex items-center justify-between p-4 border-b border-gray-200">
+                <h3 className="text-lg font-semibold text-gray-900">Drive Type</h3>
+                <button
+                  onClick={() => setDriveTypeExpanded(false)}
+                  className="text-gray-400 hover:text-gray-600 transition-colors"
+                >
+                  <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                  </svg>
+                </button>
+              </div>
+              
+              {/* Options list */}
+              <div className="max-h-80 overflow-y-auto">
+                {filterOptions.driveTypes.map((driveType, idx) => (
+                  <button
+                    key={idx}
+                    onClick={() => toggleFilter(driveType, "driveType", driveTypeFilter)}
+                    className="w-full flex items-center justify-between p-4 hover:bg-gray-50 transition-colors border-b border-gray-100 last:border-b-0"
+                  >
+                    <div className="flex items-center space-x-3">
+                      <div className={`w-5 h-5 border-2 rounded ${
+                        driveTypeFilter.includes(driveType) 
+                          ? 'bg-black border-black' 
+                          : 'border-gray-300'
+                      } flex items-center justify-center`}>
+                        {driveTypeFilter.includes(driveType) && (
+                          <svg className="w-3 h-3 text-white" fill="currentColor" viewBox="0 0 20 20">
+                            <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd"/>
+                          </svg>
+                        )}
+                      </div>
+                      <span className="text-sm font-medium text-gray-900">{driveType}</span>
+                    </div>
+                    <button className="w-6 h-6 bg-black text-white rounded-full hover:bg-gray-800 transition-colors flex items-center justify-center">
+                      <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                      </svg>
+                    </button>
+                  </button>
+                ))}
+              </div>
+              
+              {/* Footer */}
+              <div className="flex items-center justify-between p-4 border-t border-gray-200 bg-gray-50">
+                <button
+                  onClick={() => setDriveTypeFilter([])}
+                  className="text-sm text-black hover:text-gray-700 font-medium"
+                >
+                  Clear
+                </button>
+                <button
+                  onClick={() => setDriveTypeExpanded(false)}
+                  className="px-6 py-2 bg-black text-white text-sm font-medium rounded-md hover:bg-gray-800 transition-colors"
+                >
+                  Search
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Fuel Filter Popup Modal */}
+      {fuelExpanded && (
+        <div 
+          className="fixed inset-0 z-50 overflow-auto"
+          style={{
+            background: 'rgba(0, 0, 0, 0.15)',
+            backdropFilter: 'blur(2px)',
+            WebkitBackdropFilter: 'blur(2px)'
+          }}
+        >
+          <div className="flex items-center justify-center min-h-screen p-4">
+            <div className="bg-white rounded-xl shadow-2xl max-w-md w-full max-h-[80vh] overflow-hidden">
+              {/* Header */}
+              <div className="flex items-center justify-between p-4 border-b border-gray-200">
+                <h3 className="text-lg font-semibold text-gray-900">Fuel Type</h3>
+                <button
+                  onClick={() => setFuelExpanded(false)}
+                  className="text-gray-400 hover:text-gray-600 transition-colors"
+                >
+                  <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                  </svg>
+                </button>
+              </div>
+              
+              {/* Options list */}
+              <div className="max-h-80 overflow-y-auto">
+                {filterOptions.fuels.map((fuel, idx) => (
+                  <button
+                    key={idx}
+                    onClick={() => toggleFilter(fuel, "fuel", fuelFilter)}
+                    className="w-full flex items-center justify-between p-4 hover:bg-gray-50 transition-colors border-b border-gray-100 last:border-b-0"
+                  >
+                    <div className="flex items-center space-x-3">
+                      <div className={`w-5 h-5 border-2 rounded ${
+                        fuelFilter.includes(fuel) 
+                          ? 'bg-black border-black' 
+                          : 'border-gray-300'
+                      } flex items-center justify-center`}>
+                        {fuelFilter.includes(fuel) && (
+                          <svg className="w-3 h-3 text-white" fill="currentColor" viewBox="0 0 20 20">
+                            <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd"/>
+                          </svg>
+                        )}
+                      </div>
+                      <span className="text-sm font-medium text-gray-900">{fuel}</span>
+                    </div>
+                    <button className="w-6 h-6 bg-black text-white rounded-full hover:bg-gray-800 transition-colors flex items-center justify-center">
+                      <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                      </svg>
+                    </button>
+                  </button>
+                ))}
+              </div>
+              
+              {/* Footer */}
+              <div className="flex items-center justify-between p-4 border-t border-gray-200 bg-gray-50">
+                <button
+                  onClick={() => setFuelFilter([])}
+                  className="text-sm text-black hover:text-gray-700 font-medium"
+                >
+                  Clear
+                </button>
+                <button
+                  onClick={() => setFuelExpanded(false)}
+                  className="px-6 py-2 bg-black text-white text-sm font-medium rounded-md hover:bg-gray-800 transition-colors"
+                >
+                  Search
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

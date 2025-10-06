@@ -1,7 +1,7 @@
 const connectionConfig = {
-  host: "localhost",
+  host: "127.0.0.1",
   user: "root",
-  password: "123456",
+  password: "12345678",
   database: "autos-direct",
   port: 3306
 }

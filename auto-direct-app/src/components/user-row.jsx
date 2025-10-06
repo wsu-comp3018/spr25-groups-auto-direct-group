@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import RolesModal from '../components/roles-modal'
 
-const UserRow = ({userData, handleSave, handleDelete}) => {
+const UserRow = ({userData, handleSave, handleDelete, handleReactivate}) => {
 	const [user, setUser] = useState(userData);
 	const [isEditing, setIsEditing] = useState(false);
 
@@ -24,10 +24,16 @@ const UserRow = ({userData, handleSave, handleDelete}) => {
 		handleDelete(user.userID)
 	}
 
+	const handleReactivateClick = () => {
+		handleReactivate(user.userID)
+	}
+
 	return (
 		<tr
 			key={user.userID}
-			className="border-b border-gray-200 hover:bg-gray-50 transition"
+			className={`border-b border-gray-200 hover:bg-gray-50 transition ${
+				user.user_status === 'Inactive' ? 'bg-red-50 opacity-75' : ''
+			}`}
 		>
 			{isEditing ? (
 			<>
@@ -108,10 +114,26 @@ const UserRow = ({userData, handleSave, handleDelete}) => {
 			<>
 				<td className="py-3 px-4">{user.firstName}</td>
 				<td className="py-3 px-4">{user.lastName}</td>
-				<td className="py-3 px-4">{user.emailAddress}</td>
+				<td className="py-3 px-4">
+					{user.emailAddress.includes('.del') ? (
+						<span className="text-gray-500 italic">
+							{user.emailAddress.split('.del')[0]} (deleted)
+						</span>
+					) : (
+						user.emailAddress
+					)}
+				</td>
 				<td className="py-3 px-4">{user.phone}</td>
 				<td className="py-3 px-4">{user.roles}</td>
-				<td className="py-3 px-4">{user.user_status}</td>
+				<td className="py-3 px-4">
+					<span className={`px-2 py-1 rounded text-xs font-medium ${
+						user.user_status === 'Active' 
+							? 'bg-green-100 text-green-800' 
+							: 'bg-red-100 text-red-800'
+					}`}>
+						{user.user_status}
+					</span>
+				</td>
 				<td className="py-3 px-4">
 				{new Date(user.createdTime).toLocaleString()}
 				</td>
@@ -122,12 +144,21 @@ const UserRow = ({userData, handleSave, handleDelete}) => {
 				>
 					Edit
 				</button>
-				<button
-					onClick={() => handleDeleteClick()}
-					className="text-sm border px-3 py-1 rounded text-red-600 hover:bg-red-50"
-				>
-					Delete
-				</button>
+				{user.user_status === 'Inactive' ? (
+					<button
+						onClick={() => handleReactivateClick()}
+						className="text-sm border px-3 py-1 rounded text-green-600 hover:bg-green-50"
+					>
+						Reactivate
+					</button>
+				) : (
+					<button
+						onClick={() => handleDeleteClick()}
+						className="text-sm border px-3 py-1 rounded text-red-600 hover:bg-red-50"
+					>
+						Delete
+					</button>
+				)}
 				</td>
 			</>
 			)}

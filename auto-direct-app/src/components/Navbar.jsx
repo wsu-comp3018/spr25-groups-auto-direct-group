@@ -66,12 +66,6 @@ const Navbar = () => {
               {/* Desktop Nav */}
               <nav className="hidden md:flex space-x-4">
                 <Link
-                  to="/"
-                  className="inline-block py-2 px-4 text-black hover:bg-gray-200 rounded transition"
-                >
-                  Home
-                </Link>
-                <Link
                   to="/browse"
                   className="inline-block py-2 px-4 text-black hover:bg-gray-200 rounded transition"
                 >
@@ -134,144 +128,6 @@ const Navbar = () => {
         </div>
       </header>
 
-{/* User Slider (desktop only) */}
-<div
-  className={`fixed top-16 right-0 h-full w-72 bg-black border-l-2 border-white/10 font-normal z-50 transform transition-transform duration-300  ${
-    showSlider ? "translate-x-0" : "translate-x-full"
-  }`}
-  style={{
-    borderTopLeftRadius: "1.2rem",
-    borderBottomLeftRadius: "1.2rem",
-    boxShadow: "0 8px 32px 0 rgba(0,0,0,0.32)",
-  }}
->
-  <div className="p-6 flex justify-between items-center border-b border-white/10">
-    <h3 className="text-lg font-semibold text-white">Welcome </h3> 
-
-    <button
-      onClick={closeSlider}
-      className="text-white hover:bg-white hover:text-black p-2 rounded-full transition text-2xl"
-    >
-      &times;
-    </button>
-  </div>
-  <div className="flex flex-col">
-    {!user ? (
-      <>
-        <button
-          onClick={() => {
-            navigate("/login");
-            setShowSlider(false);
-          }}
-          className="text-white py-4 border-b border-white/10 hover:bg-white hover:text-black transition text-left px-6 rounded-none font-medium"
-        >
-          Login
-        </button>
-        <button
-          onClick={() => {
-            navigate("/register");
-            setShowSlider(false);
-          }}
-          className="text-white py-4 border-b border-white/10 hover:bg-white hover:text-black transition text-left px-6 rounded-none font-medium"
-        >
-          Register
-        </button>
-      </>
-    ) : (
-      <>
-        <button
-          onClick={() => {
-            navigate("/profile");
-            setShowSlider(false);
-          }}
-          className="text-white py-4 border-b border-white/10 hover:bg-white hover:text-black transition text-left px-6 rounded-none font-medium"
-        >
-          Profile Page
-        </button>
-        <button
-          onClick={() => {
-            navigate("manage-my-requests");
-            setShowSlider(false);
-          }}
-          className="text-white py-4 border-b border-white/10 hover:bg-white hover:text-black transition text-left px-6 rounded-none font-medium"
-        >
-          Manage My Requests
-        </button>
-        <button
-          onClick={() => {
-            navigate("manage-my-purchases");
-            setShowSlider(false);
-          }}
-          className="text-white py-4 border-b border-white/10 hover:bg-white hover:text-black transition text-left px-6 rounded-none font-medium"
-        >
-          Manage My Purchases
-        </button>
-        <button
-          onClick={() => setShowAdminSubmenu(!showAdminSubmenu)}
-          className="text-white py-4 border-b border-white/10 hover:bg-white hover:text-black transition text-left px-6 rounded-t-lg font-medium"
-        >
-          Admin Options
-        </button>
-        <div
-          className={`overflow-hidden transition-all duration-300 ease-in-out bg-black ${
-            showAdminSubmenu ? "max-h-[500px] shadow-inner" : "max-h-0"
-          }`}
-        >
-          <div className="pl-8 text-sm text-white">
-            <button
-              onClick={() => navigate("/manage-vehicles")}
-              className="block py-2 px-2 hover:underline hover:bg-white hover:text-black transition rounded"
-            >
-              Manage Vehicles
-            </button>
-            <button
-              onClick={() => navigate("/manage-users")}
-              className="block py-2 px-2 hover:underline hover:bg-white hover:text-black transition rounded"
-            >
-              Manage Users
-            </button>
-            <button
-              onClick={() => navigate("/manage-manufacturers")}
-              className="block py-2 px-2 hover:underline hover:bg-white hover:text-black transition rounded"
-            >
-              Manage Manufacturers
-            </button>
-            <button
-              onClick={() => navigate("/advice-queue")}
-              className="block py-2 px-2 hover:underline hover:bg-white hover:text-black transition rounded"
-            >
-              Advice Request Queue
-            </button>
-            <button
-              onClick={() => navigate("/manage-dealerships")}
-              className="block py-2 px-2 hover:underline hover:bg-white hover:text-black transition rounded"
-            >
-              Manage Dealerships
-            </button>
-            <button
-              onClick={() => navigate("/test-drive-dashboard")}
-              className="block py-2 px-2 hover:underline hover:bg-white hover:text-black transition rounded"
-            >
-              Test Drive Requests
-            </button>
-            <button
-              onClick={() => navigate("/customer-service-queue")}
-              className="block py-2 px-2 hover:underline hover:bg-white hover:text-black transition rounded"
-            >
-              Customer Service Queue
-            </button>
-          </div>
-        </div>
-        <button
-          onClick={handleLogout}
-          className="text-white py-4 border-b border-white/10 hover:bg-white hover:text-black transition text-left px-6 rounded-b-lg font-medium"
-        >
-          Logout
-        </button>
-      </>
-    )}
-  </div>
-</div>
       {/* User Slider (desktop only) */}
       <div
         className={`fixed top-16 right-0 h-full w-72 bg-black border-l-2 border-white/10 font-normal z-50 transform transition-transform duration-300  ${
@@ -425,6 +281,14 @@ const Navbar = () => {
                             className="block py-2 px-2 hover:underline hover:bg-white hover:text-black transition rounded"
                           >
                             Customer Service Queue
+                          </button>
+                        )}
+                        {user?.roles?.some(role => [ "Administrator"].includes(role) ) && (
+                          <button
+                            onClick={() => navigate("/chatbot-inquiries")}
+                            className="block py-2 px-2 hover:underline hover:bg-white hover:text-black transition rounded"
+                          >
+                            Chatbot Inquiries
                           </button>
                         )}
 
