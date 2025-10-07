@@ -27,7 +27,17 @@ const createUser = async (userNewID, user ) => {
 
 const getAllUsers = () => {
 	try {
-		const query = `SELECT userID, firstName, lastName, emailAddress, phone, createdTime, user_status FROM users`;
+		const query = `SELECT userID, firstName, lastName, emailAddress, phone, createdTime, user_status 
+			FROM users 
+			WHERE user_status = 'Active' 
+			OR (user_status = 'Inactive' AND SUBSTRING_INDEX(emailAddress, '.del', 1) NOT IN (
+				SELECT DISTINCT emailAddress FROM users WHERE user_status = 'Active'
+			) AND createdTime = (
+				SELECT MAX(createdTime) FROM users u2 
+				WHERE u2.user_status = 'Inactive' 
+				AND SUBSTRING_INDEX(u2.emailAddress, '.del', 1) = SUBSTRING_INDEX(users.emailAddress, '.del', 1)
+			))
+			ORDER BY user_status DESC, createdTime DESC`;
 
 		return new Promise((resolve, reject) => {
 			pool.query(query, (err, result) => {
@@ -138,9 +148,27 @@ const updateUserPassword = async(userID, passwordHash) => {
 
 const disableUserByUserID = async (userID) => {
 	try {
-		const query = `UPDATE users SET user_status = ? WHERE userID = ?`
+		// First get the current email to modify it
+		const getUserQuery = `SELECT emailAddress FROM users WHERE userID = ?`;
+		const userResult = await new Promise((resolve, reject) => {
+			pool.query(getUserQuery, [userID], (err, result) => {
+				if (err) reject(err);
+				resolve(result);
+			});
+		});
+
+		if (userResult.length === 0) {
+			throw 'User not found';
+		}
+
+		const originalEmail = userResult[0].emailAddress;
+		const timestamp = Date.now().toString().slice(-6); // Use only last 6 digits
+		const modifiedEmail = `${originalEmail}.del${timestamp}`;
+
+		// Update user status and modify email to free it up
+		const query = `UPDATE users SET user_status = ?, emailAddress = ? WHERE userID = ?`;
 		return new Promise((resolve, reject) => {
-			pool.query(query, ["Inactive", userID],
+			pool.query(query, ["Inactive", modifiedEmail, userID],
 				(err, result) => {
 					if (err) reject(err);
 					resolve(result);
