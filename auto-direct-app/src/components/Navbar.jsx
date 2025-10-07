@@ -77,7 +77,6 @@ const Navbar = () => {
                 >
                   Saved Cars
                 </Link>
-                {/* Test Drive Requests removed from top menu; accessible via Admin Options slider only */}
               {/* Commenting this out as we haven't gotten it functional
                 <Link
                   to="/contact"
@@ -266,6 +265,17 @@ const Navbar = () => {
                         </button>
                         )}
 
+                        {user?.roles?.some(role => [ "Administrator"].includes(role) ) && (
+                        <button onClick={() => navigate("/order-management")} className="block py-2 px-2 hover:underline hover:bg-white hover:text-black transition rounded" >
+                          Order Management
+                        </button>
+                        )}
+
+                        {user?.roles?.some(role => [ "Administrator"].includes(role) ) && (
+                        <button onClick={() => navigate("/logistics-dashboard")} className="block py-2 px-2 hover:underline hover:bg-white hover:text-black transition rounded" >
+                          Logistics Dashboard
+                        </button>
+                        )}
                         {user?.roles?.some(role => [ "Administrator"].includes(role) ) && (
                           <button
                             onClick={() => navigate("/test-drive-dashboard")}
