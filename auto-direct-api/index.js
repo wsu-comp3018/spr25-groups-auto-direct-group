@@ -8,6 +8,12 @@ const dealerRoutes = require('./routes/dealer-routes');
 const testDriveBookingRoutes = require('./routes/test-drive-booking-routes');
 const purchasesRoute = require('./routes/purchase-routes');
 const orderProcessingRoutes = require('./routes/order-processing-routes');
+<<<<<<< HEAD
+=======
+const financeRoutes = require('./routes/finance-routes');
+const financeRequestsRoutes = require('./routes/finance-requests-routes');
+const vehicleComparisonRoutes = require('./routes/vehicle-comparison-routes');
+>>>>>>> a57902b17af21a76552d2abc26b963df679bf99f
 
 const app = express();
 const connectDB = require("./service/databaseConnection");
@@ -28,6 +34,12 @@ app.use("/manage-dealerships", dealerRoutes);
 app.use("/test-drive", testDriveBookingRoutes);
 app.use("/purchases", purchasesRoute);
 app.use("/order-processing", orderProcessingRoutes);
+<<<<<<< HEAD
+=======
+app.use("/finance", financeRoutes);
+app.use("/finance-requests", financeRequestsRoutes);
+app.use("/vehicle-comparison", vehicleComparisonRoutes);
+>>>>>>> a57902b17af21a76552d2abc26b963df679bf99f
 
 connectDB();
 
@@ -40,7 +52,11 @@ connectDB();
   app.get('/api/db-connection-test', (req, res) => {
     pool.query('SELECT * from users', (err, results) => {
       if (err) {
+<<<<<<< HEAD
         console.error('Query failed: ${err}');
+=======
+        console.error(`Query failed: ${err}`);
+>>>>>>> a57902b17af21a76552d2abc26b963df679bf99f
         res.status(500).send('Server error');
       }
       else {

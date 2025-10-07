@@ -3,6 +3,16 @@ import { Link, useNavigate, useLocation } from "react-router-dom";
 import { Heart } from "lucide-react";
 import Cookies from "js-cookie";
 import api from "../data/api-calls";
+<<<<<<< HEAD
+=======
+import MakeFilterModal from "../components/MakeFilterModal";
+import PriceFilterModal from "../components/PriceFilterModal";
+import TransmissionFilterModal from "../components/TransmissionFilterModal";
+import BodyTypeFilterModal from "../components/BodyTypeFilterModal";
+import DriveTypeFilterModal from "../components/DriveTypeFilterModal";
+import FuelFilterModal from "../components/FuelFilterModal";
+import FilterPills from "../components/FilterPills";
+>>>>>>> a57902b17af21a76552d2abc26b963df679bf99f
 
 // Hardcoded options for filters (edit these to what you want available by default)
 const TRANSMISSION_OPTIONS = ["Automatic", "Manual"];
@@ -56,6 +66,10 @@ function BrowsePage() {
   });
 
   const [favourites, setFavourites] = useState([]);
+<<<<<<< HEAD
+=======
+  const [isSavingId, setIsSavingId] = useState(null);
+>>>>>>> a57902b17af21a76552d2abc26b963df679bf99f
 
   const handleToggleFavourite = async (vehicleID) => {
     if (!token || !userID) {
@@ -88,7 +102,11 @@ function BrowsePage() {
       });
 
       if (!response.ok) {
+<<<<<<< HEAD
         throw new Error("Unable to toggle favourite");
+=======
+        console.warn("Toggle favourite returned status:", response.status);
+>>>>>>> a57902b17af21a76552d2abc26b963df679bf99f
       }
 
       setFavourites((prev) =>
@@ -97,8 +115,55 @@ function BrowsePage() {
           : [...prev, vehicleID]
       );
       console.log(`Vehicle saved successfully.`);
+<<<<<<< HEAD
     } catch (error) {
       console.error("Error toggling favourite:", error);
+=======
+
+      // Navigate to Saved Cars when the action was a save (not remove)
+      if (!isCurrentlyFavourite) {
+        navigate('/saved-cars');
+      }
+    } catch (error) {
+      console.error("Error toggling favourite:", error);
+      // If user attempted to save, still navigate; backend may have already saved previously
+      if (!isCurrentlyFavourite) {
+        navigate('/saved-cars');
+      }
+    }
+  };
+
+  // Toggle save/unsave via heart on browse without redirect
+  const handleSaveViaHeart = async (vehicleID) => {
+    if (!token || !userID) {
+      alert("Please sign in to save vehicles.");
+      return;
+    }
+    if (isSavingId) return;
+    setIsSavingId(vehicleID);
+    try {
+      if (favourites.includes(vehicleID)) {
+        const res = await fetch(api + "/vehicle/save-vehicle/remove", {
+          method: "POST",
+          headers: { "Content-Type": "application/json", Authorization: token },
+          body: JSON.stringify({ userID, vehicleID })
+        });
+        if (!res.ok) console.warn("Unsave status:", res.status);
+        setFavourites((prev) => prev.filter((x) => x !== vehicleID));
+      } else {
+        const res = await fetch(api + "/vehicle/save-vehicle/add", {
+          method: "POST",
+          headers: { "Content-Type": "application/json", Authorization: token },
+          body: JSON.stringify({ userID, vehicleID })
+        });
+        if (!res.ok) console.warn("Save status:", res.status);
+        setFavourites((prev) => (prev.includes(vehicleID) ? prev : [...prev, vehicleID]));
+      }
+    } catch (err) {
+      console.error('Save error:', err);
+    } finally {
+      setIsSavingId(null);
+>>>>>>> a57902b17af21a76552d2abc26b963df679bf99f
     }
   };
 
@@ -236,6 +301,138 @@ function BrowsePage() {
     navigate(`?${queryParams.toString()}`);
   };
 
+<<<<<<< HEAD
+=======
+  // Helper to update make filter and URL
+  const handleMakeFilterChange = (newMakeFilter) => {
+    setMakeFilter(newMakeFilter);
+    
+    const queryParams = new URLSearchParams(location.search);
+    if (newMakeFilter.length > 0) {
+      queryParams.set('make', newMakeFilter.join(","));
+    } else {
+      queryParams.delete('make');
+    }
+    
+    // Update the URL according to filters
+    navigate(`?${queryParams.toString()}`);
+  };
+
+  // Helper to update price filter and URL
+  const handlePriceFilterChange = (newPriceFilter) => {
+    setPriceFilter(newPriceFilter);
+    
+    const queryParams = new URLSearchParams(location.search);
+    if (newPriceFilter.length > 0) {
+      queryParams.set('price', newPriceFilter.join(","));
+    } else {
+      queryParams.delete('price');
+    }
+    
+    navigate(`?${queryParams.toString()}`);
+  };
+
+  // Helper to update transmission filter and URL
+  const handleTransmissionFilterChange = (newTransmissionFilter) => {
+    setTransmissionFilter(newTransmissionFilter);
+    
+    const queryParams = new URLSearchParams(location.search);
+    if (newTransmissionFilter.length > 0) {
+      queryParams.set('transmission', newTransmissionFilter.join(","));
+    } else {
+      queryParams.delete('transmission');
+    }
+    
+    navigate(`?${queryParams.toString()}`);
+  };
+
+  // Helper to update body type filter and URL
+  const handleBodyTypeFilterChange = (newBodyTypeFilter) => {
+    setBodyTypeFilter(newBodyTypeFilter);
+    
+    const queryParams = new URLSearchParams(location.search);
+    if (newBodyTypeFilter.length > 0) {
+      queryParams.set('bodyType', newBodyTypeFilter.join(","));
+    } else {
+      queryParams.delete('bodyType');
+    }
+    
+    navigate(`?${queryParams.toString()}`);
+  };
+
+  // Helper to update drive type filter and URL
+  const handleDriveTypeFilterChange = (newDriveTypeFilter) => {
+    setDriveTypeFilter(newDriveTypeFilter);
+    
+    const queryParams = new URLSearchParams(location.search);
+    if (newDriveTypeFilter.length > 0) {
+      queryParams.set('driveType', newDriveTypeFilter.join(","));
+    } else {
+      queryParams.delete('driveType');
+    }
+    
+    navigate(`?${queryParams.toString()}`);
+  };
+
+  // Helper to update fuel filter and URL
+  const handleFuelFilterChange = (newFuelFilter) => {
+    setFuelFilter(newFuelFilter);
+    
+    const queryParams = new URLSearchParams(location.search);
+    if (newFuelFilter.length > 0) {
+      queryParams.set('fuel', newFuelFilter.join(","));
+    } else {
+      queryParams.delete('fuel');
+    }
+    
+    navigate(`?${queryParams.toString()}`);
+  };
+
+  // Individual filter remove functions for pills
+  const removeMakeFilter = (makeToRemove) => {
+    const newMakeFilter = makeFilter.filter(make => make !== makeToRemove);
+    handleMakeFilterChange(newMakeFilter);
+  };
+
+  const removePriceFilter = (priceToRemove) => {
+    const newPriceFilter = priceFilter.filter(price => price !== priceToRemove);
+    handlePriceFilterChange(newPriceFilter);
+  };
+
+  const removeTransmissionFilter = (transmissionToRemove) => {
+    const newTransmissionFilter = transmissionFilter.filter(transmission => transmission !== transmissionToRemove);
+    handleTransmissionFilterChange(newTransmissionFilter);
+  };
+
+  const removeBodyTypeFilter = (bodyTypeToRemove) => {
+    const newBodyTypeFilter = bodyTypeFilter.filter(bodyType => bodyType !== bodyTypeToRemove);
+    handleBodyTypeFilterChange(newBodyTypeFilter);
+  };
+
+  const removeDriveTypeFilter = (driveTypeToRemove) => {
+    const newDriveTypeFilter = driveTypeFilter.filter(driveType => driveType !== driveTypeToRemove);
+    handleDriveTypeFilterChange(newDriveTypeFilter);
+  };
+
+  const removeFuelFilter = (fuelToRemove) => {
+    const newFuelFilter = fuelFilter.filter(fuel => fuel !== fuelToRemove);
+    handleFuelFilterChange(newFuelFilter);
+  };
+
+  // Clear all filters function
+  const clearAllFilters = () => {
+    setMakeFilter([]);
+    setPriceFilter([]);
+    setTransmissionFilter([]);
+    setBodyTypeFilter([]);
+    setDriveTypeFilter([]);
+    setFuelFilter([]);
+    
+    // Clear URL parameters
+    navigate('/browse');
+  };
+
+>>>>>>> a57902b17af21a76552d2abc26b963df679bf99f
   // Pagination logic
   const totalPages = Math.ceil(cars.length / itemsPerPage);
   const startIndex = (currentPage - 1) * itemsPerPage;
@@ -250,6 +447,27 @@ function BrowsePage() {
             <h2 className="text-xl font-semibold text-gray-900 mb-2">
               Filter Vehicles
             </h2>
+<<<<<<< HEAD
+=======
+            
+            {/* Filter Pills */}
+            <FilterPills
+              makeFilter={makeFilter}
+              priceFilter={priceFilter}
+              transmissionFilter={transmissionFilter}
+              bodyTypeFilter={bodyTypeFilter}
+              driveTypeFilter={driveTypeFilter}
+              fuelFilter={fuelFilter}
+              onRemoveMake={removeMakeFilter}
+              onRemovePrice={removePriceFilter}
+              onRemoveTransmission={removeTransmissionFilter}
+              onRemoveBodyType={removeBodyTypeFilter}
+              onRemoveDriveType={removeDriveTypeFilter}
+              onRemoveFuel={removeFuelFilter}
+              onClearAll={clearAllFilters}
+            />
+            
+>>>>>>> a57902b17af21a76552d2abc26b963df679bf99f
             {/* Make Filter */}
             <div>
               <p className="text-sm font-medium text-gray-700 mb-1">Make</p>
@@ -472,6 +690,7 @@ function BrowsePage() {
                         }).format(car.price)}
                       </p>
                       <div className="flex items-center space-x-2 px-1">
+<<<<<<< HEAD
                         {/* Favourite button */}
                         <button
                           onClick={() => handleToggleFavourite(car.vehicleID)}
@@ -496,6 +715,19 @@ function BrowsePage() {
                                 : "none"
                             }
                           />
+=======
+                        {/* New Save Heart (browse) */}
+                        <button
+                          onClick={(e) => { e.preventDefault(); e.stopPropagation(); handleSaveViaHeart(car.vehicleID); }}
+                          disabled={isSavingId === car.vehicleID}
+                          className={`p-2 rounded-full border transition ${
+                            favourites.includes(car.vehicleID) ? 'bg-red-100 border-red-400 hover:bg-red-200' : 'bg-gray-100 border-gray-200 hover:bg-gray-200'
+                          } ${isSavingId === car.vehicleID ? 'opacity-50 cursor-not-allowed' : ''}`}
+                          aria-label="Save to favourites"
+                          title={favourites.includes(car.vehicleID) ? 'Saved' : 'Save to favourites'}
+                        >
+                          <Heart className={`w-5 h-5 ${favourites.includes(car.vehicleID) ? 'text-red-600 fill-red-600' : 'text-gray-600'}`} />
+>>>>>>> a57902b17af21a76552d2abc26b963df679bf99f
                         </button>
                         {/* Test drive button */}
                         <button

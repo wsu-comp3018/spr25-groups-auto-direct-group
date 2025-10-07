@@ -7,6 +7,7 @@ import Cookies from "js-cookie";
 import { Heart } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import api from "../data/api-calls";
+<<<<<<< HEAD
 import PurchaseStepper from "../components/PurchaseStepper";
 import { autoFillForm, fieldMappings } from "../utils/autoFillUtils";
 import PurchaseConfirmationModal from "../components/PurchaseConfirmationModal";
@@ -15,6 +16,10 @@ import AdminPaymentModal from "../components/AdminPaymentModal";
 
 import { GoogleMap, LoadScript, Marker } from "@react-google-maps/api";
 import { toast } from 'react-toastify';
+=======
+
+import BookingTestDrive from "./booking-test-drive";
+>>>>>>> a57902b17af21a76552d2abc26b963df679bf99f
 
 function CarDetailPage() {
   const { id } = useParams();
@@ -22,14 +27,18 @@ function CarDetailPage() {
   const [car, setCar] = useState(null);
   const [images, setImages] = useState([]);
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
+<<<<<<< HEAD
   const [dealerships, setDealerships] = useState([]);
   const [manufacturers, setManufacturers] = useState([]);
   const [manufacturerDetails, setManufacturerDetails] = useState(null);
   const [loadingManufacturerDetails, setLoadingManufacturerDetails] = useState(false);
+=======
+>>>>>>> a57902b17af21a76552d2abc26b963df679bf99f
   const userID = Cookies.get("auto-direct-userID");
   const token = Cookies.get("auto-direct-token");
   const [isLightboxOpen, setIsLightboxOpen] = useState(false);
   const [favourites, setFavourites] = useState([]);
+<<<<<<< HEAD
   const navigate = useNavigate();
 
   // Process the heart icon based for save and unsave
@@ -75,11 +84,53 @@ function CarDetailPage() {
       console.log(`Vehicle saved successfully.`);
     } catch (error) {
       console.error("Error toggling favourite:", error);
+=======
+  const [isSaving, setIsSaving] = useState(false);
+  const navigate = useNavigate();
+
+  // Toggle save/unsave via heart, silent and without redirect
+  const handleSaveViaHeart = async () => {
+    if (!token || !userID) {
+      window.alert('Please sign in to save vehicles.');
+      return;
+    }
+    if (!car?.vehicleID || isSaving) return;
+    setIsSaving(true);
+    try {
+      if (favourites.includes(car.vehicleID)) {
+        // Unsave
+        const res = await fetch(api + `/vehicle/save-vehicle/remove`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json', 'Authorization': token },
+          body: JSON.stringify({ userID, vehicleID: car.vehicleID })
+        });
+        if (!res.ok) {
+          console.warn('Unsave response status:', res.status);
+        }
+        setFavourites((prev) => prev.filter((x) => x !== car.vehicleID));
+      } else {
+        // Save
+        const res = await fetch(api + `/vehicle/save-vehicle/add`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json', 'Authorization': token },
+          body: JSON.stringify({ userID, vehicleID: car.vehicleID })
+        });
+        if (!res.ok) {
+          console.warn('Save response status:', res.status);
+        }
+        setFavourites((prev) => (prev.includes(car.vehicleID) ? prev : [...prev, car.vehicleID]));
+      }
+    } catch (err) {
+      console.error('Save error:', err);
+    } finally {
+      setIsSaving(false);
+>>>>>>> a57902b17af21a76552d2abc26b963df679bf99f
     }
   };
 
   // State for modals
   const [showBookingForm, setShowBookingForm] = useState(false);
+<<<<<<< HEAD
   const [bookingForm, setBookingForm] = useState({
     name: "",
     email: "",
@@ -87,11 +138,14 @@ function CarDetailPage() {
     customerNotes: "",
     date: "",
   });
+=======
+>>>>>>> a57902b17af21a76552d2abc26b963df679bf99f
   const [showAdviceForm, setShowAdviceForm] = useState(false);
   const [adviceForm, setAdviceForm] = useState({
     message: "",
   });
   const [showPurchaseForm, setShowPurchaseForm] = useState(false);
+<<<<<<< HEAD
   const [showSuccessPage, setShowSuccessPage] = useState(false);
   const [orderID, setOrderID] = useState("");
   const [showPurchaseConfirmation, setShowPurchaseConfirmation] = useState(false);
@@ -283,6 +337,11 @@ function CarDetailPage() {
   };
 
   // Fetch car info, dealerships, and manufacturers on mount or when ID changes
+=======
+  const [purchaseForm, setPurchaseForm] = useState({ email: "", notes: "" });
+
+  // Fetch car info on mount or when ID changes
+>>>>>>> a57902b17af21a76552d2abc26b963df679bf99f
   useEffect(() => {
     fetch(api + `/vehicle/vehicle-information/${id}`)
       .then((res) => res.json())
@@ -291,6 +350,7 @@ function CarDetailPage() {
         setImages(data.images);
       })
       .catch((err) => console.error("Error fetching car:", err));
+<<<<<<< HEAD
 
     fetchDealerships();
     fetchManufacturers();
@@ -323,6 +383,10 @@ function CarDetailPage() {
     }
   }, [currentPurchaseStep, car]);
 
+=======
+  }, [id]);
+
+>>>>>>> a57902b17af21a76552d2abc26b963df679bf99f
   // Fetch the if the vehicle has been saved by the user
   useEffect(() => {
     const fetchSavedVehicles = async () => {
@@ -364,6 +428,7 @@ function CarDetailPage() {
 
   useEffect(() => {
     if (location.state && location.state.testDriveClicked) {
+<<<<<<< HEAD
       handleTestDriveClick();
     }
   }, [location.state]);
@@ -375,6 +440,12 @@ function CarDetailPage() {
     await autoFillForm(setBookingForm, fieldMappings.testDrive);
   };
 
+=======
+      setShowBookingForm(true);
+    }
+  }, [location.state]);
+
+>>>>>>> a57902b17af21a76552d2abc26b963df679bf99f
   // Close lightbox on Escape key
   useEffect(() => {
     const handleKeyDown = (e) => {
@@ -408,11 +479,17 @@ function CarDetailPage() {
     setCurrentImageIndex((prev) => (prev === images.length - 1 ? 0 : prev + 1));
   const handleThumbnailClick = (i) => setCurrentImageIndex(i);
 
+<<<<<<< HEAD
+=======
+  // Removed separate Save button - heart icon handles save and navigation
+
+>>>>>>> a57902b17af21a76552d2abc26b963df679bf99f
   // Open lightbox when clicking main image
   const handleImageClick = () => {
     setIsLightboxOpen(true);
   };
 
+<<<<<<< HEAD
   // Booking handlers
   const handleBookingChange = (e) => {
     const { name, value } = e.target;
@@ -424,6 +501,9 @@ function CarDetailPage() {
     setBookingForm({ name: "", email: "", phone: "", customerNotes: "" });
     setShowBookingForm(false);
   };
+=======
+  // Removed old booking handlers, will use booking-test-drive component
+>>>>>>> a57902b17af21a76552d2abc26b963df679bf99f
 
   // Advice handlers
   const handleAdviceChange = (e) => {
@@ -454,6 +534,7 @@ function CarDetailPage() {
 
   // Purchase handlers
   const handlePurchaseChange = (e) => {
+<<<<<<< HEAD
     const { name, value, type, checked } = e.target;
     let newValue = type === 'checkbox' ? checked : value;
     
@@ -1379,6 +1460,31 @@ function CarDetailPage() {
       default:
         return null;
     }
+=======
+    const { name, value } = e.target;
+    setPurchaseForm((p) => ({ ...p, [name]: value }));
+  };
+  const handlePurchaseSubmit = (e) => {
+    e.preventDefault();
+    setPurchaseForm({ email: "" });
+	
+	fetch(api + '/purchases/purchase', {
+		method: 'POST', 
+		headers: {"Content-Type": "application/json", 'Authorization': token}, 
+		body: JSON.stringify({vehicleID: car.vehicleID, notes: purchaseForm.notes})
+	})
+	.then((res) => {
+		let data = res.json();
+		if(res.status != 200) { 
+			window.alert('purchase error failed ' + data.error);
+			return;
+		}
+	})
+    alert(
+      `Thank you! We'll contact you at ${purchaseForm.email} to complete your purchase.`
+    );
+    setShowPurchaseForm(false);
+>>>>>>> a57902b17af21a76552d2abc26b963df679bf99f
   };
 
   const similarCars = cars
@@ -1386,6 +1492,7 @@ function CarDetailPage() {
     .sort(() => 0.5 - Math.random())
     .slice(0, 3);
 
+<<<<<<< HEAD
   // Get manufacturerID for the vehicle - handle makeName to manufacturerID mapping
   const getManufacturerIDForVehicle = () => {
     // Method 1: If car has manufacturerID directly
@@ -1492,6 +1599,8 @@ function CarDetailPage() {
     );
   }
 
+=======
+>>>>>>> a57902b17af21a76552d2abc26b963df679bf99f
   return (
     <div className="p-8 max-w-6xl mx-auto pt-20 space-y-16">
         <div className="relative mb-3 flex justify-between items-center">
@@ -1575,6 +1684,7 @@ function CarDetailPage() {
         {/* Car Info + Actions */}
         <div className="pt-4 space-y-4 text-left">
           <div className="flex items-center justify-between">
+<<<<<<< HEAD
             {/* Favourite button */}
             <h2 className="text-4xl font-bold text-gray-900">
               {`${car.makeName} ${car.modelName}`}
@@ -1600,6 +1710,22 @@ function CarDetailPage() {
                   favourites.includes(car.vehicleID) ? "currentColor" : "none"
                 }
               />
+=======
+            {/* Title */}
+            <h2 className="text-4xl font-bold text-gray-900">
+              {`${car.makeName} ${car.modelName}`}
+            </h2>
+            {/* New Save Heart */}
+            <button
+              onClick={handleSaveViaHeart}
+              disabled={isSaving}
+              type="button"
+              className={`p-2 rounded-full border transition ${isSaving ? 'opacity-50 cursor-not-allowed' : 'hover:bg-gray-100'} ${favourites.includes(car.vehicleID) ? 'bg-red-100 border-red-400' : 'border-gray-200'}`}
+              aria-label="Save to favourites"
+              title="Save to favourites"
+            >
+              <Heart className={`w-6 h-6 ${favourites.includes(car.vehicleID) ? 'text-red-600 fill-red-600' : 'text-gray-700'}`}/>
+>>>>>>> a57902b17af21a76552d2abc26b963df679bf99f
             </button>
           </div>
 
@@ -1624,9 +1750,21 @@ function CarDetailPage() {
             ))}
           </div>
 
+<<<<<<< HEAD
           <div className="mt-8 flex gap-1">
             <button
               onClick={handleTestDriveClick}
+=======
+          <div className="mt-8 flex gap-1 flex-wrap">
+            <button
+              onClick={() => {
+                // Set vehicle field to car's full name before opening modal
+                if (car) {
+                  window.selectedCarName = `${car.makeName || ""} ${car.modelName || ""}`.trim();
+                }
+                setShowBookingForm(true);
+              }}
+>>>>>>> a57902b17af21a76552d2abc26b963df679bf99f
               className="bg-transparent border-2 border-black text-black font-semibold py-2 px-6 rounded-lg  transition hover:bg-black hover:text-white flex-1"
             >
               Book Test Drive
@@ -1637,6 +1775,7 @@ function CarDetailPage() {
             >
               Request Advice
             </button>
+<<<<<<< HEAD
             {!isPurchased ? (
               <button
                 onClick={handlePurchaseClick}
@@ -1652,6 +1791,14 @@ function CarDetailPage() {
                 Process Payment
               </button>
             )}
+=======
+            <button
+              onClick={() => setShowPurchaseForm(true)}
+              className="bg-black border-2 border-black text-white font-semibold py-2 px-6 rounded-lg  transition hover:bg-black hover:text-white flex-1"
+            >
+              Purchase
+            </button>
+>>>>>>> a57902b17af21a76552d2abc26b963df679bf99f
           </div>
         </div>
       </div>
@@ -1806,6 +1953,7 @@ function CarDetailPage() {
         </div>
       </div>
 
+<<<<<<< HEAD
       {/* Google Map showing manufacturer-specific dealerships */}
       <div className="mt-16">
         <h3 className="text-2xl font-bold text-gray-800 mb-6">
@@ -1968,6 +2116,21 @@ function CarDetailPage() {
               </Link>
               . When you use this enquiry form your contact details will be
               forwarded to the seller so they can contact you directly.
+=======
+      {/* Test Drive Booking Modal */}
+
+      {/* Booking Modal - replaced with booking-test-drive component */}
+      {showBookingForm && (
+        <div className="fixed inset-0 flex items-center justify-center z-50 bg-black/30 px-3" onClick={() => setShowBookingForm(false)}>
+          <div className="bg-transparent w-full max-w-3xl max-h-[85vh] overflow-y-auto" onClick={(e) => e.stopPropagation()}>
+            {/* Integrate booking-test-drive component, pass car and thumbnail */}
+            <div className="bg-white rounded-2xl border border-gray-100 shadow-none">
+              <BookingTestDrive
+                car={car}
+                thumbnailPath={images[currentImageIndex]?.path || images[0]?.path}
+                onClose={() => setShowBookingForm(false)}
+              />
+>>>>>>> a57902b17af21a76552d2abc26b963df679bf99f
             </div>
           </div>
         </div>
@@ -2029,6 +2192,7 @@ function CarDetailPage() {
       {showPurchaseForm && (
         <div
           className="fixed inset-0 flex items-center justify-center z-50 bg-black/30 backdrop-blur-sm"
+<<<<<<< HEAD
           onClick={() => {
             setShowPurchaseForm(false);
             resetPurchaseForm();
@@ -2142,6 +2306,43 @@ function CarDetailPage() {
         customerAddress={`${purchaseForm.streetNumber || ''} ${purchaseForm.streetName || ''}, ${purchaseForm.suburb || ''}, ${purchaseForm.state || ''} ${purchaseForm.postcode || ''}`.replace(/^,\s*/, '').replace(/,\s*$/, '').trim()}
         vehicleDetails={car}
       />
+=======
+          onClick={() => setShowPurchaseForm(false)}
+        >
+          <div
+            className="bg-white p-6 rounded-lg shadow-lg w-full max-w-3xl"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <h3 className="text-xl font-bold mb-4">Purchase Vehicle</h3>
+            <form onSubmit={handlePurchaseSubmit} className="space-y-4">
+              <textarea
+                name="notes"
+                value={purchaseForm.notes || ""}
+                onChange={handlePurchaseChange}
+                placeholder="Additional notes (optional)"
+                className="w-full border p-2 rounded min-h-[250px] "
+                rows={3}
+              />
+              <div className="flex justify-end gap-2">
+                <button
+                  type="button"
+                  onClick={() => setShowPurchaseForm(false)}
+                  className="bg-gray-300 px-4 py-2 rounded hover:bg-gray-400"
+                >
+                  Cancel
+                </button>
+                <button
+                  type="submit"
+                  className="bg-black text-white px-6 py-2 rounded hover:bg-white hover:text-black border font-semibold text-lg"
+                >
+                  Submit
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
+>>>>>>> a57902b17af21a76552d2abc26b963df679bf99f
     </div>
   );
 }

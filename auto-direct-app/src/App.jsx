@@ -3,8 +3,12 @@
 
 import { createContext, useContext } from "react";
 import { BrowserRouter as Router, Route, Routes, Link } from "react-router-dom";
+<<<<<<< HEAD
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+=======
+import { Toaster } from "react-hot-toast";
+>>>>>>> a57902b17af21a76552d2abc26b963df679bf99f
 
 import Navbar from "./components/Navbar";
 import Dropzone from "./components/Dropzone";
@@ -30,9 +34,20 @@ import ManageDealershipsPage from "./pages/manage-dealerships-page";
 import ManageMyRequestsPage from "./pages/manage-myrequests-page"; // this is a regular user page to view and manage sent requests and their status
 import UserManagePurchasesPage from "./pages/user-manage-purchases-page"; // this is a regular user page to view and manage sent requests and their status
 import DbConnectionTestPage from "./pages/db-connection-test-page"; // to be deleted before handover
+<<<<<<< HEAD
 import SAPDatabasePage from "./pages/sap-database-page"; // Admin-only SAP database management
 import PurchaseVehiclePage from "./pages/PurchaseVehiclePage"; // Purchase vehicle form page
 import PurchaseFlowPage from "./pages/PurchaseFlowPage"; // New dedicated purchase flow page
+=======
+import OrderManagementPage from "./pages/OrderManagementPage"; // Admin-only order management dashboard
+import ProfessionalOrderManagementPage from "./pages/ProfessionalOrderManagementPage"; // Enhanced professional order management
+import LogisticsDashboard from "./pages/LogisticsDashboard"; // Logistics coordination dashboard
+import PurchaseVehiclePage from "./pages/PurchaseVehiclePage"; // Purchase vehicle form page
+import PaymentInstructionsPage from "./pages/PaymentInstructionsPage"; // Payment instructions page
+import PaymentDetailsPage from "./pages/PaymentDetailsPage"; // Payment details page
+import TestDriveDashboard from "./pages/test-drive-dashboard";
+import CustomerServiceQueue from "./pages/customer-service-queue";
+>>>>>>> a57902b17af21a76552d2abc26b963df679bf99f
 
 import ProtectedRoute from "./components/ProtectedRoute";
 import { UserProvider } from "./contexts/UserContext"; // path may change based on your setup
@@ -56,7 +71,10 @@ function App() {
           <Route path="/login" element={<LoginPage />} />
           <Route path="/register" element={<RegisterPage />} />
           <Route path="/manage-my-purchases" element={<UserManagePurchasesPage />} />
+<<<<<<< HEAD
           <Route path="/purchase-flow" element={<PurchaseFlowPage />} />
+=======
+>>>>>>> a57902b17af21a76552d2abc26b963df679bf99f
           <Route path="/profile" element={<ProfilePage />} />
           <Route path="/privacy-policy" element={<PrivacyPolicyPage />} />
           <Route path="/glossary" element={<GlossaryPage />} />
@@ -82,6 +100,25 @@ function App() {
             />
 
             <Route path="/testDrive" element={<BookingTestDrive />} />
+<<<<<<< HEAD
+=======
+            <Route
+              path="/test-drive-dashboard"
+              element={
+                <ProtectedRoute allowedRoles={["Administrator"]}>
+                  <TestDriveDashboard />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/customer-service-queue"
+              element={
+                <ProtectedRoute allowedRoles={["Administrator"]}>
+                  <CustomerServiceQueue />
+                </ProtectedRoute>
+              }
+            />
+>>>>>>> a57902b17af21a76552d2abc26b963df679bf99f
 
             {/* Advice Queue: Only admin */}
             <Route
@@ -135,12 +172,41 @@ function App() {
               }
             />
 
+<<<<<<< HEAD
             {/* SAP Database: Only admin */}
             <Route
               path="/sap-database"
               element={
                 <ProtectedRoute allowedRoles={["Administrator"]}>
                   <SAPDatabasePage />
+=======
+            {/* Order Management: Only admin */}
+            <Route
+              path="/order-management"
+              element={
+                <ProtectedRoute allowedRoles={["Administrator"]}>
+                  <OrderManagementPage />
+                </ProtectedRoute>
+              }
+            />
+
+            {/* Professional Order Management: Only admin */}
+            <Route
+              path="/professional-order-management"
+              element={
+                <ProtectedRoute allowedRoles={["Administrator"]}>
+                  <ProfessionalOrderManagementPage />
+                </ProtectedRoute>
+              }
+            />
+
+            {/* Logistics Dashboard: Only admin */}
+            <Route
+              path="/logistics-dashboard"
+              element={
+                <ProtectedRoute allowedRoles={["Administrator"]}>
+                  <LogisticsDashboard />
+>>>>>>> a57902b17af21a76552d2abc26b963df679bf99f
                 </ProtectedRoute>
               }
             />
@@ -189,6 +255,11 @@ function App() {
 
             {/* Unprotected/other placeholder routes */}
             <Route path="/purchase-vehicle" element={<PurchaseVehiclePage />} />
+<<<<<<< HEAD
+=======
+            <Route path="/payment-instructions" element={<PaymentInstructionsPage />} />
+            <Route path="/payment-details" element={<PaymentDetailsPage />} />
+>>>>>>> a57902b17af21a76552d2abc26b963df679bf99f
             <Route path="/bookings" element={<Placeholder text="Customer Booked Test Drives Placeholder" />} />
             <Route path="/received-bookings" element={<Placeholder text="Manufacturer Received Bookings Placeholder" />} />
             <Route path="/dealer-locator" element={<Placeholder text="Dealer Locator Placeholder" />} />
@@ -210,6 +281,7 @@ function App() {
 				</Link>
           </footer>
         </div>
+<<<<<<< HEAD
         <ToastContainer
           position="top-right"
           autoClose={5000}
@@ -221,6 +293,31 @@ function App() {
           draggable
           pauseOnHover
           theme="light"
+=======
+        <Toaster 
+          position="top-right"
+          toastOptions={{
+            duration: 4000,
+            style: {
+              background: '#363636',
+              color: '#fff',
+            },
+            success: {
+              duration: 3000,
+              style: {
+                background: '#10B981',
+                color: '#fff',
+              },
+            },
+            error: {
+              duration: 4000,
+              style: {
+                background: '#EF4444',
+                color: '#fff',
+              },
+            },
+          }}
+>>>>>>> a57902b17af21a76552d2abc26b963df679bf99f
         />
       </Router>
     </UserProvider>

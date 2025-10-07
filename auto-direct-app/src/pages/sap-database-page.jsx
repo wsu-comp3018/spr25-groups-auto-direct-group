@@ -3,9 +3,17 @@ import { useNavigate } from 'react-router-dom';
 import api from '../data/api-calls';
 import Cookies from 'js-cookie';
 import AdminPaymentModal from '../components/AdminPaymentModal';
+<<<<<<< HEAD
 
 const SAPDatabasePage = () => {
   const navigate = useNavigate();
+=======
+import { useToast } from '../components/Toast';
+
+const SAPDatabasePage = () => {
+  const navigate = useNavigate();
+  const { showToast, ToastContainer } = useToast();
+>>>>>>> a57902b17af21a76552d2abc26b963df679bf99f
   
   const [formData, setFormData] = useState({
     // Customer Details
@@ -296,11 +304,19 @@ const SAPDatabasePage = () => {
           console.warn('⚠️ SAP updated but email sending encountered an error:', emailError);
         }
         
+<<<<<<< HEAD
         alert('Order processed successfully! All relevant parties have been notified via email.');
         navigate(-1);
       } else {
         console.error('❌ Failed to update SAP database');
         alert('Failed to process order');
+=======
+        showToast('Order processed successfully!', 'success');
+        setTimeout(() => navigate(-1), 2000);
+      } else {
+        console.error('❌ Failed to update SAP database');
+        showToast('Failed to process order', 'error');
+>>>>>>> a57902b17af21a76552d2abc26b963df679bf99f
       }
     } catch (error) {
       console.error('❌ Error updating SAP database:', error);
@@ -674,6 +690,12 @@ const SAPDatabasePage = () => {
           setShowAdminPayment(false);
         }}
       />
+<<<<<<< HEAD
+=======
+      
+      {/* Toast Notifications */}
+      <ToastContainer />
+>>>>>>> a57902b17af21a76552d2abc26b963df679bf99f
     </div>
   );
 };

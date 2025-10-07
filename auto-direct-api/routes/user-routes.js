@@ -4,18 +4,56 @@ const jwt = require('jsonwebtoken');
 const express = require('express');
 const router = express.Router();
 const { v4: uuidv4 } = require('uuid');
+<<<<<<< HEAD
+=======
+const axios = require('axios');
+>>>>>>> a57902b17af21a76552d2abc26b963df679bf99f
 const { jwtKey } = require('../config/connectionsConfig.js');
 const verifyToken = require('../middleware/authentication');
 const authorizeUser = require('../middleware/authorization');
 const { getRoleIDByLabel, getUserRolesByID, createUserRole } = require('../service/role-services.js');
 const { updateUserAsUser, createUser, getUserByEmail, getUserByID, getUserInfoByID, updateUserPassword } = require('../service/user-services.js');
 
+<<<<<<< HEAD
+=======
+// reCAPTCHA verification function
+const verifyRecaptcha = async (recaptchaToken) => {
+	try {
+		const response = await axios.post('https://www.google.com/recaptcha/api/siteverify', null, {
+			params: {
+				secret: '6LeIxAcTAAAAAGG-vFI1TnRWxMZNFuojJ4WifJWe',
+				response: recaptchaToken
+			}
+		});
+		return response.data.success;
+	} catch (error) {
+		console.error('reCAPTCHA verification error:', error);
+		return false;
+	}
+};
+
+>>>>>>> a57902b17af21a76552d2abc26b963df679bf99f
 /*
  * Initial Register User Function
 */
 router.post('/register', async (req, res) => {
 	try {
+<<<<<<< HEAD
 		const { emailAddress, password } = req.body;
+=======
+		const { emailAddress, password, recaptchaToken } = req.body;
+		
+		// Verify reCAPTCHA
+		if (!recaptchaToken) {
+			return res.status(400).json({error: "reCAPTCHA verification is required"});
+		}
+		
+		const isRecaptchaValid = await verifyRecaptcha(recaptchaToken);
+		if (!isRecaptchaValid) {
+			return res.status(400).json({error: "reCAPTCHA verification failed"});
+		}
+		
+>>>>>>> a57902b17af21a76552d2abc26b963df679bf99f
 		const emailExists = await getUserByEmail(emailAddress);
 		if (emailExists.length > 0) {
 			throw "Your chosen email is already registered";
@@ -36,7 +74,22 @@ router.post('/register', async (req, res) => {
 
 // User login
 router.post('/login', async (req, res) => {
+<<<<<<< HEAD
 	const { emailAddress, password } = req.body;
+=======
+	const { emailAddress, password, recaptchaToken } = req.body;
+	
+	// Verify reCAPTCHA
+	if (!recaptchaToken) {
+		return res.status(400).json({message: "reCAPTCHA verification is required"});
+	}
+	
+	const isRecaptchaValid = await verifyRecaptcha(recaptchaToken);
+	if (!isRecaptchaValid) {
+		return res.status(400).json({message: "reCAPTCHA verification failed"});
+	}
+	
+>>>>>>> a57902b17af21a76552d2abc26b963df679bf99f
 	try {
 		const rows = await getUserByEmail(emailAddress);
 		if (rows.length == 0) {

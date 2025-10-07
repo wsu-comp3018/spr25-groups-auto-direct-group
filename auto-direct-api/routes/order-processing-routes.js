@@ -8,10 +8,17 @@ const { enhancedEmailService } = require('../service/enhanced-email-service');
 // In-memory storage for orders (in production, this would be a database)
 const orderStorage = new Map();
 
+<<<<<<< HEAD
 // Process order endpoint - this stores the order data
 router.post('/process-order', async (req, res) => {
   try {
     console.log('🚨 PROCESS ORDER ENDPOINT HIT! Request received at:', new Date().toISOString());
+=======
+// Process order endpoint - stores order data (no auth required - for purchase flow)
+router.post('/process-order-purchase', async (req, res) => {
+  try {
+    console.log('🚨 PROCESS ORDER PURCHASE ENDPOINT HIT! Request received at:', new Date().toISOString());
+>>>>>>> a57902b17af21a76552d2abc26b963df679bf99f
     console.log('🚨 Full request body:', JSON.stringify(req.body, null, 2));
 
     const { 
@@ -60,7 +67,11 @@ router.post('/process-order', async (req, res) => {
 
     // Store in memory (in production, save to database)
     orderStorage.set(orderID, orderData);
+<<<<<<< HEAD
     console.log('✅ Order stored for SAP Database access:', orderData);
+=======
+    console.log('✅ Order stored for Order Management access:', orderData);
+>>>>>>> a57902b17af21a76552d2abc26b963df679bf99f
 
     res.status(200).json({ 
       success: true, 
@@ -205,7 +216,50 @@ router.get('/get-order/:orderID', async (req, res) => {
     }
 
     // If not found in storage, check if it's one of the known order IDs from your purchase
+<<<<<<< HEAD
     // Based on your screenshot, "SUBJJ332UP" should return the Jonne Jo data
+=======
+    // Based on your screenshot, "SUBBE814UP" should return the Billy Ean data
+    if (orderID === 'SUBBE814UP') {
+      const knownOrderData = {
+        orderID: orderID,
+        status: 'confirmed',
+        
+        // Customer Details from Order Management test
+        customerFirstName: 'Billy',
+        customerLastName: 'Ean', 
+        customerEmail: 'billyean5@gmail.com',
+        customerPhone: '+61426559608',
+        deliveryAddress: '23, 23 Redman Circuit st, goulburn, NSW 2580',
+        licenseNumber: '',
+        
+        // Vehicle Details (Subaru BRZ from your form)
+        vehicleMake: 'Subaru',
+        vehicleModel: 'BRZ',
+        vehicleYear: '2024',
+        vehicleVIN: '14ed32e0-2c1a-428c-a5d2-10ef85f592ab',
+        vehicleID: '14ed32e0-2c1a-428c-a5d2-10ef85f592ab',
+        
+        // Manufacturer Details
+        manufacturerName: 'Volkswagen Group',
+        manufacturerContact: 'contact@manufacturer.com',
+        
+        // Logistics Data
+        logisticsCompany: 'Auto Direct Logistics',
+        logisticsContact: 'logistics@autodirect.com',
+        
+        // Order Metadata
+        orderDate: new Date().toISOString(),
+        paymentStatus: 'confirmed'
+      };
+      
+      console.log('✅ Found known order data for SUBBE814UP:', knownOrderData);
+      res.status(200).json(knownOrderData);
+      return;
+    }
+
+    // Legacy test data for SUBJJ332UP
+>>>>>>> a57902b17af21a76552d2abc26b963df679bf99f
     if (orderID === 'SUBJJ332UP') {
       const knownOrderData = {
         orderID: orderID,
@@ -254,10 +308,60 @@ router.get('/get-order/:orderID', async (req, res) => {
   }
 });
 
+<<<<<<< HEAD
 // Update SAP database (Admin only)
 router.post('/update-sap', [verifyToken, authorizeUser], async (req, res) => {
   try {
     console.log('🚨 UPDATE SAP ENDPOINT HIT! Request received at:', new Date().toISOString());
+=======
+// Update order information (Admin only) - Used by Order Management
+router.post('/update-order', [verifyToken, authorizeUser], async (req, res) => {
+  try {
+    console.log('🚨 UPDATE ORDER ENDPOINT HIT! Request received at:', new Date().toISOString());
+    console.log('🚨 Full request body:', JSON.stringify(req.body, null, 2));
+
+    const { 
+      firstName, 
+      lastName, 
+      email, 
+      bestContact, 
+      deliveryAddress, 
+      licenseNumber,
+      vehicleModel,
+      manufacturer,
+      manufacturerContact,
+      vinDetails,
+      logisticsCompany,
+      logisticsCompanyContact
+    } = req.body;
+
+    // Validate admin role
+    if (req.userRole !== 'Administrator') {
+      return res.status(403).json({ error: 'Unauthorized - Admin access required' });
+    }
+
+    // Update database (in real implementation, this would update SAP/Database)
+    console.log('📊 Order Management Database update:');
+    console.log('- Customer:', { firstName, lastName, email, bestContact, deliveryAddress, licenseNumber });
+    console.log('- Vehicle:', { vehicleModel, manufacturer, manufacturerContact, vinDetails });
+    console.log('- Logistics:', { logisticsCompany, logisticsCompanyContact });
+
+    res.status(200).json({ 
+      success: true, 
+      message: 'Order database updated successfully' 
+    });
+
+  } catch (error) {
+    console.error('❌ Order update error:', error);
+    res.status(500).json({ error: 'Failed to update order database' });
+  }
+});
+
+// Update SAP database (Admin only) - Used by SAP Database Page (teammates' workflow)
+router.post('/update-sap', [verifyToken, authorizeUser], async (req, res) => {
+  try {
+    console.log('🚨 SAP DATABASE ENDPOINT HIT! Request received at:', new Date().toISOString());
+>>>>>>> a57902b17af21a76552d2abc26b963df679bf99f
     console.log('🚨 Full request body:', JSON.stringify(req.body, null, 2));
 
     const { 
@@ -281,7 +385,10 @@ router.post('/update-sap', [verifyToken, authorizeUser], async (req, res) => {
     }
 
     // In a real implementation, this would update the SAP database
+<<<<<<< HEAD
     // For now, just log the data
+=======
+>>>>>>> a57902b17af21a76552d2abc26b963df679bf99f
     console.log('📊 SAP Database update:');
     console.log('- Customer:', { firstName, lastName, email, bestContact, deliveryAddress, licenseNumber });
     console.log('- Vehicle:', { vehicleModel, manufacturer, manufacturerContact, vinDetails });
