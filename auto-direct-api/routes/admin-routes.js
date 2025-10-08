@@ -43,9 +43,9 @@ router.get('/advice-requests/unassigned', (req, res) => {
     let unassignedRequestsQuery = `SELECT ar.requestID, ar.requesterID, ar.employeeID, ar.vehicleID,
             ar.status, ar.description, ar.submittedAt, u.firstName, u.lastName, u.emailAddress, u.phone, v.modelName, m.makeName
         FROM advice_requests AS ar
-        JOIN Users AS u ON ar.requesterID = u.userID
-        JOIN Vehicles AS v ON ar.vehicleID = v.vehicleID
-        JOIN Makes AS m ON v.makeID = m.makeID`;
+        JOIN users AS u ON ar.requesterID = u.userID
+        JOIN vehicles AS v ON ar.vehicleID = v.vehicleID
+        JOIN makes AS m ON v.makeID = m.makeID`;
 
     conditions.push(`ar.employeeID IS NULL`);
     conditions.push(`ar.status ='Pending'`);
@@ -87,9 +87,9 @@ router.get('/advice-requests/in-progress', (req, res) => {
     let inProgressRequestsQuery = `SELECT ar.requestID, ar.requesterID, ar.employeeID, ar.vehicleID,
             ar.status, ar.description, ar.submittedAt, u.firstName, u.lastName, u.emailAddress, u.phone, v.modelName, m.makeName
         FROM advice_requests AS ar
-        JOIN Users AS u ON ar.requesterID = u.userID
-        JOIN Vehicles AS v ON ar.vehicleID = v.vehicleID
-        JOIN Makes AS m ON v.makeID = m.makeID`;
+        JOIN users AS u ON ar.requesterID = u.userID
+        JOIN vehicles AS v ON ar.vehicleID = v.vehicleID
+        JOIN makes AS m ON v.makeID = m.makeID`;
 
     conditions.push(`ar.status ='In Progress'`);
 
@@ -129,9 +129,9 @@ router.get('/advice-requests/completed', (req, res) => {
     let completedRequestsQuery = `SELECT ar.requestID, ar.requesterID, ar.employeeID, ar.vehicleID,
             ar.status, ar.description, ar.submittedAt, u.firstName, u.lastName, u.emailAddress, u.phone, v.modelName, m.makeName
         FROM advice_requests AS ar
-        JOIN Users AS u ON ar.requesterID = u.userID
-        JOIN Vehicles AS v ON ar.vehicleID = v.vehicleID
-        JOIN Makes AS m ON v.makeID = m.makeID`;
+        JOIN users AS u ON ar.requesterID = u.userID
+        JOIN vehicles AS v ON ar.vehicleID = v.vehicleID
+        JOIN makes AS m ON v.makeID = m.makeID`;
 
     conditions.push(`ar.status ='Completed'`);
 
@@ -209,9 +209,9 @@ router.get('/my-requests/in-progress', (req, res) => {
     let inProgressRequestsQuery = `SELECT ar.requestID, ar.requesterID, ar.employeeID, ar.vehicleID,
                 ar.status, ar.description, ar.submittedAt, u.firstName, u.lastName, u.emailAddress, u.phone, v.modelName, m.makeName
             FROM advice_requests AS ar
-            JOIN Users AS u ON ar.requesterID = u.userID
-            JOIN Vehicles AS v ON ar.vehicleID = v.vehicleID
-            JOIN Makes AS m ON v.makeID = m.makeID`;
+            JOIN users AS u ON ar.requesterID = u.userID
+            JOIN vehicles AS v ON ar.vehicleID = v.vehicleID
+            JOIN makes AS m ON v.makeID = m.makeID`;
 
     conditions.push(`ar.status ='In Progress'`);
 
@@ -254,9 +254,9 @@ router.get('/my-requests/completed', (req, res) => {
     let completedRequestsQuery = `SELECT ar.requestID, ar.requesterID, ar.employeeID, ar.vehicleID,
                 ar.status, ar.description, ar.submittedAt, u.firstName, u.lastName, u.emailAddress, u.phone, v.modelName, m.makeName
             FROM advice_requests AS ar
-            JOIN Users AS u ON ar.requesterID = u.userID
-            JOIN Vehicles AS v ON ar.vehicleID = v.vehicleID
-            JOIN Makes AS m ON v.makeID = m.makeID`;
+            JOIN users AS u ON ar.requesterID = u.userID
+            JOIN vehicles AS v ON ar.vehicleID = v.vehicleID
+            JOIN makes AS m ON v.makeID = m.makeID`;
 
     conditions.push(`ar.status ='Completed'`);
 

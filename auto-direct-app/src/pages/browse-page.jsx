@@ -3,8 +3,6 @@ import { Link, useNavigate, useLocation } from "react-router-dom";
 import { Heart } from "lucide-react";
 import Cookies from "js-cookie";
 import api from "../data/api-calls";
-<<<<<<< HEAD
-=======
 import MakeFilterModal from "../components/MakeFilterModal";
 import PriceFilterModal from "../components/PriceFilterModal";
 import TransmissionFilterModal from "../components/TransmissionFilterModal";
@@ -12,7 +10,6 @@ import BodyTypeFilterModal from "../components/BodyTypeFilterModal";
 import DriveTypeFilterModal from "../components/DriveTypeFilterModal";
 import FuelFilterModal from "../components/FuelFilterModal";
 import FilterPills from "../components/FilterPills";
->>>>>>> a57902b17af21a76552d2abc26b963df679bf99f
 
 // Hardcoded options for filters (edit these to what you want available by default)
 const TRANSMISSION_OPTIONS = ["Automatic", "Manual"];
@@ -66,10 +63,7 @@ function BrowsePage() {
   });
 
   const [favourites, setFavourites] = useState([]);
-<<<<<<< HEAD
-=======
   const [isSavingId, setIsSavingId] = useState(null);
->>>>>>> a57902b17af21a76552d2abc26b963df679bf99f
 
   const handleToggleFavourite = async (vehicleID) => {
     if (!token || !userID) {
@@ -102,11 +96,7 @@ function BrowsePage() {
       });
 
       if (!response.ok) {
-<<<<<<< HEAD
-        throw new Error("Unable to toggle favourite");
-=======
         console.warn("Toggle favourite returned status:", response.status);
->>>>>>> a57902b17af21a76552d2abc26b963df679bf99f
       }
 
       setFavourites((prev) =>
@@ -115,10 +105,6 @@ function BrowsePage() {
           : [...prev, vehicleID]
       );
       console.log(`Vehicle saved successfully.`);
-<<<<<<< HEAD
-    } catch (error) {
-      console.error("Error toggling favourite:", error);
-=======
 
       // Navigate to Saved Cars when the action was a save (not remove)
       if (!isCurrentlyFavourite) {
@@ -163,7 +149,6 @@ function BrowsePage() {
       console.error('Save error:', err);
     } finally {
       setIsSavingId(null);
->>>>>>> a57902b17af21a76552d2abc26b963df679bf99f
     }
   };
 
@@ -301,8 +286,6 @@ function BrowsePage() {
     navigate(`?${queryParams.toString()}`);
   };
 
-<<<<<<< HEAD
-=======
   // Helper to update make filter and URL
   const handleMakeFilterChange = (newMakeFilter) => {
     setMakeFilter(newMakeFilter);
@@ -432,7 +415,6 @@ function BrowsePage() {
     navigate('/browse');
   };
 
->>>>>>> a57902b17af21a76552d2abc26b963df679bf99f
   // Pagination logic
   const totalPages = Math.ceil(cars.length / itemsPerPage);
   const startIndex = (currentPage - 1) * itemsPerPage;
@@ -447,8 +429,6 @@ function BrowsePage() {
             <h2 className="text-xl font-semibold text-gray-900 mb-2">
               Filter Vehicles
             </h2>
-<<<<<<< HEAD
-=======
             
             {/* Filter Pills */}
             <FilterPills
@@ -467,7 +447,6 @@ function BrowsePage() {
               onClearAll={clearAllFilters}
             />
             
->>>>>>> a57902b17af21a76552d2abc26b963df679bf99f
             {/* Make Filter */}
             <div>
               <p className="text-sm font-medium text-gray-700 mb-1">Make</p>
@@ -690,32 +669,6 @@ function BrowsePage() {
                         }).format(car.price)}
                       </p>
                       <div className="flex items-center space-x-2 px-1">
-<<<<<<< HEAD
-                        {/* Favourite button */}
-                        <button
-                          onClick={() => handleToggleFavourite(car.vehicleID)}
-                          className={`p-2
-                                  ${
-                                    favourites.includes(car.vehicleID)
-                                      ? "border-red-400"
-                                      : "border-gray-200"
-                                  }`}
-                          aria-label="Favourite"
-                        >
-                          <Heart
-                            className={`w-5 h-5 transition
-                              ${
-                                favourites.includes(car.vehicleID)
-                                  ? "text-red-600 fill-red-600"
-                                  : "text-gray-500"
-                              }`}
-                            fill={
-                              favourites.includes(car.vehicleID)
-                                ? "currentColour"
-                                : "none"
-                            }
-                          />
-=======
                         {/* New Save Heart (browse) */}
                         <button
                           onClick={(e) => { e.preventDefault(); e.stopPropagation(); handleSaveViaHeart(car.vehicleID); }}
@@ -727,7 +680,6 @@ function BrowsePage() {
                           title={favourites.includes(car.vehicleID) ? 'Saved' : 'Save to favourites'}
                         >
                           <Heart className={`w-5 h-5 ${favourites.includes(car.vehicleID) ? 'text-red-600 fill-red-600' : 'text-gray-600'}`} />
->>>>>>> a57902b17af21a76552d2abc26b963df679bf99f
                         </button>
                         {/* Test drive button */}
                         <button

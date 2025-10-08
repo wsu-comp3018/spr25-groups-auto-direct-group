@@ -244,11 +244,7 @@ router.get('/browse-vehicles', (req, res) => {
     LEFT JOIN (
       SELECT vehicleID, path FROM vehicle_images WHERE imageOrder = 1
     ) vi ON v.vehicleID = vi.vehicleID
-<<<<<<< HEAD
     JOIN makes m ON v.makeID = m.makeID
-=======
-    JOIN Makes m ON v.makeID = m.makeID
->>>>>>> a57902b17af21a76552d2abc26b963df679bf99f
     WHERE 1=1 AND v.approvalStatus = 'Approved' AND v.deletedStatus != 'Deleted'
   `;
 
@@ -342,11 +338,7 @@ router.get('/manage-vehicles', (req, res) => {
     const searchTerm = req.query.q;
 
     let allVehiclesQuery = `SELECT v.*, m.makeName FROM vehicles v
-<<<<<<< HEAD
     JOIN makes m ON v.makeID = m.makeID
-=======
-    JOIN Makes m ON v.makeID = m.makeID
->>>>>>> a57902b17af21a76552d2abc26b963df679bf99f
     WHERE v.deletedStatus != 'Deleted'`;
 
     const queryParams = []; // Array to hold parameters for the SQL query
@@ -576,22 +568,12 @@ router.get('/saved-vehicles/', [ verifyToken, authorizeUser ], async (req, res) 
             LEFT JOIN (
                 SELECT vehicleID, path FROM vehicle_images WHERE imageOrder = 1
             ) vi ON v.vehicleID = vi.vehicleID
-<<<<<<< HEAD
             JOIN makes m ON v.makeID = m.makeID
-            JOIN saved_vehicle sv ON v.vehicleID = sv.vehicleID
-            WHERE v.vehicleID IN (${placeholders}) AND v.approvalStatus = 'Approved' AND v.deletedStatus != 'Deleted'
-            ORDER BY sv.savedAt DESC
-        `;
-
-        const [savedVehicleDetails] = await pool.promise().query(vehicleDetailsQuery, vehicleIDs);
-=======
-            JOIN Makes m ON v.makeID = m.makeID
             WHERE v.vehicleID IN (${placeholders}) AND v.approvalStatus = 'Approved' AND v.deletedStatus != 'Deleted'
             ORDER BY CASE ${vehicleIDs.map((id, index) => `WHEN v.vehicleID = ? THEN ${index}`).join(' ')} END
         `;
 
         const [savedVehicleDetails] = await pool.promise().query(vehicleDetailsQuery, [...vehicleIDs, ...vehicleIDs]);
->>>>>>> a57902b17af21a76552d2abc26b963df679bf99f
 
         res.status(200).json(savedVehicleDetails);
 

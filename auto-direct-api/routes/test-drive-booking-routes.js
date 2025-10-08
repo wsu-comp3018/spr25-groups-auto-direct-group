@@ -6,8 +6,6 @@ const verifyToken = require('../middleware/authentication.js');
 const authorizeUser = require('../middleware/authorization.js');
 const { createTestDrive, getTestDrivesByUser, getTestDrivesByUserDealer, updateDealerTestDrive, updateUserTestDrive, updateTestDriveStatus } = require('../service/test-drive-booking-services.js')
 const { getUserRolesByID } = require('../service/role-services.js');
-<<<<<<< HEAD
-=======
 // Get all test drive bookings for admin dashboard
 router.get('/admin-requests', async (req, res) => {
 	try {
@@ -167,7 +165,6 @@ router.put('/admin/assign-dealer', async (req, res) => {
 		res.status(500).json({ error: 'Server error: ' + err });
 	}
 });
->>>>>>> a57902b17af21a76552d2abc26b963df679bf99f
 
 router.post('/test-drive', [ verifyToken, authorizeUser ], async (req, res) => {
 	try {
@@ -222,20 +219,6 @@ router.put('/user-test-drive', [ verifyToken, authorizeUser ], async (req, res) 
 	}
 });
 
-<<<<<<< HEAD
-router.put('/test-drive-status', [ verifyToken, authorizeUser ], async (req, res) => {
-	try {
-		const { status } = req.body;
-		let userRoles = getUserRolesByID(req.userID);
-		userRoles.filter((userRole) => { userRole.DealerID});
-		if(userRoles.length == 0 && status != 'Cancelled') throw 'User is not an Dealer';
-
-		const result = await updateTestDriveStatus(testDriveID, status);
-
-		res.status(200).json({result: result});
-	} catch (err) {
-		res.status(500).json({error: 'get dealer test drives error: ' + err})
-=======
 router.put('/test-drive-status', async (req, res) => {
 	try {
 		const { bookingID, status } = req.body;
@@ -304,7 +287,6 @@ router.put('/assign-dealer', async (req, res) => {
 	} catch (err) {
 		console.error('Server error assigning dealer:', err);
 		res.status(500).json({ error: 'Server error: ' + err });
->>>>>>> a57902b17af21a76552d2abc26b963df679bf99f
 	}
 });
 

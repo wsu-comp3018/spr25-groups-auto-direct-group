@@ -5,8 +5,6 @@ const pool = mysql.createPool(connectionConfig);
 const createTestDrive = async ( testDriveNewID, userID, vehicleID, status, notes ) => {
 	try {
 		let createdTime = new Date(Date.now()).toISOString().replace('T', ' ').slice(0, 19);
-<<<<<<< HEAD
-=======
 		let dealerID = null;
 		
 		// Try to fetch dealerID for the vehicle, but don't let it block the insert
@@ -30,7 +28,6 @@ const createTestDrive = async ( testDriveNewID, userID, vehicleID, status, notes
 			dealerID = null;
 		}
 		
->>>>>>> a57902b17af21a76552d2abc26b963df679bf99f
 		const query = `INSERT INTO test_drive_bookings (bookingID, userID, vehicleID, dealerID, time, status, customerNotes) VALUES (?, ?, ?, ?, ?, ?, ?);`;
 		return new Promise((resolve, reject) => {
 			pool.query(query, [ testDriveNewID, userID, vehicleID, dealerID, createdTime, status, notes ], 

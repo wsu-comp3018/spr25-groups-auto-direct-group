@@ -8,17 +8,10 @@ const { enhancedEmailService } = require('../service/enhanced-email-service');
 // In-memory storage for orders (in production, this would be a database)
 const orderStorage = new Map();
 
-<<<<<<< HEAD
-// Process order endpoint - this stores the order data
-router.post('/process-order', async (req, res) => {
-  try {
-    console.log('🚨 PROCESS ORDER ENDPOINT HIT! Request received at:', new Date().toISOString());
-=======
 // Process order endpoint - stores order data (no auth required - for purchase flow)
 router.post('/process-order-purchase', async (req, res) => {
   try {
     console.log('🚨 PROCESS ORDER PURCHASE ENDPOINT HIT! Request received at:', new Date().toISOString());
->>>>>>> a57902b17af21a76552d2abc26b963df679bf99f
     console.log('🚨 Full request body:', JSON.stringify(req.body, null, 2));
 
     const { 
@@ -67,11 +60,7 @@ router.post('/process-order-purchase', async (req, res) => {
 
     // Store in memory (in production, save to database)
     orderStorage.set(orderID, orderData);
-<<<<<<< HEAD
-    console.log('✅ Order stored for SAP Database access:', orderData);
-=======
     console.log('✅ Order stored for Order Management access:', orderData);
->>>>>>> a57902b17af21a76552d2abc26b963df679bf99f
 
     res.status(200).json({ 
       success: true, 
@@ -216,9 +205,6 @@ router.get('/get-order/:orderID', async (req, res) => {
     }
 
     // If not found in storage, check if it's one of the known order IDs from your purchase
-<<<<<<< HEAD
-    // Based on your screenshot, "SUBJJ332UP" should return the Jonne Jo data
-=======
     // Based on your screenshot, "SUBBE814UP" should return the Billy Ean data
     if (orderID === 'SUBBE814UP') {
       const knownOrderData = {
@@ -259,7 +245,6 @@ router.get('/get-order/:orderID', async (req, res) => {
     }
 
     // Legacy test data for SUBJJ332UP
->>>>>>> a57902b17af21a76552d2abc26b963df679bf99f
     if (orderID === 'SUBJJ332UP') {
       const knownOrderData = {
         orderID: orderID,
@@ -308,12 +293,6 @@ router.get('/get-order/:orderID', async (req, res) => {
   }
 });
 
-<<<<<<< HEAD
-// Update SAP database (Admin only)
-router.post('/update-sap', [verifyToken, authorizeUser], async (req, res) => {
-  try {
-    console.log('🚨 UPDATE SAP ENDPOINT HIT! Request received at:', new Date().toISOString());
-=======
 // Update order information (Admin only) - Used by Order Management
 router.post('/update-order', [verifyToken, authorizeUser], async (req, res) => {
   try {
@@ -361,7 +340,6 @@ router.post('/update-order', [verifyToken, authorizeUser], async (req, res) => {
 router.post('/update-sap', [verifyToken, authorizeUser], async (req, res) => {
   try {
     console.log('🚨 SAP DATABASE ENDPOINT HIT! Request received at:', new Date().toISOString());
->>>>>>> a57902b17af21a76552d2abc26b963df679bf99f
     console.log('🚨 Full request body:', JSON.stringify(req.body, null, 2));
 
     const { 
@@ -385,10 +363,6 @@ router.post('/update-sap', [verifyToken, authorizeUser], async (req, res) => {
     }
 
     // In a real implementation, this would update the SAP database
-<<<<<<< HEAD
-    // For now, just log the data
-=======
->>>>>>> a57902b17af21a76552d2abc26b963df679bf99f
     console.log('📊 SAP Database update:');
     console.log('- Customer:', { firstName, lastName, email, bestContact, deliveryAddress, licenseNumber });
     console.log('- Vehicle:', { vehicleModel, manufacturer, manufacturerContact, vinDetails });

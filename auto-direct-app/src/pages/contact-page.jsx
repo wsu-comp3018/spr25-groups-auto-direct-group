@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 import { useState, useEffect } from "react";
 import { autoFillForm, fieldMappings } from "../utils/autoFillUtils";
 
@@ -27,20 +26,13 @@ function ContactPage() {
     console.log('Contact form submitted:', formData);
     // Add your contact form submission logic here
   };
-=======
-function ContactPage() {
->>>>>>> a57902b17af21a76552d2abc26b963df679bf99f
 	return (
 		<div className="p-8 max-w-3xl mx-auto pt-20">
 			<h2 className="text-4xl font-bold text-black mb-8 text-center">
         Contact Us
 			</h2>
 
-<<<<<<< HEAD
 			<form onSubmit={handleSubmit} className="bg-white border border-black rounded-lg p-6 space-y-6">
-=======
-			<form className="bg-white border border-black rounded-lg p-6 space-y-6">
->>>>>>> a57902b17af21a76552d2abc26b963df679bf99f
 				{/* Name */}
 				<div>
 					<label className="block mb-2 text-sm font-medium text-gray-700">
@@ -48,12 +40,9 @@ function ContactPage() {
 					</label>
 					<input
 						type="text"
-<<<<<<< HEAD
 						name="name"
 						value={formData.name}
 						onChange={handleInputChange}
-=======
->>>>>>> a57902b17af21a76552d2abc26b963df679bf99f
 						placeholder="Jane Doe"
 						className="w-full border border-black p-3 rounded-lg text-gray-800 placeholder-gray-400 focus:ring-2 focus:ring-blue-500 focus:outline-none"
 					/>
@@ -66,12 +55,9 @@ function ContactPage() {
           </label>
           <input
             type="email"
-<<<<<<< HEAD
             name="email"
             value={formData.email}
             onChange={handleInputChange}
-=======
->>>>>>> a57902b17af21a76552d2abc26b963df679bf99f
             placeholder="you@example.com"
             className="w-full border border-black p-3 rounded-lg text-gray-800 placeholder-gray-400 focus:ring-2 focus:ring-blue-500 focus:outline-none"
           />
@@ -83,12 +69,9 @@ function ContactPage() {
             Your Message
           </label>
           <textarea
-<<<<<<< HEAD
             name="message"
             value={formData.message}
             onChange={handleInputChange}
-=======
->>>>>>> a57902b17af21a76552d2abc26b963df679bf99f
             placeholder="How can we help you?"
             rows="4"
             className="w-full border border-black p-3 rounded-lg text-gray-800 placeholder-gray-400 focus:ring-2 focus:ring-blue-500 focus:outline-none"

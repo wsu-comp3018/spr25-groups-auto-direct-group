@@ -5,10 +5,7 @@ import Cookies from 'js-cookie';
 import api from "../data/api-calls";
 
 function SavedCarsPage() {
-<<<<<<< HEAD
-=======
   const navigate = useNavigate();
->>>>>>> a57902b17af21a76552d2abc26b963df679bf99f
   const [cars, setCars] = useState([]);
   const userID = Cookies.get("auto-direct-userID");
   const token = Cookies.get('auto-direct-token');
@@ -16,14 +13,11 @@ function SavedCarsPage() {
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 9;
 
-<<<<<<< HEAD
-=======
   // Comparison state
   const [compareVehicles, setCompareVehicles] = useState([]); // array of car objects
   const [compareNotes, setCompareNotes] = useState("");
   const [isDragOver, setIsDragOver] = useState(false);
 
->>>>>>> a57902b17af21a76552d2abc26b963df679bf99f
   // Retrieved saved cars for th user
 
   useEffect(() => {
@@ -98,18 +92,6 @@ function SavedCarsPage() {
   const startIndex = (currentPage - 1) * itemsPerPage;
   const paginatedCars = cars.slice(startIndex, startIndex + itemsPerPage);
 
-<<<<<<< HEAD
-  return (
-    <div className="p-8 pt-20 max-w-7xl mx-auto text-black">
-    <h2 className="text-3xl font-bold mb-6">My Saved Cars</h2>
-      <div className="grid grid-cols-1">
-        {/* Vehicle Listings */}
-        <div className="lg:col-span-3">
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8 min-h-[500px]">
-            {paginatedCars.length === 0 ? (
-              <div className="col-span-full text-center text-gray-500 text-lg my-auto">
-                You haven't saved any vehicles yet! You can save a vehicle by selecting the heart icon in the listing.
-=======
   // Drag and Drop helpers
   const handleDragStart = (e, vehicleID) => {
     e.dataTransfer.setData('text/plain', vehicleID);
@@ -205,18 +187,14 @@ function SavedCarsPage() {
                 <div className="mt-3">
                   <Link to="/browse" className="inline-block px-4 py-2 rounded border border-black text-black hover:bg-black hover:text-white text-sm">Browse Cars</Link>
                 </div>
->>>>>>> a57902b17af21a76552d2abc26b963df679bf99f
               </div>
             ) : (
               paginatedCars.map(car => (
                 <div
                   key={car.vehicleID}
                   className="bg-white rounded-xl overflow-hidden border border-gray-200 hover:shadow-md transform hover:scale-[1.02] transition duration-300 flex flex-col h-[370px]"
-<<<<<<< HEAD
-=======
                   draggable
                   onDragStart={(e) => handleDragStart(e, car.vehicleID)}
->>>>>>> a57902b17af21a76552d2abc26b963df679bf99f
                 >
                   <Link to={`/car/${car.vehicleID}`} className="relative w-full h-56 overflow-hidden">
                     <img
@@ -292,8 +270,6 @@ function SavedCarsPage() {
               </button>
             </div>
           )}
-<<<<<<< HEAD
-=======
 
           {/* Vehicle Comparison Section */}
           <div className="mt-10 bg-white border border-gray-200 rounded-xl shadow-sm">
@@ -350,7 +326,6 @@ function SavedCarsPage() {
               </div>
             </div>
           </div>
->>>>>>> a57902b17af21a76552d2abc26b963df679bf99f
         </div>
       </div>
     </div>

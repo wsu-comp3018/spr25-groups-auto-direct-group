@@ -37,7 +37,7 @@ import PurchaseFlowPage from "./pages/PurchaseFlowPage"; // New dedicated purcha
 import OrderManagementPage from "./pages/OrderManagementPage"; // Admin-only order management dashboard
 import ProfessionalOrderManagementPage from "./pages/ProfessionalOrderManagementPage"; // Enhanced professional order management
 import LogisticsDashboard from "./pages/LogisticsDashboard"; // Logistics coordination dashboard
-import PurchaseVehiclePage from "./pages/PurchaseVehiclePage"; // Purchase vehicle form page
+// import PurchaseVehiclePage from "./pages/PurchaseVehiclePage"; // Purchase vehicle form page
 import PaymentInstructionsPage from "./pages/PaymentInstructionsPage"; // Payment instructions page
 import PaymentDetailsPage from "./pages/PaymentDetailsPage"; // Payment details page
 import TestDriveDashboard from "./pages/test-drive-dashboard";
@@ -280,4 +280,3 @@ function Placeholder({ text }) {
 }
 
 export default App;
-s

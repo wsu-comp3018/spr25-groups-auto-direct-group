@@ -1,19 +1,12 @@
 // Register component: Renders the registration form for new users
 
-<<<<<<< HEAD
-import React, { useState } from "react";
-=======
 import React, { useState, useRef } from "react";
->>>>>>> a57902b17af21a76552d2abc26b963df679bf99f
 import { useNavigate } from "react-router-dom"; // added navigate
 import Cookies from "js-cookie";
 import { useUser } from "../contexts/UserContext"; 
 import api from "../data/api-calls";
-<<<<<<< HEAD
-=======
 import ReCAPTCHA from "react-google-recaptcha";
 import toast from "react-hot-toast";
->>>>>>> a57902b17af21a76552d2abc26b963df679bf99f
 
 
 //function RegisterPage() {
@@ -24,11 +17,8 @@ const RegisterPage = () => {
 
   // Set the JSON data fields
   const [errorMessage, setErrorMessage] = useState(""); // To display errors
-<<<<<<< HEAD
-=======
   const [recaptchaToken, setRecaptchaToken] = useState(null); // reCAPTCHA token
   const recaptchaRef = useRef(null); // reCAPTCHA ref
->>>>>>> a57902b17af21a76552d2abc26b963df679bf99f
   const [formData, setFormData] = useState({
     firstName: "",
     lastName: "",
@@ -49,20 +39,15 @@ const RegisterPage = () => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
-<<<<<<< HEAD
-=======
   // reCAPTCHA callback function
   const handleRecaptchaChange = (token) => {
     setRecaptchaToken(token);
   };
 
->>>>>>> a57902b17af21a76552d2abc26b963df679bf99f
   // handleSubmit that handles clicking Register and passing to the API
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-<<<<<<< HEAD
-=======
     // Validate required fields
     const requiredFields = ['firstName', 'lastName', 'emailAddress', 'password', 'confirmPassword', 'phoneNumber', 'streetNo', 'streetName', 'suburb', 'postcode'];
     const missingFields = requiredFields.filter(field => !formData[field] || formData[field].trim() === '');
@@ -90,30 +75,19 @@ const RegisterPage = () => {
       return;
     }
 
->>>>>>> a57902b17af21a76552d2abc26b963df679bf99f
     try {
       //  register user
       const response = await fetch(api + "/user/register", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-<<<<<<< HEAD
-        body: JSON.stringify(formData),
-=======
         body: JSON.stringify({
           ...registrationData,
           recaptchaToken: recaptchaToken
         }),
->>>>>>> a57902b17af21a76552d2abc26b963df679bf99f
       });
 
       if (!response.ok) {
         console.error("Registration failed");
-<<<<<<< HEAD
-        alert("Registration failed. Please check your details.");
-
-        // If login failed, show an error
-        setErrorMessage(response.json().error || "Registration failed. Please try again.");
-=======
         const errorData = await response.json();
         const errorMessage = errorData.error || "Registration failed. Please try again.";
         toast.error(errorMessage);
@@ -123,15 +97,11 @@ const RegisterPage = () => {
           recaptchaRef.current.reset();
           setRecaptchaToken(null);
         }
->>>>>>> a57902b17af21a76552d2abc26b963df679bf99f
         return;
       }
 
       console.log("Registration successful");
-<<<<<<< HEAD
-=======
       toast.success("Registration successful! Welcome to Auto Direct!");
->>>>>>> a57902b17af21a76552d2abc26b963df679bf99f
 
       // login user right after registration
       const loginResponse = await fetch(api + "/user/login", {
@@ -181,41 +151,6 @@ const RegisterPage = () => {
    */
 
   return (
-<<<<<<< HEAD
-    <div className="min-h-screen pt-24 px-4 bg-white">
-      <div className="max-w-md mx-auto bg-white border border-black rounded-lg p-8 shadow">
-        <h2 className="text-3xl font-bold text-black mb-6 text-center">
-          Create an Account
-        </h2>
-
-        <form className="space-y-5" onSubmit={handleSubmit}>
-          {/* First Name */}
-          <div>
-            <label className="block mb-1 text-sm font-medium text-black">
-              First Name
-            </label>
-            <input
-              name="firstName"
-              type="text"
-              placeholder="John"
-              onChange={handleChange}
-              className="w-full border border-black p-3 rounded text-black bg-white placeholder-gray-500 focus:ring-2 focus:ring-black focus:outline-none"
-            />
-          </div>
-
-          {/* Last Name */}
-          <div>
-            <label className="block mb-1 text-sm font-medium text-black">
-              Last Name
-            </label>
-            <input
-              name="lastName"
-              type="text"
-              placeholder="Doe"
-              onChange={handleChange}
-              className="w-full border border-black p-3 rounded text-black bg-white placeholder-gray-500 focus:ring-2 focus:ring-black focus:outline-none"
-            />
-=======
     <div className="min-h-screen pt-24 pb-12 px-4 relative">
       {/* Car image background */}
       <img 
@@ -524,46 +459,52 @@ const RegisterPage = () => {
                 Create Account
               </button>
             </div>
-          </form>
 
-          {/* Additional Links */}
-          <div className="mt-8 text-center">
-            <p className="text-sm text-gray-600">
-              Already have an account?{' '}
-              <a href="/login" className="font-semibold text-black hover:text-gray-700 transition-colors duration-200">
-                Sign in here
-              </a>
-            </p>
->>>>>>> a57902b17af21a76552d2abc26b963df679bf99f
-          </div>
+            {/* Email Field */}
+            <div className="space-y-2">
+              <label className="block text-sm font-medium text-gray-700">
+                Email Address
+              </label>
+              <div className="relative">
+                <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                  <svg className="h-5 w-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 12a4 4 0 10-8 0 4 4 0 008 0zm0 0v1.5a2.5 2.5 0 005 0V12a9 9 0 10-9 9m4.5-1.206a8.959 8.959 0 01-4.5 1.207" />
+                  </svg>
+                </div>
+                <input
+                  name="emailAddress"
+                  type="email"
+                  placeholder="you@example.com"
+                  value={formData.emailAddress}
+                  onChange={handleChange}
+                  className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-black focus:border-transparent transition-all duration-200"
+                  required
+                />
+              </div>
+            </div>
 
-          {/* Email */}
-          <div>
-            <label className="block mb-1 text-sm font-medium text-black">
-              Email Address
-            </label>
-            <input
-              name="emailAddress"
-              type="email"
-              placeholder="you@example.com"
-              onChange={handleChange}
-              className="w-full border border-black p-3 rounded text-black bg-white placeholder-gray-500 focus:ring-2 focus:ring-black focus:outline-none"
-            />
-          </div>
-
-          {/* Password */}
-          <div>
-            <label className="block mb-1 text-sm font-medium text-black">
-              Password
-            </label>
-            <input
-              name="password"
-              type="password"
-              placeholder="••••••••"
-              onChange={handleChange}
-              className="w-full border border-black p-3 rounded text-black bg-white placeholder-gray-500 focus:ring-2 focus:ring-black focus:outline-none"
-            />
-          </div>
+            {/* Password Field */}
+            <div className="space-y-2">
+              <label className="block text-sm font-medium text-gray-700">
+                Password
+              </label>
+              <div className="relative">
+                <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                  <svg className="h-5 w-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
+                  </svg>
+                </div>
+                <input
+                  name="password"
+                  type="password"
+                  placeholder="••••••••"
+                  value={formData.password}
+                  onChange={handleChange}
+                  className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-black focus:border-transparent transition-all duration-200"
+                  required
+                />
+              </div>
+            </div>
 
           {/* Confirm Password */}
           <div>
@@ -660,6 +601,8 @@ const RegisterPage = () => {
           </button>
         </form>
       </div>
+    </div>
+    </div>
     </div>
   );
 };

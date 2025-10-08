@@ -1,18 +1,11 @@
 // Login component: Renders the login form for user authentication
-<<<<<<< HEAD
-import React, { useState } from "react";
-=======
 import React, { useState, useRef } from "react";
->>>>>>> a57902b17af21a76552d2abc26b963df679bf99f
 import Cookies from 'js-cookie';
 import { useNavigate } from "react-router-dom"; // Import useNavigate
 import { useUser } from "../contexts/UserContext"; // Import your UserContext
 import api from "../data/api-calls";
-<<<<<<< HEAD
-=======
 import ReCAPTCHA from "react-google-recaptcha";
 import toast from "react-hot-toast";
->>>>>>> a57902b17af21a76552d2abc26b963df679bf99f
 
 function Login() {
 	const [formData, setFormData] = useState({
@@ -20,11 +13,8 @@ function Login() {
 		password: "",
 	});
 	const [errorMessage, setErrorMessage] = useState(""); // To display errors
-<<<<<<< HEAD
-=======
 	const [recaptchaToken, setRecaptchaToken] = useState(null); // reCAPTCHA token
 	const recaptchaRef = useRef(null); // reCAPTCHA ref
->>>>>>> a57902b17af21a76552d2abc26b963df679bf99f
 	const navigate = useNavigate(); // Initialize navigate
 	
 	const { setUser } = useUser(); //get setUser from context
@@ -34,40 +24,30 @@ function Login() {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
-<<<<<<< HEAD
-=======
   // reCAPTCHA callback function
   const handleRecaptchaChange = (token) => {
     setRecaptchaToken(token);
   };
 
->>>>>>> a57902b17af21a76552d2abc26b963df679bf99f
   // handleSubmit sends form data to API
   const handleSubmit = async (e) => {
     e.preventDefault();
     setErrorMessage(""); // Clear any previous error
 
-<<<<<<< HEAD
-=======
     // Validate reCAPTCHA
     if (!recaptchaToken) {
       setErrorMessage("Please complete the reCAPTCHA verification.");
       return;
     }
 
->>>>>>> a57902b17af21a76552d2abc26b963df679bf99f
     try {
       const response = await fetch(api + "/user/login", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-<<<<<<< HEAD
-        body: JSON.stringify(formData),
-=======
         body: JSON.stringify({
           ...formData,
           recaptchaToken: recaptchaToken
         }),
->>>>>>> a57902b17af21a76552d2abc26b963df679bf99f
       });
 
       const result = await response.json();
@@ -89,23 +69,13 @@ function Login() {
 
         });			
 
-<<<<<<< HEAD
-=======
         // Show success message
         toast.success(`Welcome back, ${result.firstName}!`);
 
->>>>>>> a57902b17af21a76552d2abc26b963df679bf99f
         // Redirect to home page
         navigate("/");
       } else {
         // If login failed, show an error
-<<<<<<< HEAD
-        setErrorMessage(result.message || "Login failed. Please try again.");
-      }
-    } catch (error) {
-      console.error("Error submitting form:", error);
-      setErrorMessage("An error occurred. Please try again.");
-=======
         const errorMsg = result.message || "Login failed. Please try again.";
         toast.error(errorMsg);
         setErrorMessage(errorMsg);
@@ -120,56 +90,10 @@ function Login() {
       const errorMsg = "An error occurred. Please try again.";
       toast.error(errorMsg);
       setErrorMessage(errorMsg);
->>>>>>> a57902b17af21a76552d2abc26b963df679bf99f
     }
   };
 
   return (
-<<<<<<< HEAD
-    <div className="min-h-screen pt-24 px-4 bg-white">
-      <div className="max-w-md mx-auto bg-white shadow-lg rounded-lg p-8 border border-black">
-        <h2 className="text-3xl font-bold text-black mb-6 text-center">
-          Login to Your Account
-				</h2>
-
-				<form className="space-y-5" onSubmit={handleSubmit}>
-					{/* Email */}
-					<div>
-						<label className="block mb-1 text-sm font-medium text-black">
-              Email Address
-						</label>
-						<input
-							name="emailAddress"
-							type="email"
-							placeholder="you@example.com"
-							onChange={handleChange}
-							required
-							className="w-full border border-black p-3 rounded-lg text-black bg-white placeholder-gray-400 focus:ring-2 focus:ring-white focus:outline-none"
-						/>
-					</div>
-
-					{/* Password */}
-					<div>
-						<label className="block mb-1 text-sm font-medium text-black">
-              Password
-						</label>
-						<input
-				        name="password"
-							type="password"
-							placeholder="••••••••"
-							onChange={handleChange}
-              				required
-							className="w-full border border-black p-3 rounded-lg text-black bg-white placeholder-gray-400 focus:ring-2 focus:ring-white focus:outline-none"
-						/>
-					</div>
-
-          {/* Error message */}
-          {errorMessage && (
-            <div className="text-red-500 text-sm text-center">
-              {errorMessage}
-            </div>
-          )}
-=======
     <div className="min-h-screen flex items-center justify-center px-4 py-12 relative">
       {/* Car image background */}
       <img 
@@ -274,7 +198,6 @@ function Login() {
                 </div>
               </div>
             )}
->>>>>>> a57902b17af21a76552d2abc26b963df679bf99f
 
 					{/* Submit Button */}
 					<button
@@ -286,6 +209,7 @@ function Login() {
 				</form>
 			</div>
 		</div>
+	</div>
 	);
 }
 

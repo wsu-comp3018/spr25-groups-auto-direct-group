@@ -248,12 +248,6 @@ const Navbar = () => {
               Manage Dealerships
             </button>
             <button
-<<<<<<< HEAD
-              onClick={() => navigate("/sap-database")}
-              className="block py-2 px-2 hover:underline hover:bg-white hover:text-black transition rounded"
-            >
-              SAP Database
-=======
               onClick={() => navigate("/order-management")}
               className="block py-2 px-2 hover:underline hover:bg-white hover:text-black transition rounded"
             >
@@ -270,7 +264,6 @@ const Navbar = () => {
               className="block py-2 px-2 hover:underline hover:bg-white hover:text-black transition rounded"
             >
               Customer Service Queue
->>>>>>> a57902b17af21a76552d2abc26b963df679bf99f
             </button>
           </div>
         </div>
@@ -423,13 +416,6 @@ const Navbar = () => {
                         )}
 
                         {user?.roles?.some(role => [ "Administrator"].includes(role) ) && (
-<<<<<<< HEAD
-                        <button onClick={() => navigate("/sap-database")} className="block py-2 px-2 hover:underline hover:bg-white hover:text-black transition rounded" >
-                          SAP Database
-                        </button>
-                        )}
-
-=======
                         <button onClick={() => navigate("/order-management")} className="block py-2 px-2 hover:underline hover:bg-white hover:text-black transition rounded" >
                           Order Management
                         </button>
@@ -459,7 +445,6 @@ const Navbar = () => {
                           )}
                         
 
->>>>>>> a57902b17af21a76552d2abc26b963df679bf99f
                         
                     </div>
                   </div>
