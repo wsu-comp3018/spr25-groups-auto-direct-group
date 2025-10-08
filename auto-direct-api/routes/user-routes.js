@@ -90,7 +90,7 @@ router.post('/login', async (req, res) => {
 
 		const token = jwt.sign({ userId: user.userID }, jwtKey, {	expiresIn: '1d' });
 		const rolesData = await getUserRolesByID(user.userID);
-		roles = rolesData.map((row) => row.label);
+		const roles = rolesData.map((row) => row.label);
 
 		res.status(200).send({ token: token, userID: user.userID, roles, firstName: user.firstName, });
 	} catch (error) {
