@@ -9,7 +9,7 @@ function ManageManufacturersPage() {
 
 	useEffect(() => {
 		const token = Cookies.get("auto-direct-token");
-		fetch(api + '/manufacturer/manufacturers', {method: 'GET', headers: {'Authorization': token} })
+		fetch(api + '/manufacturer/manufacturers', {method: 'GET', headers: {'Authorization': `Bearer ${token}`} })
 			.then((res) => { return res.json() })
 			.then((data) => { 
 				const dbData = data.result.map(m => { return { ...m, edit: false }});
@@ -20,14 +20,14 @@ function ManageManufacturersPage() {
 	const handleSaveClick = (m, isNew) => {
 		const token = Cookies.get("auto-direct-token");
 		if (isNew) {
-			fetch(api + '/manufacturer/create', {method: 'POST', headers: {"Content-Type": "application/json", 'Authorization': token}, 
+			fetch(api + '/manufacturer/create', {method: 'POST', headers: {"Content-Type": "application/json", 'Authorization': `Bearer ${token}`}, 
 				body: JSON.stringify({manufacturer: m})})
 			.then((res) => { 
 				let data = res.json(); 
 				if (res.status != 200) window.alert('error adding: ' + data.error);
 			});
 		} else {
-			fetch(api + '/manufacturer/update', {method: 'PUT', headers: {"Content-Type": "application/json", 'Authorization': token}, 
+			fetch(api + '/manufacturer/update', {method: 'PUT', headers: {"Content-Type": "application/json", 'Authorization': `Bearer ${token}`}, 
 				body: JSON.stringify({manufacturer: m})})
 			.then((res) => { 
 				let data = res.json(); 

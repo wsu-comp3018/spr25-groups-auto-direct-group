@@ -36,7 +36,7 @@ function CarDetailPage() {
         // Unsave
         const res = await fetch(api + `/vehicle/save-vehicle/remove`, {
           method: 'POST',
-          headers: { 'Content-Type': 'application/json', 'Authorization': token },
+          headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
           body: JSON.stringify({ userID, vehicleID: car.vehicleID })
         });
         if (!res.ok) {
@@ -47,7 +47,7 @@ function CarDetailPage() {
         // Save
         const res = await fetch(api + `/vehicle/save-vehicle/add`, {
           method: 'POST',
-          headers: { 'Content-Type': 'application/json', 'Authorization': token },
+          headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
           body: JSON.stringify({ userID, vehicleID: car.vehicleID })
         });
         if (!res.ok) {
@@ -207,7 +207,7 @@ function CarDetailPage() {
 	
 	fetch(api + '/purchases/purchase', {
 		method: 'POST', 
-		headers: {"Content-Type": "application/json", 'Authorization': token}, 
+		headers: {"Content-Type": "application/json", 'Authorization': `Bearer ${token}`}, 
 		body: JSON.stringify({vehicleID: car.vehicleID, notes: purchaseForm.notes})
 	})
 	.then((res) => {

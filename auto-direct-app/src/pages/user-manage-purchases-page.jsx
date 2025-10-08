@@ -8,7 +8,7 @@ function UserPurchasePage() {
 
 	useEffect(() => {
 		const token = Cookies.get("auto-direct-token");
-		fetch(api + '/purchases/my-purchases', {method: 'GET', headers: {'Authorization': token} })
+		fetch(api + '/purchases/my-purchases', {method: 'GET', headers: {'Authorization': `Bearer ${token}`} })
 			.then((res) => { return res.json() })
 			.then((data) => { 
 				setPurchases(data.result);
@@ -17,7 +17,7 @@ function UserPurchasePage() {
 
 	const handleSaveClick = (p) => {
 		const token = Cookies.get("auto-direct-token");
-		fetch(api + '/purchases/manage-user-purchase', {method: 'PUT', headers: {"Content-Type": "application/json", 'Authorization': token}, 
+		fetch(api + '/purchases/manage-user-purchase', {method: 'PUT', headers: {"Content-Type": "application/json", 'Authorization': `Bearer ${token}`}, 
 			body: JSON.stringify({purchase: p})})
 		.then((res) => { 
 			let data = res.json(); 

@@ -14,6 +14,7 @@ const AddUserModal = ({ isOpen, onClose, onUserAdded }) => {
     user_status: 'Active'
   });
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [error, setError] = useState('');
 
   const availableRoles = ['Administrator', 'Customer', 'Manufacturer', 'Employee'];
 
@@ -47,7 +48,7 @@ const AddUserModal = ({ isOpen, onClose, onUserAdded }) => {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          'Authorization': token
+          'Authorization': `Bearer ${token}`
         },
         body: JSON.stringify(formData)
       });
