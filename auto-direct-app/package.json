@@ -22,21 +22,15 @@
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
     "react-dropzone": "^14.3.8",
-<<<<<<< HEAD
-=======
     "react-google-recaptcha": "^3.1.0",
     "react-hot-toast": "^2.6.0",
->>>>>>> a57902b17af21a76552d2abc26b963df679bf99f
     "react-icons": "^5.5.0",
     "react-leaflet": "^5.0.0",
     "react-modal": "^3.16.3",
     "react-places-autocomplete": "^7.3.0",
     "react-router-dom": "^6.24.1",
     "react-sortablejs": "^6.1.4",
-<<<<<<< HEAD
     "react-toastify": "^11.0.5",
-=======
->>>>>>> a57902b17af21a76552d2abc26b963df679bf99f
     "sortablejs": "^1.15.6",
     "tailwindcss": "^4.0.17"
   },
