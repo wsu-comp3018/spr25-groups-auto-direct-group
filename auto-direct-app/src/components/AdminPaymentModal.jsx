@@ -76,7 +76,7 @@ const AdminPaymentModal = ({
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          'Authorization': token
+          'Authorization': `Bearer ${token}`
         },
         body: JSON.stringify({
           orderID,
@@ -121,7 +121,7 @@ const AdminPaymentModal = ({
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          'Authorization': token
+          'Authorization': `Bearer ${token}`
         },
         body: JSON.stringify({
           orderID,

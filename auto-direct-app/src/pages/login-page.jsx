@@ -34,11 +34,11 @@ function Login() {
     e.preventDefault();
     setErrorMessage(""); // Clear any previous error
 
-    // Validate reCAPTCHA
-    if (!recaptchaToken) {
-      setErrorMessage("Please complete the reCAPTCHA verification.");
-      return;
-    }
+    // Validate reCAPTCHA (temporarily disabled for development)
+    // if (!recaptchaToken) {
+    //   setErrorMessage("Please complete the reCAPTCHA verification.");
+    //   return;
+    // }
 
     try {
       const response = await fetch(api + "/user/login", {
@@ -46,7 +46,7 @@ function Login() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           ...formData,
-          recaptchaToken: recaptchaToken
+          recaptchaToken: "development-bypass" // Temporary bypass for development
         }),
       });
 
@@ -171,8 +171,8 @@ function Login() {
               </div>
             </div>
 
-            {/* reCAPTCHA Section */}
-            <div className="space-y-4">
+            {/* reCAPTCHA Section - temporarily disabled for development */}
+            {/* <div className="space-y-4">
               <div className="flex justify-center">
                 <ReCAPTCHA
                   ref={recaptchaRef}
@@ -181,7 +181,7 @@ function Login() {
                   theme="light"
                 />
               </div>
-            </div>
+            </div> */}
 
             {/* Error Message */}
             {errorMessage && (

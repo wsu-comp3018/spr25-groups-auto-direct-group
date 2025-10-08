@@ -25,7 +25,7 @@ const ProfilePage = () =>  {
     fetch(api + '/user/profile', {
       method: 'GET',
       headers: {
-        'Authorization': token,
+        'Authorization': `Bearer ${token}`,
       },
     })
       .then((res) => res.json())
@@ -83,7 +83,7 @@ const ProfilePage = () =>  {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
-          'Authorization': token,
+          'Authorization': `Bearer ${token}`,
         },
         body: JSON.stringify(body),
       });
