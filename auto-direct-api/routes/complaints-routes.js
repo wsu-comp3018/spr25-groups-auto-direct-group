@@ -19,6 +19,8 @@ const sendComplaintEmail = async (complaintData) => {
     html: `
       <h2>New Customer Complaint</h2>
       <p><strong>Customer Name:</strong> ${complaintData.customer_name}</p>
+      <p><strong>Customer Email:</strong> ${complaintData.customer_email}</p>
+      <p><strong>Customer Phone:</strong> ${complaintData.customer_phone}</p>
       <p><strong>Has Account:</strong> ${complaintData.has_account}</p>
       ${complaintData.account_number ? `<p><strong>Account Number:</strong> ${complaintData.account_number}</p>` : ''}
       <p><strong>Staff Related:</strong> ${complaintData.is_staff_related}</p>
@@ -51,6 +53,8 @@ router.post('/', (req, res) => {
     
     const {
       customerName,
+      customerEmail,
+      customerPhone,
       hasAccount,
       accountNumber,
       isStaffRelated,
@@ -61,7 +65,7 @@ router.post('/', (req, res) => {
     } = req.body;
 
   // Validate required fields
-  if (!customerName || !hasAccount || !isStaffRelated || !complaintDetails || !resolutionRequest || !contactDetails) {
+  if (!customerName || !customerEmail || !customerPhone || !hasAccount || !isStaffRelated || !complaintDetails || !resolutionRequest || !contactDetails) {
     console.log('Validation failed - missing fields');
     return res.status(400).json({ 
       error: 'Missing required fields. Please fill in all required information.' 
@@ -70,13 +74,15 @@ router.post('/', (req, res) => {
 
   const complaintData = {
     customer_name: customerName,
+    customer_email: customerEmail,
+    customer_phone: customerPhone,
     has_account: hasAccount,
     account_number: accountNumber || null,
     is_staff_related: isStaffRelated,
     staff_member: staffMember || null,
     complaint_details: complaintDetails,
     resolution_request: resolutionRequest,
-    contact_details: contactDetails,
+    contact_details: `Email: ${customerEmail}\nPhone: ${customerPhone}\nAdditional: ${contactDetails}`,
     status: 'pending',
     created_at: new Date(),
     updated_at: new Date()
@@ -85,6 +91,8 @@ router.post('/', (req, res) => {
   const query = `
     INSERT INTO complaints (
       customer_name, 
+      customer_email, 
+      customer_phone,
       has_account, 
       account_number, 
       is_staff_related, 
@@ -95,11 +103,13 @@ router.post('/', (req, res) => {
       status, 
       created_at, 
       updated_at
-    ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+    ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
   `;
 
   const values = [
     complaintData.customer_name,
+    complaintData.customer_email,
+    complaintData.customer_phone,
     complaintData.has_account,
     complaintData.account_number,
     complaintData.is_staff_related,

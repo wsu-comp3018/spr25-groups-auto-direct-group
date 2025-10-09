@@ -5,6 +5,8 @@ import { autoFillForm, fieldMappings } from "../utils/autoFillUtils";
 const ComplaintsPage = () => {
   const [formData, setFormData] = useState({
     customerName: "",
+    customerEmail: "",
+    customerPhone: "",
     hasAccount: "",
     accountNumber: "",
     isStaffRelated: "",
@@ -53,6 +55,8 @@ const ComplaintsPage = () => {
         setSubmitMessage(result.message || "Complaint submitted successfully. You will receive a response directly.");
         setFormData({
           customerName: "",
+          customerEmail: "",
+          customerPhone: "",
           hasAccount: "",
           accountNumber: "",
           isStaffRelated: "",
@@ -100,6 +104,36 @@ const ComplaintsPage = () => {
                   value={formData.customerName}
                   onChange={handleInputChange}
                   required
+                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-gray-500"
+                />
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  Email address
+                </label>
+                <input
+                  type="email"
+                  name="customerEmail"
+                  value={formData.customerEmail}
+                  onChange={handleInputChange}
+                  required
+                  placeholder="customer@example.com"
+                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-gray-500"
+                />
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  Phone number
+                </label>
+                <input
+                  type="tel"
+                  name="customerPhone"
+                  value={formData.customerPhone}
+                  onChange={handleInputChange}
+                  required
+                  placeholder="0412345678"
                   className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-gray-500"
                 />
               </div>

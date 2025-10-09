@@ -19,6 +19,7 @@ import HomePage from "./pages/home-page";
 import ProfilePage from "./pages/profile-page";
 import PrivacyPolicyPage from "./pages/privacy-policy-page";
 import GlossaryPage from "./pages/glossary-page";
+import ComplaintsPage from "./pages/complaints-page";
 import SavedCarsPage from "./pages/saved-cars-page";
 import AddVehiclePage from "./pages/add-vehicle-page";
 import ApproveVehiclesPage from "./pages/approve-vehicles-page";
@@ -30,6 +31,9 @@ import ManageManufacturersPage from "./pages/manage-manufacturers-page";
 import ManageDealershipsPage from "./pages/manage-dealerships-page";
 import ManageMyRequestsPage from "./pages/manage-myrequests-page"; // this is a regular user page to view and manage sent requests and their status
 import UserManagePurchasesPage from "./pages/user-manage-purchases-page"; // this is a regular user page to view and manage sent requests and their status
+import InternalRegisterPage from "./pages/internal-register-page";
+import Chatbot from "./components/Chatbot";
+import ChatbotInquiries from "./pages/chatbot-inquiries";
 import DbConnectionTestPage from "./pages/db-connection-test-page"; // to be deleted before handover
 import SAPDatabasePage from "./pages/sap-database-page"; // Admin-only SAP database management
 import PurchaseVehiclePage from "./pages/PurchaseVehiclePage"; // Purchase vehicle form page
@@ -64,11 +68,13 @@ function App() {
           <Route path="/contact" element={<ContactPage />} />
           <Route path="/login" element={<LoginPage />} />
           <Route path="/register" element={<RegisterPage />} />
+          <Route path="/internal-register" element={<InternalRegisterPage />} />
           <Route path="/manage-my-purchases" element={<UserManagePurchasesPage />} />
           <Route path="/purchase-flow" element={<PurchaseFlowPage />} />
           <Route path="/profile" element={<ProfilePage />} />
           <Route path="/privacy-policy" element={<PrivacyPolicyPage />} />
           <Route path="/glossary" element={<GlossaryPage />} />
+          <Route path="/complaints" element={<ComplaintsPage />} />
 
 {/* Add Vehicle: Only admin */}
             <Route
@@ -241,13 +247,24 @@ function App() {
             <Route path="/dealer-locator" element={<Placeholder text="Dealer Locator Placeholder" />} />
             <Route path="/employee-queue" element={<Placeholder text="Employee Advice Request Queue Placeholder" />} />
             <Route path="/purchase" element={<Placeholder text="Vehicle Purchase / Transaction Placeholder" />} />
+            <Route
+              path="/chatbot-inquiries"
+              element={
+                <ProtectedRoute allowedRoles={["Administrator"]}>
+                  <ChatbotInquiries />
+                </ProtectedRoute>
+              }
+            />
 
           </Routes>
 
           <footer className="mt-16 py-6 text-center text-gray-600 text-sm font-sans">
             &copy; {new Date().getFullYear()} Autos Direct. All rights reserved. |{" "}
-				<Link to="/contact" className="text-blue-700 hover:underline">
+            <Link to="/contact" className="text-blue-700 hover:underline">
 				Contact
+				</Link>{" | "}
+				<Link to="/complaints" className="text-blue-700 hover:underline">
+				Complaints
 				</Link>{" | "}
 				<Link to="/privacy-policy" className="text-blue-700 hover:underline">
 				Privacy Policy
@@ -269,6 +286,7 @@ function App() {
           pauseOnHover
           theme="light"
         />
+        <Chatbot />
       </Router>
     </UserProvider>
   );

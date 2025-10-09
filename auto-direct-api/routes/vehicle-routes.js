@@ -257,9 +257,25 @@ router.get('/browse-vehicles', (req, res) => {
         const placeholders = paramArray.map(() => '?').join(', ');
 
         if (columnName === 'v.price' && isNumber) {
-          const maxPrice = Math.max(...paramArray.map(Number));
-          browseQuery += ` AND ${columnName} <= ?`;
-          values.push(maxPrice);
+          // Handle "Above $100,000" case separately
+          const hasAbove100k = paramArray.includes('above100000');
+          const numericPrices = paramArray.map(Number).filter(price => !isNaN(price));
+          
+          if (hasAbove100k && numericPrices.length > 0) {
+            // If we have "above100000" AND other prices, show cars above 100k OR under the other prices
+            const maxOtherPrice = Math.max(...numericPrices);
+            browseQuery += ` AND (${columnName} > ? OR ${columnName} <= ?)`;
+            values.push(100000, maxOtherPrice);
+          } else if (hasAbove100k) {
+            // Only "Above $100,000" selected
+            browseQuery += ` AND ${columnName} > ?`;
+            values.push(100000);
+          } else if (numericPrices.length > 0) {
+            // Regular price filtering (under a certain amount)
+            const maxPrice = Math.max(...numericPrices);
+            browseQuery += ` AND ${columnName} <= ?`;
+            values.push(maxPrice);
+          }
 
         } else {
           
