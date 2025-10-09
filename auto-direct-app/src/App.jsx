@@ -3,6 +3,8 @@
 
 import { createContext, useContext } from "react";
 import { BrowserRouter as Router, Route, Routes, Link } from "react-router-dom";
+import { ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 import { Toaster } from "react-hot-toast";
 
 import Navbar from "./components/Navbar";
@@ -33,10 +35,13 @@ import InternalRegisterPage from "./pages/internal-register-page";
 import Chatbot from "./components/Chatbot";
 import ChatbotInquiries from "./pages/chatbot-inquiries";
 import DbConnectionTestPage from "./pages/db-connection-test-page"; // to be deleted before handover
+import SAPDatabasePage from "./pages/sap-database-page"; // Admin-only SAP database management
+import PurchaseVehiclePage from "./pages/PurchaseVehiclePage"; // Purchase vehicle form page
+import PurchaseFlowPage from "./pages/PurchaseFlowPage"; // New dedicated purchase flow page
 import OrderManagementPage from "./pages/OrderManagementPage"; // Admin-only order management dashboard
 import ProfessionalOrderManagementPage from "./pages/ProfessionalOrderManagementPage"; // Enhanced professional order management
 import LogisticsDashboard from "./pages/LogisticsDashboard"; // Logistics coordination dashboard
-import PurchaseVehiclePage from "./pages/PurchaseVehiclePage"; // Purchase vehicle form page
+// import PurchaseVehiclePage from "./pages/PurchaseVehiclePage"; // Purchase vehicle form page
 import PaymentInstructionsPage from "./pages/PaymentInstructionsPage"; // Payment instructions page
 import PaymentDetailsPage from "./pages/PaymentDetailsPage"; // Payment details page
 import TestDriveDashboard from "./pages/test-drive-dashboard";
@@ -65,6 +70,7 @@ function App() {
           <Route path="/register" element={<RegisterPage />} />
           <Route path="/internal-register" element={<InternalRegisterPage />} />
           <Route path="/manage-my-purchases" element={<UserManagePurchasesPage />} />
+          <Route path="/purchase-flow" element={<PurchaseFlowPage />} />
           <Route path="/profile" element={<ProfilePage />} />
           <Route path="/privacy-policy" element={<PrivacyPolicyPage />} />
           <Route path="/glossary" element={<GlossaryPage />} />
@@ -268,29 +274,17 @@ function App() {
 				</Link>
           </footer>
         </div>
-        <Toaster 
+        <ToastContainer
           position="top-right"
-          toastOptions={{
-            duration: 4000,
-            style: {
-              background: '#363636',
-              color: '#fff',
-            },
-            success: {
-              duration: 3000,
-              style: {
-                background: '#10B981',
-                color: '#fff',
-              },
-            },
-            error: {
-              duration: 4000,
-              style: {
-                background: '#EF4444',
-                color: '#fff',
-              },
-            },
-          }}
+          autoClose={5000}
+          hideProgressBar={false}
+          newestOnTop={false}
+          closeOnClick
+          rtl={false}
+          pauseOnFocusLoss
+          draggable
+          pauseOnHover
+          theme="light"
         />
         <Chatbot />
       </Router>

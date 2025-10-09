@@ -244,7 +244,7 @@ router.get('/browse-vehicles', (req, res) => {
     LEFT JOIN (
       SELECT vehicleID, path FROM vehicle_images WHERE imageOrder = 1
     ) vi ON v.vehicleID = vi.vehicleID
-    JOIN Makes m ON v.makeID = m.makeID
+    JOIN makes m ON v.makeID = m.makeID
     WHERE 1=1 AND v.approvalStatus = 'Approved' AND v.deletedStatus != 'Deleted'
   `;
 
@@ -354,7 +354,7 @@ router.get('/manage-vehicles', (req, res) => {
     const searchTerm = req.query.q;
 
     let allVehiclesQuery = `SELECT v.*, m.makeName FROM vehicles v
-    JOIN Makes m ON v.makeID = m.makeID
+    JOIN makes m ON v.makeID = m.makeID
     WHERE v.deletedStatus != 'Deleted'`;
 
     const queryParams = []; // Array to hold parameters for the SQL query
@@ -584,7 +584,7 @@ router.get('/saved-vehicles/', [ verifyToken, authorizeUser ], async (req, res) 
             LEFT JOIN (
                 SELECT vehicleID, path FROM vehicle_images WHERE imageOrder = 1
             ) vi ON v.vehicleID = vi.vehicleID
-            JOIN Makes m ON v.makeID = m.makeID
+            JOIN makes m ON v.makeID = m.makeID
             WHERE v.vehicleID IN (${placeholders}) AND v.approvalStatus = 'Approved' AND v.deletedStatus != 'Deleted'
             ORDER BY CASE ${vehicleIDs.map((id, index) => `WHEN v.vehicleID = ? THEN ${index}`).join(' ')} END
         `;

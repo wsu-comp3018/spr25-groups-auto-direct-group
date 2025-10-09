@@ -1,5 +1,6 @@
 // ComplaintsPage.jsx – Complaint form for Autos Direct
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
+import { autoFillForm, fieldMappings } from "../utils/autoFillUtils";
 
 const ComplaintsPage = () => {
   const [formData, setFormData] = useState({
@@ -17,6 +18,11 @@ const ComplaintsPage = () => {
 
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submitMessage, setSubmitMessage] = useState("");
+
+  // Auto-fill form with user profile data when component loads
+  useEffect(() => {
+    autoFillForm(setFormData, fieldMappings.complaints);
+  }, []);
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;

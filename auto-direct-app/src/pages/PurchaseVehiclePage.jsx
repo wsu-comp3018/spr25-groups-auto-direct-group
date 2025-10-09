@@ -18,6 +18,11 @@ const PurchaseVehiclePage = () => {
   // State for vehicle categories with real data
   const [vehicleCategories, setVehicleCategories] = useState([]);
   
+  // Scroll to top when page loads
+  useEffect(() => {
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }, []);
+  
   // Fetch real vehicle data from API
   useEffect(() => {
     const fetchVehicleCategories = async () => {
@@ -114,9 +119,9 @@ const PurchaseVehiclePage = () => {
       {/* Header */}
       <header className="bg-white border-b border-gray-200 px-6 py-4">
         <div className="flex items-center justify-between max-w-7xl mx-auto">
-          <div className="flex items-center space-x-2">
-            <div className="w-6 h-6 bg-black rounded-sm flex items-center justify-center">
-              <span className="text-white text-xs font-bold">AD</span>
+          <div className="flex items-center space-x-3">
+            <div className="w-8 h-8 bg-blue-600 rounded flex items-center justify-center">
+              <span className="text-white font-bold">A</span>
             </div>
             <span className="font-bold text-lg">Autos Direct</span>
           </div>
@@ -127,7 +132,7 @@ const PurchaseVehiclePage = () => {
             <a href="/saved" className="text-gray-600 hover:text-gray-900">Saved Cars</a>
           </nav>
           
-          <button className="p-2">
+          <button className="p-2 text-gray-600 hover:text-gray-900">
             <div className="w-6 h-6">
               <svg className="w-full h-full" fill="currentColor" viewBox="0 0 20 20">
                 <path fillRule="evenodd" d="M3 5a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zM3 10a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zM3 15a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1z" clipRule="evenodd" />
@@ -139,7 +144,19 @@ const PurchaseVehiclePage = () => {
 
       {/* Main Content */}
       <div className="max-w-4xl mx-auto px-6 py-8">
-        <h1 className="text-3xl font-bold text-center mb-8">Purchase Vehicle Form</h1>
+        <h1 className="text-3xl font-bold text-center mb-4">Purchase Vehicle Form</h1>
+        
+        {/* Green Checkmark and Order ID */}
+        <div className="flex items-center justify-center mb-8">
+          <div className="flex items-center space-x-3">
+            <div className="w-8 h-8 bg-green-500 rounded-full flex items-center justify-center">
+              <svg className="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+              </svg>
+            </div>
+            <span className="text-lg font-semibold text-green-600">Order Confirmed - ID: {orderID || 'BRZPM479QP'}</span>
+          </div>
+        </div>
         
         {/* Main Form Box */}
         <div className="border border-gray-300 rounded-lg p-6 mb-6 bg-white">
@@ -151,8 +168,8 @@ const PurchaseVehiclePage = () => {
             </p>
             
             <p>
-              To complete your purchase, please click "View Payment Instructions" below to proceed with 
-              the payment process. You'll find detailed bank transfer information and payment steps.
+              To complete your purchase, please make a direct bank transfer to the manufacturer using the 
+              account details provided. Please be sure to include your Order ID as the payment reference.
             </p>
             
             <p>
@@ -175,25 +192,11 @@ const PurchaseVehiclePage = () => {
           </div>
         </div>
 
-        {/* Action Buttons */}
-        <div className="flex justify-center gap-4 mb-8">
-          <button
-            onClick={() => navigate('/payment-instructions', {
-              state: {
-                orderID,
-                customerName,
-                purchaseFormData,
-                vehicleDetails,
-                manufacturerDetails
-              }
-            })}
-            className="bg-black border-2 border-black text-white font-semibold py-2 px-6 rounded-lg transition hover:bg-black hover:text-white"
-          >
-            View Payment Instructions
-          </button>
+        {/* Close Button */}
+        <div className="flex justify-end mb-8">
           <button
             onClick={handleClose}
-            className="bg-transparent border-2 border-black text-black font-semibold py-2 px-6 rounded-lg transition hover:bg-black hover:text-white"
+            className="bg-blue-600 text-white px-6 py-2 rounded hover:bg-blue-700 transition-colors font-semibold"
           >
             Close
           </button>
