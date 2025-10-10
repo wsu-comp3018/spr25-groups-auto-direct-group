@@ -49,7 +49,7 @@ const RegisterPage = () => {
 
       if (!response.ok) {
         console.error("Registration failed");
-        alert("Registration failed. Please check your details.");
+        window.toast.error("Registration failed. Please check your details.");
 
         // If login failed, show an error
         setErrorMessage(response.json().error || "Registration failed. Please try again.");
@@ -92,11 +92,11 @@ const RegisterPage = () => {
         navigate("/");
       } else {
         console.error("Login failed after registration");
-        alert("Login failed after registration.");
+        window.toast.error("Login failed after registration.");
       }
     } catch (error) {
       console.error("Error submitting form:", error);
-      alert("An error occurred during registration.");
+      window.toast.error("An error occurred during registration.");
     }
   };
 

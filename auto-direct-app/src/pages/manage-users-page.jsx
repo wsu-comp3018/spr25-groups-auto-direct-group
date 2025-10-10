@@ -28,7 +28,7 @@ function ManageUsersPage() {
 	.then((res) => {
 		let data = res.json();
 		if(!res.ok) { 
-			window.alert('save failed ' + data.error);
+			window.toast.error('Save failed: ' + data.error);
 			return;
 		}
 	})
@@ -49,7 +49,7 @@ function ManageUsersPage() {
 	.then((res) => {
 		let data = res.json();
 		if(res.status != 200) { 
-			window.alert('disable failed ' + data.error);
+			window.toast.error('Disable failed: ' + data.error);
 			return;
 		}
 		

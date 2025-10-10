@@ -8,3 +8,18 @@ html, body {
     color: black;
 
 }
+
+/* Toast Notifications */
+.animate-slide-in {
+  transform: translateX(100%);
+  opacity: 0;
+  transition: transform 0.3s ease-out, opacity 0.3s ease-out;
+}
+
+#toast-container {
+  pointer-events: none;
+}
+
+#toast-container > div {
+  pointer-events: auto;
+}

@@ -7,6 +7,7 @@ import { BrowserRouter as Router, Route, Routes, Link } from "react-router-dom";
 import Navbar from "./components/Navbar";
 import Dropzone from "./components/Dropzone";
 import EditVehicleForm from "./components/edit-vehicle";
+import "./utils/toast"; // Initialize toast system
 import BrowsePage from "./pages/browse-page";
 import CarDetailPage from "./pages/car-detail-page";
 import ContactPage from "./pages/contact-page";

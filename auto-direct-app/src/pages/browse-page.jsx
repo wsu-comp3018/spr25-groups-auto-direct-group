@@ -115,7 +115,7 @@ function BrowsePage() {
   // Toggle save/unsave via heart on browse without redirect
   const handleSaveViaHeart = async (vehicleID) => {
     if (!token || !userID) {
-      alert("Please sign in to save vehicles.");
+      window.toast.warning("Please sign in to save vehicles.");
       return;
     }
     if (isSavingId) return;

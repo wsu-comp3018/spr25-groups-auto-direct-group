@@ -26,7 +26,7 @@ function CarDetailPage() {
   // Toggle save/unsave via heart, silent and without redirect
   const handleSaveViaHeart = async () => {
     if (!token || !userID) {
-      window.alert('Please sign in to save vehicles.');
+      window.toast.warning('Please sign in to save vehicles.');
       return;
     }
     if (!car?.vehicleID || isSaving) return;
@@ -189,7 +189,7 @@ function CarDetailPage() {
         }),
       }
     );
-    alert("Thank you! Your request for advice has been sent.");
+    window.toast.success("Thank you! Your request for advice has been sent.");
     setAdviceForm({
       message: "",
     });
@@ -213,11 +213,11 @@ function CarDetailPage() {
 	.then((res) => {
 		let data = res.json();
 		if(res.status != 200) { 
-			window.alert('purchase error failed ' + data.error);
+			window.toast.error('Purchase error: ' + data.error);
 			return;
 		}
 	})
-    alert(
+    window.toast.success(
       `Thank you! We'll contact you at ${purchaseForm.email} to complete your purchase.`
     );
     setShowPurchaseForm(false);

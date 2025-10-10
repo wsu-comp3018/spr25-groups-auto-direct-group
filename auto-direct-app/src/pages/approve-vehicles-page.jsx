@@ -52,14 +52,14 @@ function ApproveVehiclesPage() {
     setPendingList(updatedPending);
     setApprovedList(updatedApproved);
     updateLocalStorage(updatedPending, updatedApproved);
-    alert(`Approved: ${car.modelName || car.name}`);
+    window.toast.success(`Approved: ${car.modelName || car.name}`);
   };
 
   const handleReject = (car) => {
     const updatedPending = pendingList.filter((c) => c.id !== car.id);
     setPendingList(updatedPending);
     updateLocalStorage(updatedPending, approvedList);
-    alert(`Rejected: ${car.modelName || car.name}`);
+    window.toast.success(`Rejected: ${car.modelName || car.name}`);
   };
 
   const handleEdit = (car) => {
@@ -79,7 +79,7 @@ function ApproveVehiclesPage() {
     setPendingList(updatedPending);
     updateLocalStorage(updatedPending, approvedList);
     setEditingCarId(null);
-    alert("Car details updated.");
+    window.toast.success("Car details updated.");
   };
 
   const allCars = [

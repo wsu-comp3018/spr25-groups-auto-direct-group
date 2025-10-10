@@ -124,7 +124,7 @@ function SavedCarsPage() {
 
   const sendComparisonRequest = async () => {
     if (compareVehicles.length < 2 || compareVehicles.length > 3) {
-      alert('Please add 2 or 3 vehicles to compare.');
+      window.toast.warning('Please add 2 or 3 vehicles to compare.');
       return;
     }
     
@@ -134,7 +134,7 @@ function SavedCarsPage() {
       const currentUserID = userID; // Already defined at the top using Cookies.get("auto-direct-userID")
       
       if (!authToken) {
-        alert('Please log in to submit a comparison request.');
+        window.toast.warning('Please log in to submit a comparison request.');
         return;
       }
 
@@ -162,12 +162,12 @@ function SavedCarsPage() {
         throw new Error(result.error || `Server returned ${res.status}: ${res.statusText}`);
       }
       
-      alert('Your comparison request was sent to our experts and will appear in the admin dashboard.');
+      window.toast.success('Thank you! Your vehicle comparison request has been submitted and our team will prepare a detailed comparison for you.');
       setCompareVehicles([]);
       setCompareNotes("");
     } catch (err) {
       console.error('Comparison request error:', err);
-      alert(`Could not send comparison request: ${err.message}. Please check console for details.`);
+      window.toast.error(`Could not send comparison request: ${err.message}. Please check console for details.`);
     }
   };
 

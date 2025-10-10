@@ -44,7 +44,7 @@ const ComplaintsPage = () => {
 
       if (response.ok) {
         const result = await response.json();
-        setSubmitMessage(result.message || "Complaint submitted successfully. You will receive a response directly.");
+        window.toast.success("Thank you! Your complaint has been submitted successfully. You will receive a response directly.");
         setFormData({
           customerName: "",
           hasAccount: "",
@@ -58,15 +58,15 @@ const ComplaintsPage = () => {
       } else {
         try {
           const errorData = await response.json();
-          setSubmitMessage(errorData.error || "There was an error submitting your complaint. Please try again or contact us directly.");
+          window.toast.error(errorData.error || "There was an error submitting your complaint. Please try again or contact us directly.");
         } catch (jsonError) {
           console.error('Error parsing error response:', jsonError);
-          setSubmitMessage(`Server error (${response.status}). Please try again or contact us directly.`);
+          window.toast.error(`Server error (${response.status}). Please try again or contact us directly.`);
         }
       }
     } catch (error) {
       console.error('Error submitting complaint:', error);
-      setSubmitMessage("There was an error submitting your complaint. Please try again or contact us directly.");
+      window.toast.error("There was an error submitting your complaint. Please try again or contact us directly.");
     } finally {
       setIsSubmitting(false);
     }

@@ -24,14 +24,14 @@ function ManageManufacturersPage() {
 				body: JSON.stringify({manufacturer: m})})
 			.then((res) => { 
 				let data = res.json(); 
-				if (res.status != 200) window.alert('error adding: ' + data.error);
+				if (res.status != 200) window.toast.error('Error adding: ' + data.error);
 			});
 		} else {
 			fetch(api + '/manufacturer/update', {method: 'PUT', headers: {"Content-Type": "application/json", 'Authorization': token}, 
 				body: JSON.stringify({manufacturer: m})})
 			.then((res) => { 
 				let data = res.json(); 
-				if (res.status != 200) window.alert('error adding: ' + data.error);
+				if (res.status != 200) window.toast.error('Error updating: ' + data.error);
 			});
 		}
 	};
@@ -62,7 +62,7 @@ function ManageManufacturersPage() {
 		.then((res) => {
 			let data = res.json();
 			if(res.status != 200) { 
-				window.alert('toggle status failed ' + data.error);
+				window.toast.error('Toggle status failed: ' + data.error);
 				return;
 			}
 

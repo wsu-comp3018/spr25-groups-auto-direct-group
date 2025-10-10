@@ -52,7 +52,7 @@ function TestDriveDashboard() {
 
   const handleAssignDealer = async (request) => {
     if (!dealerInput.trim()) {
-      alert("Please enter a Dealer ID");
+      window.toast.error("Please enter a Dealer ID");
       return;
     }
     
@@ -73,16 +73,16 @@ function TestDriveDashboard() {
       const data = await response.json();
       
       if (response.ok) {
-        alert(`Dealer ${dealerInput} assigned successfully!`);
+        window.toast.success(`Dealer ${dealerInput} assigned successfully!`);
         fetchRequests();
         setSelectedRequest(null);
         setDealerInput("");
       } else {
-        alert(`Error: ${data.error || 'Failed to assign dealer'}`);
+        window.toast.error(`Error: ${data.error || 'Failed to assign dealer'}`);
       }
     } catch (err) {
       console.error('Error assigning dealer:', err);
-      alert('Network error. Please try again.');
+      window.toast.error('Network error. Please try again.');
     }
     setActionLoading(false);
   };
@@ -109,15 +109,15 @@ function TestDriveDashboard() {
       const data = await response.json();
       
       if (response.ok) {
-        alert("Request marked as completed!");
+        window.toast.success("Request marked as completed!");
         fetchRequests();
         setSelectedRequest(null);
       } else {
-        alert(`Error: ${data.error || 'Failed to update status'}`);
+        window.toast.error(`Error: ${data.error || 'Failed to update status'}`);
       }
     } catch (err) {
       console.error('Error marking completed:', err);
-      alert('Network error. Please try again.');
+      window.toast.error('Network error. Please try again.');
     }
     setActionLoading(false);
   };
@@ -144,15 +144,15 @@ function TestDriveDashboard() {
       const data = await response.json();
       
       if (response.ok) {
-        alert("Request cancelled successfully!");
+        window.toast.success("Request cancelled successfully!");
         fetchRequests();
         setSelectedRequest(null);
       } else {
-        alert(`Error: ${data.error || 'Failed to cancel request'}`);
+        window.toast.error(`Error: ${data.error || 'Failed to cancel request'}`);
       }
     } catch (err) {
       console.error('Error cancelling request:', err);
-      alert('Network error. Please try again.');
+      window.toast.error('Network error. Please try again.');
     }
     setActionLoading(false);
   };
