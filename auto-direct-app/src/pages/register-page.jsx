@@ -2,23 +2,20 @@
 
 import React, { useState, useRef } from "react";
 import { useNavigate } from "react-router-dom"; // added navigate
+import Cookies from "js-cookie";
+import { useUser } from "../contexts/UserContext"; 
+import api from "../data/api-calls";
 import ReCAPTCHA from "react-google-recaptcha";
+import toast from "react-hot-toast";
 
-function RegisterPage() {
-  // Add state variables to store data entered by user into the form
-  const navigate = useNavigate();
 
-  // initialize this state as empty strings
-  const [firstName, setFirstName] = useState("");
-  const [lastName, setLastName] = useState("");
-  const [emailAddress, setEmailAddress] = useState("");
-  const [password, setPassword] = useState("");
-  const [confirmPassword, setConfirmPassword] = useState("");
-  const [phoneNumber, setPhoneNumber] = useState("");
-  const [streetNo, setStreetNo] = useState("");
-  const [streetName, setStreetName] = useState("");
-  const [suburb, setSuburb] = useState("");
-  const [postcode, setPostcode] = useState("");
+//function RegisterPage() {
+const RegisterPage = () => {
+  const navigate = useNavigate(); // useNavigate hook
+
+  const { setUser } = useUser(); 
+
+  // Set the JSON data fields
   const [errorMessage, setErrorMessage] = useState(""); // To display errors
   const [recaptchaToken, setRecaptchaToken] = useState(null); // reCAPTCHA token
   const recaptchaRef = useRef(null); // reCAPTCHA ref
@@ -27,15 +24,15 @@ function RegisterPage() {
     lastName: "",
     emailAddress: "",
     password: "",
-    confirmPassword: "",
     phoneNumber: "",
     streetNo: "",
     streetName: "",
     suburb: "",
-    postcode: ""
+    postcode: "",
   });
 
   
+
 
   // handleChange will get the form data and plug it into JSON above
   const handleChange = (e) => {
@@ -43,11 +40,11 @@ function RegisterPage() {
   };
 
   // reCAPTCHA callback function
-  const onReCaptchaChange = (token) => {
+  const handleRecaptchaChange = (token) => {
     setRecaptchaToken(token);
   };
 
-  // Add the fetch request to the backend
+  // handleSubmit that handles clicking Register and passing to the API
   const handleSubmit = async (e) => {
     e.preventDefault();
 
@@ -72,63 +69,42 @@ function RegisterPage() {
       return;
     }
 
-    // Clear any previous error messages
-    setErrorMessage("");
-
-    // reCAPTCHA validation
+    // Validate reCAPTCHA
     if (!recaptchaToken) {
       setErrorMessage("Please complete the reCAPTCHA verification.");
       return;
     }
 
-    // Now we're creating a JSON representation of the user's info
-    const userData = {
-      firstName: formData.firstName,
-      lastName: formData.lastName,
-      emailAddress: formData.emailAddress,
-      password: formData.password,
-      confirmPassword: formData.confirmPassword,
-      phoneNumber: formData.phoneNumber,
-      streetNo: formData.streetNo,
-      streetName: formData.streetName,
-      suburb: formData.suburb,
-      postcode: formData.postcode
-    };
-
     try {
-      // Send the registration request
-      const response = await fetch("/api/register", {
+      //  register user
+      const response = await fetch(api + "/user/register", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          firstName: formData.firstName,
-          lastName: formData.lastName,
-          emailAddress: formData.emailAddress,
-          password: formData.password,
-          confirmPassword: formData.confirmPassword,
-          phoneNumber: formData.phoneNumber,
-          streetNo: formData.streetNo,
-          streetName: formData.streetName,
-          suburb: formData.suburb,
-          postcode: formData.postcode
+          ...registrationData,
+          recaptchaToken: recaptchaToken
         }),
       });
 
-      if (response.ok) {
-        alert("Registration successful! Redirecting to login...");
-        navigate("/login");
-      } else {
+      if (!response.ok) {
+        console.error("Registration failed");
         const errorData = await response.json();
-        setErrorMessage(errorData.message || "Registration failed. Please try again.");
+        const errorMessage = errorData.error || "Registration failed. Please try again.";
+        toast.error(errorMessage);
+        setErrorMessage(errorMessage);
+        // Reset reCAPTCHA on error
+        if (recaptchaRef.current) {
+          recaptchaRef.current.reset();
+          setRecaptchaToken(null);
+        }
+        return;
       }
-    } catch (error) {
-      console.error("Error submitting form:", error);
-      alert("An error occurred during registration.");
-    }
 
-    // Attempt to automatically log in the user after successful registration
-    try {
-      const loginResponse = await fetch("/api/login", {
+      console.log("Registration successful");
+      toast.success("Registration successful! Welcome to Auto Direct!");
+
+      // login user right after registration
+      const loginResponse = await fetch(api + "/user/login", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
@@ -137,12 +113,30 @@ function RegisterPage() {
         }),
       });
 
-      if (loginResponse.ok) {
-        const loginData = await loginResponse.json();
-        localStorage.setItem("token", loginData.token);
-        localStorage.setItem("userRole", loginData.user?.role || "customer");
-        navigate("/"); // Redirect to home page
+      const loginResult = await loginResponse.json();
+      console.log("Login response:", loginResult);
+
+      // CHANGED: use Cookies and not localStorage so Navbar works instantly
+      if (loginResponse.ok && loginResult.token) {
+        // ADDED: Save token and userID to cookies for Navbar to detect login immediately
+        Cookies.set("auto-direct-token", loginResult.token, { expires: 1 });
+        Cookies.set("auto-direct-userID", loginResult.userID, { expires: 1 });
+        Cookies.set("auto-direct-roles", JSON.stringify(loginResult.roles), { expires: 1 });
+        Cookies.set("auto-direct-firstName", loginResult.firstName, { expires: 1 });
+
+        // Update user context immediately!
+        setUser({
+          userID: loginResult.userID,
+          roles: loginResult.roles,
+          token: loginResult.token,
+          firstName: loginResult.firstName,
+
+        });
+
+        // Redirect to the home page
+        navigate("/");
       } else {
+        console.error("Login failed after registration");
         alert("Login failed after registration.");
       }
     } catch (error) {
@@ -160,20 +154,18 @@ function RegisterPage() {
     <div className="min-h-screen pt-24 pb-12 px-4 relative">
       {/* Car image background */}
       <img 
-        src="/assets/login-image.png"
+        src="/assets/login-image.png" 
         alt="Car background"
         className="absolute inset-0 w-full h-full object-cover opacity-95"
         style={{ zIndex: 1 }}
         onError={(e) => {
           console.log('Image failed to load:', e.target.src);
-          // Try alternative path
           e.target.src = './assets/login-image.png';
         }}
         onLoad={() => {
           console.log('Image loaded successfully');
         }}
       />
-      
       {/* No overlay - using image opacity instead */}
       
       <div className="max-w-4xl mx-auto relative z-10">
@@ -184,9 +176,6 @@ function RegisterPage() {
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M18 9v3m0 0v3m0-3h3m-3 0h-3m-2-5a4 4 0 11-8 0 4 4 0 018 0zM3 20a6 6 0 0112 0v1H3v-1z" />
             </svg>
           </div>
-          <h1 className="text-4xl font-bold text-black mb-2">Create Your Account</h1>
-          <p className="text-gray-600 text-lg">Join Autos Direct and find your perfect vehicle</p>
-        </div>
 
         {/* Registration Form */}
         <div className="bg-white bg-opacity-95 backdrop-blur-sm rounded-2xl shadow-xl border border-gray-200 p-8">
@@ -355,7 +344,7 @@ function RegisterPage() {
                 </h3>
               </div>
               
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                 {/* Street Number */}
                 <div className="space-y-2">
                   <label className="block text-sm font-semibold text-gray-700">
@@ -373,7 +362,7 @@ function RegisterPage() {
                 </div>
 
                 {/* Street Name */}
-                <div className="space-y-2">
+                <div className="space-y-2 md:col-span-2">
                   <label className="block text-sm font-semibold text-gray-700">
                     Street Name *
                   </label>
@@ -387,7 +376,9 @@ function RegisterPage() {
                     className="w-full px-4 py-3 border border-gray-300 rounded-xl text-gray-900 bg-white placeholder-gray-500 focus:ring-2 focus:ring-black focus:border-transparent focus:outline-none transition-all duration-200"
                   />
                 </div>
+              </div>
 
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 {/* Suburb */}
                 <div className="space-y-2">
                   <label className="block text-sm font-semibold text-gray-700">
@@ -422,31 +413,42 @@ function RegisterPage() {
               </div>
             </div>
 
-            {/* Error Message Display */}
-            {errorMessage && (
-              <div className="bg-red-50 border border-red-200 rounded-xl p-4">
-                <div className="flex items-center">
-                  <svg className="w-5 h-5 text-red-500 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-                  </svg>
-                  <p className="text-red-800 text-sm font-medium">{errorMessage}</p>
-                </div>
-              </div>
-            )}
-
             {/* reCAPTCHA Section */}
-            <div className="space-y-4">
+            <div className="space-y-6">
+              <div className="border-b border-gray-200 pb-4">
+                <h3 className="text-lg font-semibold text-black flex items-center">
+                  <svg className="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
+                  </svg>
+                  Security Verification
+                </h3>
+              </div>
+              
               <div className="flex justify-center">
                 <ReCAPTCHA
                   ref={recaptchaRef}
-                  sitekey="6LeIxAcTAAAAAJcZVRqyHh71UMIEGNQ_MXjiZKhI" // This is the public test key
-                  onChange={onReCaptchaChange}
+                  sitekey="6LeIxAcTAAAAAJcZVRqyHh71UMIEGNQ_MXjiZKhI"
+                  onChange={handleRecaptchaChange}
+                  theme="light"
                 />
               </div>
-              <p className="text-xs text-gray-500 text-center">
-                This site is protected by reCAPTCHA and the Google Privacy Policy and Terms of Service apply.
-              </p>
             </div>
+
+            {/* Error Message */}
+            {errorMessage && (
+              <div className="bg-red-50 border border-red-200 rounded-xl p-4">
+                <div className="flex">
+                  <div className="flex-shrink-0">
+                    <svg className="h-5 w-5 text-red-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                    </svg>
+                  </div>
+                  <div className="ml-3">
+                    <p className="text-sm text-red-800">{errorMessage}</p>
+                  </div>
+                </div>
+              </div>
+            )}
 
             {/* Submit Button */}
             <div className="pt-6">
@@ -457,19 +459,150 @@ function RegisterPage() {
                 Create Account
               </button>
             </div>
-          </form>
 
-          {/* Additional Links */}
-          <div className="mt-8 text-center">
-            <p className="text-sm text-gray-600">
-              Already have an account?{' '}
-              <a href="/login" className="font-semibold text-black hover:text-gray-700 transition-colors duration-200">
-                Sign in here
-              </a>
-            </p>
+            {/* Email Field */}
+            <div className="space-y-2">
+              <label className="block text-sm font-medium text-gray-700">
+                Email Address
+              </label>
+              <div className="relative">
+                <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                  <svg className="h-5 w-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 12a4 4 0 10-8 0 4 4 0 008 0zm0 0v1.5a2.5 2.5 0 005 0V12a9 9 0 10-9 9m4.5-1.206a8.959 8.959 0 01-4.5 1.207" />
+                  </svg>
+                </div>
+                <input
+                  name="emailAddress"
+                  type="email"
+                  placeholder="you@example.com"
+                  value={formData.emailAddress}
+                  onChange={handleChange}
+                  className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-black focus:border-transparent transition-all duration-200"
+                  required
+                />
+              </div>
+            </div>
+
+            {/* Password Field */}
+            <div className="space-y-2">
+              <label className="block text-sm font-medium text-gray-700">
+                Password
+              </label>
+              <div className="relative">
+                <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                  <svg className="h-5 w-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
+                  </svg>
+                </div>
+                <input
+                  name="password"
+                  type="password"
+                  placeholder="••••••••"
+                  value={formData.password}
+                  onChange={handleChange}
+                  className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-black focus:border-transparent transition-all duration-200"
+                  required
+                />
+              </div>
+            </div>
+
+          {/* Confirm Password */}
+          <div>
+            <label className="block mb-1 text-sm font-medium text-black">
+              Confirm Password
+            </label>
+            <input
+              name="confirmPassword"
+              type="password"
+              placeholder="••••••••"
+              className="w-full border border-black p-3 rounded text-black bg-white placeholder-gray-500 focus:ring-2 focus:ring-black focus:outline-none"
+            />
           </div>
-        </div>
+
+          {/* Phone Number */}
+          <div>
+            <label className="block mb-1 text-sm font-medium text-black">
+              Phone Number
+            </label>
+            <input
+              name="phoneNumber"
+              type="text"
+              placeholder="04########"
+              onChange={handleChange}
+              className="w-full border border-black p-3 rounded text-black bg-white placeholder-gray-500 focus:ring-2 focus:ring-black focus:outline-none"
+            />
+          </div>
+
+          {/* Street Number */}
+          <div>
+            <label className="block mb-1 text-sm font-medium text-black">
+              Street Number
+            </label>
+            <input
+              name="streetNo"
+              type="text"
+              placeholder="222"
+              onChange={handleChange}
+              className="w-full border border-black p-3 rounded text-black bg-white placeholder-gray-500 focus:ring-2 focus:ring-black focus:outline-none"
+            />
+          </div>
+
+          {/* Street Name */}
+          <div>
+            <label className="block mb-1 text-sm font-medium text-black">
+              Street Name
+            </label>
+            <input
+              name="streetName"
+              type="text"
+              placeholder="Pitt Street"
+              onChange={handleChange}
+              className="w-full border border-black p-3 rounded text-black bg-white placeholder-gray-500 focus:ring-2 focus:ring-black focus:outline-none"
+            />
+          </div>
+
+          {/* Suburb */}
+          <div>
+            <label className="block mb-1 text-sm font-medium text-black">
+              Suburb
+            </label>
+            <input
+              name="suburb"
+              type="text"
+              placeholder="Sydney"
+              onChange={handleChange}
+              className="w-full border border-black p-3 rounded text-black bg-white placeholder-gray-500 focus:ring-2 focus:ring-black focus:outline-none"
+            />
+          </div>
+
+          {/* Postcode */}
+          <div>
+            <label className="block mb-1 text-sm font-medium text-black">
+              Postcode
+            </label>
+            <input
+              name="postcode"
+              type="number"
+              placeholder="2000"
+              onChange={handleChange}
+              className="w-full border border-black p-3 rounded text-black bg-white placeholder-gray-500 focus:ring-2 focus:ring-black focus:outline-none"
+            />
+          </div>
+          {errorMessage && (
+            <div className="text-red-600 text-sm text-center">{errorMessage}</div>
+          )}
+
+          {/* Submit Button */}
+          <button
+            type="submit"
+            className="w-full bg-black text-white py-3 rounded font-semibold hover:bg-gray-900 transition"
+          >
+            Register
+          </button>
+        </form>
       </div>
+    </div>
+    </div>
     </div>
   );
 };
