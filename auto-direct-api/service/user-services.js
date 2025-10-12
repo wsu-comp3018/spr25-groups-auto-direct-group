@@ -13,7 +13,7 @@ const createUser = async (userNewID, user ) => {
 
 		return new Promise((resolve, reject) => {
 			pool.query(query, [
-				userNewID, firstName, lastName, emailAddress, passwordHash, phoneNumber, createdTime, streetNo, streetName, suburb, postcode, "Active"],
+				userNewID, firstName, lastName, emailAddress, passwordHash, phoneNumber || "00000000", createdTime, streetNo, streetName, suburb, postcode, "Active"],
 				(err, result) => {
 				if (err) reject(err);
 					resolve(result);

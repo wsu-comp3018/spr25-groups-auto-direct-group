@@ -10,19 +10,10 @@ const emailConfig = require('../email-config');
 
 const verifyToken = require('../middleware/authentication');
 const authorizeUser = require('../middleware/authorization');
-const { createUserRole, getAllUserRoles, getRoles, getUserRolesByID, deleteUserRoleByUserIDAndLabel } = require('../service/role-services.js');
-const { getAllUsers, updateUser, disableUserByUserID } = require('../service/user-services.js');
+const { createUserRole, getAllUserRoles, getRoles, getUserRolesByID, deleteUserRoleByUserIDAndLabel, getRoleIDByLabel } = require('../service/role-services.js');
+const { getAllUsers, updateUser, disableUserByUserID, createUser, getUserByEmail } = require('../service/user-services.js');
 
-// Helper function to get role ID by label
-async function getRoleIDByLabel(roleLabel) {
-	try {
-		const [rows] = await pool.promise().query('SELECT roleID FROM roles WHERE label = ?', [roleLabel]);
-		return rows.length > 0 ? rows[0].roleID : null;
-	} catch (error) {
-		console.error('Error getting role ID:', error);
-		throw error;
-	}
-}
+// -------- Manage Vehicles --------
 
 // Email configuration
 const transporter = nodemailer.createTransport(emailConfig);
@@ -119,9 +110,9 @@ router.get('/advice-requests/unassigned', (req, res) => {
     let unassignedRequestsQuery = `SELECT ar.requestID, ar.requesterID, ar.employeeID, ar.vehicleID,
             ar.status, ar.description, ar.submittedAt, u.firstName, u.lastName, u.emailAddress, u.phone, v.modelName, m.makeName
         FROM advice_requests AS ar
-        JOIN Users AS u ON ar.requesterID = u.userID
-        JOIN Vehicles AS v ON ar.vehicleID = v.vehicleID
-        JOIN Makes AS m ON v.makeID = m.makeID`;
+        JOIN users AS u ON ar.requesterID = u.userID
+        JOIN vehicles AS v ON ar.vehicleID = v.vehicleID
+        JOIN makes AS m ON v.makeID = m.makeID`;
 
     conditions.push(`ar.employeeID IS NULL`);
     conditions.push(`ar.status ='Pending'`);
@@ -163,9 +154,9 @@ router.get('/advice-requests/in-progress', (req, res) => {
     let inProgressRequestsQuery = `SELECT ar.requestID, ar.requesterID, ar.employeeID, ar.vehicleID,
             ar.status, ar.description, ar.submittedAt, u.firstName, u.lastName, u.emailAddress, u.phone, v.modelName, m.makeName
         FROM advice_requests AS ar
-        JOIN Users AS u ON ar.requesterID = u.userID
-        JOIN Vehicles AS v ON ar.vehicleID = v.vehicleID
-        JOIN Makes AS m ON v.makeID = m.makeID`;
+        JOIN users AS u ON ar.requesterID = u.userID
+        JOIN vehicles AS v ON ar.vehicleID = v.vehicleID
+        JOIN makes AS m ON v.makeID = m.makeID`;
 
     conditions.push(`ar.status ='In Progress'`);
 
@@ -205,9 +196,9 @@ router.get('/advice-requests/completed', (req, res) => {
     let completedRequestsQuery = `SELECT ar.requestID, ar.requesterID, ar.employeeID, ar.vehicleID,
             ar.status, ar.description, ar.submittedAt, u.firstName, u.lastName, u.emailAddress, u.phone, v.modelName, m.makeName
         FROM advice_requests AS ar
-        JOIN Users AS u ON ar.requesterID = u.userID
-        JOIN Vehicles AS v ON ar.vehicleID = v.vehicleID
-        JOIN Makes AS m ON v.makeID = m.makeID`;
+        JOIN users AS u ON ar.requesterID = u.userID
+        JOIN vehicles AS v ON ar.vehicleID = v.vehicleID
+        JOIN makes AS m ON v.makeID = m.makeID`;
 
     conditions.push(`ar.status ='Completed'`);
 
@@ -285,9 +276,9 @@ router.get('/my-requests/in-progress', (req, res) => {
     let inProgressRequestsQuery = `SELECT ar.requestID, ar.requesterID, ar.employeeID, ar.vehicleID,
                 ar.status, ar.description, ar.submittedAt, u.firstName, u.lastName, u.emailAddress, u.phone, v.modelName, m.makeName
             FROM advice_requests AS ar
-            JOIN Users AS u ON ar.requesterID = u.userID
-            JOIN Vehicles AS v ON ar.vehicleID = v.vehicleID
-            JOIN Makes AS m ON v.makeID = m.makeID`;
+            JOIN users AS u ON ar.requesterID = u.userID
+            JOIN vehicles AS v ON ar.vehicleID = v.vehicleID
+            JOIN makes AS m ON v.makeID = m.makeID`;
 
     conditions.push(`ar.status ='In Progress'`);
 
@@ -330,9 +321,9 @@ router.get('/my-requests/completed', (req, res) => {
     let completedRequestsQuery = `SELECT ar.requestID, ar.requesterID, ar.employeeID, ar.vehicleID,
                 ar.status, ar.description, ar.submittedAt, u.firstName, u.lastName, u.emailAddress, u.phone, v.modelName, m.makeName
             FROM advice_requests AS ar
-            JOIN Users AS u ON ar.requesterID = u.userID
-            JOIN Vehicles AS v ON ar.vehicleID = v.vehicleID
-            JOIN Makes AS m ON v.makeID = m.makeID`;
+            JOIN users AS u ON ar.requesterID = u.userID
+            JOIN vehicles AS v ON ar.vehicleID = v.vehicleID
+            JOIN makes AS m ON v.makeID = m.makeID`;
 
     conditions.push(`ar.status ='Completed'`);
 
@@ -468,6 +459,56 @@ router.put("/updateUser", [ verifyToken, authorizeUser ], async (req, res) => {
 		res.status(200).json({message: query})
 	} catch (err) {
 		res.status(500).json({error: 'update user and roles failure: ' + err})
+	}
+});
+
+//create user
+router.post("/createUser", [ verifyToken, authorizeUser ], async (req, res) => {
+	try {
+		if(!req.roles.includes('Administrator')) throw 'User does not have permission for Admin actions!'
+
+		const { firstName, lastName, emailAddress, phone, password, roles, user_status } = req.body;
+		
+		// Check if email already exists
+		const existingUsers = await getUserByEmail(emailAddress);
+		if (existingUsers.length > 0) {
+			return res.status(400).json({ error: 'Email address already exists' });
+		}
+
+		// Generate user ID and hash password
+		const userNewID = uuidv4();
+		const passwordHash = bcrypt.hashSync(password, bcrypt.genSaltSync(12));
+		
+		// Create user data object
+		const userData = {
+			firstName,
+			lastName,
+			emailAddress,
+			phoneNumber: phone || "00000000",
+			passwordHash,
+			user_status: user_status || 'Active',
+			streetNo: "0",
+			streetName: "Default Street", 
+			suburb: "Default Suburb",
+			postcode: 2000
+		};
+
+		// Create the user
+		await createUser(userNewID, userData);
+
+		// Add roles
+		if (roles && roles.length > 0) {
+			for (const roleLabel of roles) {
+				const roleID = await getRoleIDByLabel(roleLabel);
+				const userRoleID = uuidv4();
+				await createUserRole(userRoleID, userNewID, roleID);
+			}
+		}
+
+		res.status(201).json({ message: 'User created successfully', userID: userNewID });
+	} catch (err) {
+		console.error('Error creating user:', err);
+		res.status(500).json({ error: 'Failed to create user: ' + err.message });
 	}
 });
 
