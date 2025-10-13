@@ -38,7 +38,6 @@ import DbConnectionTestPage from "./pages/db-connection-test-page"; // to be del
 import SAPDatabasePage from "./pages/sap-database-page"; // Admin-only SAP database management
 import PurchaseVehiclePage from "./pages/PurchaseVehiclePage"; // Purchase vehicle form page
 import PurchaseFlowPage from "./pages/PurchaseFlowPage"; // New dedicated purchase flow page
-import OrderManagementPage from "./pages/OrderManagementPage"; // Admin-only order management dashboard
 import ProfessionalOrderManagementPage from "./pages/ProfessionalOrderManagementPage"; // Enhanced professional order management
 import LogisticsDashboard from "./pages/LogisticsDashboard"; // Logistics coordination dashboard
 // import PurchaseVehiclePage from "./pages/PurchaseVehiclePage"; // Purchase vehicle form page
@@ -171,7 +170,7 @@ function App() {
               path="/order-management"
               element={
                 <ProtectedRoute allowedRoles={["Administrator"]}>
-                  <OrderManagementPage />
+                  <ProfessionalOrderManagementPage />
                 </ProtectedRoute>
               }
             />

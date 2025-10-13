@@ -1,4 +1,5 @@
 import React from 'react';
+import { useNavigate } from 'react-router-dom';
 
 const PurchaseConfirmationModal = ({ 
   isOpen, 
@@ -6,16 +7,34 @@ const PurchaseConfirmationModal = ({
   orderID, 
   customerName, 
   vehicleDetails,
+  manufacturerDetails,
+  purchaseFormData,
   onProcessPayment 
 }) => {
+  const navigate = useNavigate();
+  
   if (!isOpen) return null;
+
+  const handleClose = () => {
+    // Close modal first, then navigate to payment instructions page
+    onClose();
+    navigate('/payment-instructions', {
+      state: {
+        orderID,
+        customerName,
+        purchaseFormData,
+        vehicleDetails,
+        manufacturerDetails
+      }
+    });
+  };
 
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
       <div className="bg-white rounded-lg p-8 max-w-2xl w-full mx-4 relative">
         {/* Close Button */}
         <button
-          onClick={onClose}
+          onClick={handleClose}
           className="absolute top-4 right-4 text-gray-500 hover:text-gray-700 text-2xl font-bold"
         >
           ×
@@ -24,6 +43,18 @@ const PurchaseConfirmationModal = ({
         {/* Header */}
         <div className="text-center mb-8">
           <h2 className="text-3xl font-bold text-gray-900 mb-4">Purchase Vehicle Form</h2>
+          
+          {/* Green Checkmark and Order Confirmed */}
+          <div className="flex items-center justify-center mb-6">
+            <div className="flex items-center space-x-3">
+              <div className="w-8 h-8 bg-green-500 rounded-full flex items-center justify-center">
+                <svg className="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                </svg>
+              </div>
+              <span className="text-lg font-semibold text-green-600">Order Confirmed - ID: {orderID}</span>
+            </div>
+          </div>
         </div>
 
         {/* Content */}
@@ -63,8 +94,8 @@ const PurchaseConfirmationModal = ({
         {/* Close Button */}
         <div className="flex justify-end">
           <button
-            onClick={onClose}
-            className="bg-black text-white px-6 py-2 rounded hover:bg-gray-800 transition-colors font-semibold"
+            onClick={handleClose}
+            className="bg-blue-600 text-white px-6 py-2 rounded hover:bg-blue-700 transition-colors font-semibold"
           >
             Close
           </button>

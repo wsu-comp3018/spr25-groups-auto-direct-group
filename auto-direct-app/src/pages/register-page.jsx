@@ -600,10 +600,9 @@ const RegisterPage = () => {
           >
             Register
           </button>
+          </form>
         </div>
       </div>
-    </div>
-    </div>
     </div>
   );
 }

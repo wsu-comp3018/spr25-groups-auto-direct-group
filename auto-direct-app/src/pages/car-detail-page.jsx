@@ -10,8 +10,6 @@ import api from "../data/api-calls";
 import PurchaseStepper from "../components/PurchaseStepper";
 import { autoFillForm, fieldMappings } from "../utils/autoFillUtils";
 import PurchaseConfirmationModal from "../components/PurchaseConfirmationModal";
-import PaymentInstructionsModal from "../components/PaymentInstructionsModal";
-import AdminPaymentModal from "../components/AdminPaymentModal";
 
 import { GoogleMap, LoadScript, Marker } from "@react-google-maps/api";
 import { toast } from 'react-toastify';
@@ -1650,10 +1648,10 @@ function CarDetailPage() {
               </button>
             ) : (
               <button
-                onClick={() => setShowPaymentInstructions(true)}
+                onClick={handlePurchaseClick}
                 className="bg-black border-2 border-black text-white font-semibold py-2 px-6 rounded-lg  transition hover:bg-black hover:text-white flex-1"
               >
-                Process Payment
+                Purchase Vehicle
               </button>
             )}
           </div>
@@ -1976,27 +1974,7 @@ function CarDetailPage() {
         }}
       />
 
-      {/* Payment Instructions Modal */}
-      <PaymentInstructionsModal
-        isOpen={showPaymentInstructions}
-        onClose={() => setShowPaymentInstructions(false)}
-        orderID={orderID}
-        manufacturerDetails={manufacturerDetails}
-        vehicleDetails={car}
-        onNext={handleNextStep}
-      />
 
-      {/* Admin Payment Modal */}
-      <AdminPaymentModal
-        isOpen={showAdminPayment}
-        onClose={() => setShowAdminPayment(false)}
-        orderID={orderID}
-        customerName={`${purchaseForm.firstName || ''} ${purchaseForm.lastName || ''}`.trim()}
-        customerEmail={purchaseForm.email || ''}
-        customerPhone={purchaseForm.phone || ''}
-        customerAddress={`${purchaseForm.streetNumber || ''} ${purchaseForm.streetName || ''}, ${purchaseForm.suburb || ''}, ${purchaseForm.state || ''} ${purchaseForm.postcode || ''}`.replace(/^,\s*/, '').replace(/,\s*$/, '').trim()}
-        vehicleDetails={car}
-      />
     </div>
   );
 }

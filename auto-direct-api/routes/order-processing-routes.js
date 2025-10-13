@@ -27,10 +27,11 @@ router.post('/process-order-purchase', async (req, res) => {
     // Store the order data for later retrieval
     const orderData = {
       orderID,
-      status: 'confirmed',
+      status: 'Processing',  // Changed from 'confirmed' to 'Processing' to match Order Management filters
       timestamp: new Date().toISOString(),
       
       // Customer Details from the purchase form
+      customerName: customerName || '',
       customerFirstName: customerName?.split(' ')[0] || customerName || '',
       customerLastName: customerName?.split(' ').slice(1).join(' ') || '',
       customerEmail: customerEmail || '',
@@ -55,12 +56,16 @@ router.post('/process-order-purchase', async (req, res) => {
       
       // Order Metadata
       orderDate: new Date().toISOString(),
-      paymentStatus: 'confirmed'
+      paymentStatus: 'confirmed',
+      salesRep: 'Auto Direct Sales',  // Default sales rep
+      estimatedDelivery: new Date(Date.now() + 14 * 24 * 60 * 60 * 1000).toISOString().split('T')[0]  // 14 days from now
     };
 
     // Store in memory (in production, save to database)
     orderStorage.set(orderID, orderData);
     console.log('✅ Order stored for Order Management access:', orderData);
+    console.log('📊 Total orders in storage now:', orderStorage.size);
+    console.log('📊 All order IDs in storage:', Array.from(orderStorage.keys()));
 
     res.status(200).json({ 
       success: true, 
@@ -376,6 +381,99 @@ router.post('/update-sap', [verifyToken, authorizeUser], async (req, res) => {
   } catch (error) {
     console.error('❌ SAP update error:', error);
     res.status(500).json({ error: 'Failed to update SAP database' });
+  }
+});
+
+// Get all orders for Order Management Page
+router.get('/get-all-orders', [verifyToken, authorizeUser], async (req, res) => {
+  try {
+    console.log('�🚨🚨 GET ALL ORDERS ENDPOINT HIT! Request received at:', new Date().toISOString());
+    console.log('🔗 Full request headers:', req.headers);
+    console.log('🔑 Authorization header:', req.headers.authorization);
+
+    // Log user info for debugging
+    console.log('👤 User role:', req.userRole);
+    console.log('👤 User ID:', req.userID);
+    
+    // Allow authenticated users to see orders (not just admins for now)
+    // TODO: In production, restrict to admins only
+    // if (req.userRole !== 'Administrator') {
+    //   return res.status(403).json({ error: 'Unauthorized - Admin access required' });
+    // }
+
+    // Get all orders from memory storage (in production, this would be from database)
+    const allOrders = Array.from(orderStorage.values());
+    
+    // Add some default test orders if storage is empty (for demo purposes)
+    if (allOrders.length === 0) {
+      // Add current test orders to storage for consistency
+      const testOrders = [
+        {
+          orderID: 'SUBBE814UP',
+          customerName: 'John Smith',
+          customerFirstName: 'John',
+          customerLastName: 'Smith',
+          customerEmail: 'john.smith@email.com',
+          customerPhone: '+1 (555) 123-4567',
+          deliveryAddress: '123 Main Street, City, State 12345',
+          vehicleMake: 'Toyota',
+          vehicleModel: 'Camry',
+          status: 'Processing',
+          salesRep: 'Mike Johnson',
+          estimatedDelivery: '2025-11-15',
+          orderDate: new Date().toISOString(),
+          paymentStatus: 'confirmed'
+        },
+        {
+          orderID: 'SUBJJ332UP',
+          customerName: 'Sarah Davis',
+          customerFirstName: 'Sarah',
+          customerLastName: 'Davis',
+          customerEmail: 'sarah.davis@email.com',
+          customerPhone: '+1 (555) 987-6543',
+          deliveryAddress: '456 Oak Avenue, Town, State 67890',
+          vehicleMake: 'Honda',
+          vehicleModel: 'Civic',
+          status: 'Confirmed',
+          salesRep: 'Lisa Chen',
+          estimatedDelivery: '2025-12-01',
+          orderDate: new Date().toISOString(),
+          paymentStatus: 'confirmed'
+        },
+        {
+          orderID: 'SUBAS562UP',
+          customerName: 'Michael Brown',
+          customerFirstName: 'Michael',
+          customerLastName: 'Brown',
+          customerEmail: 'michael.brown@email.com',
+          customerPhone: '+1 (555) 456-7890',
+          deliveryAddress: '789 Pine Road, Village, State 54321',
+          vehicleMake: 'Ford',
+          vehicleModel: 'F-150',
+          status: 'Delivered',
+          salesRep: 'Tom Wilson',
+          estimatedDelivery: '2025-10-20',
+          orderDate: new Date().toISOString(),
+          paymentStatus: 'confirmed'
+        }
+      ];
+
+      // Add test orders to storage
+      testOrders.forEach(order => {
+        orderStorage.set(order.orderID, order);
+      });
+
+      console.log('✅ Initialized with test orders:', testOrders.length);
+      res.status(200).json(testOrders);
+      return;
+    }
+
+    console.log('✅ Retrieved orders from storage:', allOrders.length);
+    res.status(200).json(allOrders);
+
+  } catch (error) {
+    console.error('❌ Get all orders error:', error);
+    res.status(500).json({ error: 'Failed to retrieve orders' });
   }
 });
 
