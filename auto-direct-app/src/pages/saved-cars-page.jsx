@@ -31,7 +31,7 @@ function SavedCarsPage() {
 
         const res = await fetch(api + "/vehicle/saved-vehicles/", {
           headers: {
-            'Authorization': token
+            'Authorization': `Bearer ${token}`
           }
         });
 
@@ -69,7 +69,7 @@ function SavedCarsPage() {
         method: method,
         headers: {
           'Content-Type': 'application/json',
-          'Authorization': token
+          'Authorization': `Bearer ${token}`
         },
         body: JSON.stringify({ userID, vehicleID })
       });

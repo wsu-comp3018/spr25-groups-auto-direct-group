@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import Cookies from "js-cookie";
 import { useNavigate, useLocation, Link } from "react-router-dom";
 import getImageUrl from "./getImageUrl";
@@ -12,6 +12,9 @@ const Navbar = () => {
   const [showMobileMenu, setShowMobileMenu] = useState(false);
   const [showAdminSubmenu, setShowAdminSubmenu] = useState(false);
   const [showAdminSubmenuMobile, setShowAdminSubmenuMobile] = useState(false);
+  
+  const desktopScrollRef = useRef(null);
+  const mobileScrollRef = useRef(null);
 
   const navigate = useNavigate();
   const { pathname } = useLocation();
@@ -29,6 +32,28 @@ const Navbar = () => {
     window.addEventListener("scroll", controlNavbar);
     return () => window.removeEventListener("scroll", controlNavbar);
   }, [lastScrollY]);
+
+  // Check if scrollable content exists
+  useEffect(() => {
+    const checkScrollable = () => {
+      if (desktopScrollRef.current) {
+        const element = desktopScrollRef.current;
+        const isScrollable = element.scrollHeight > element.clientHeight;
+        element.classList.toggle('scrollable', isScrollable);
+      }
+      if (mobileScrollRef.current) {
+        const element = mobileScrollRef.current;
+        const isScrollable = element.scrollHeight > element.clientHeight;
+        element.classList.toggle('scrollable', isScrollable);
+      }
+    };
+
+    // Check immediately and after a short delay to ensure content is loaded
+    checkScrollable();
+    const timeoutId = setTimeout(checkScrollable, 100);
+    
+    return () => clearTimeout(timeoutId);
+  }, [showSlider, showMobileMenu, showAdminSubmenu, showAdminSubmenuMobile, user]);
 
   const handleUserClick = () => setShowSlider(true);
   const closeSlider = () => setShowSlider(false);
@@ -66,12 +91,6 @@ const Navbar = () => {
               {/* Desktop Nav */}
               <nav className="hidden md:flex space-x-4">
                 <Link
-                  to="/"
-                  className="inline-block py-2 px-4 text-black hover:bg-gray-200 rounded transition"
-                >
-                  Home
-                </Link>
-                <Link
                   to="/browse"
                   className="inline-block py-2 px-4 text-black hover:bg-gray-200 rounded transition"
                 >
@@ -83,7 +102,6 @@ const Navbar = () => {
                 >
                   Saved Cars
                 </Link>
-                {/* Test Drive Requests removed from top menu; accessible via Admin Options slider only */}
               {/* Commenting this out as we haven't gotten it functional
                 <Link
                   to="/contact"
@@ -134,147 +152,9 @@ const Navbar = () => {
         </div>
       </header>
 
-{/* User Slider (desktop only) */}
-<div
-  className={`fixed top-16 right-0 h-full w-72 bg-black border-l-2 border-white/10 font-normal z-50 transform transition-transform duration-300  ${
-    showSlider ? "translate-x-0" : "translate-x-full"
-  }`}
-  style={{
-    borderTopLeftRadius: "1.2rem",
-    borderBottomLeftRadius: "1.2rem",
-    boxShadow: "0 8px 32px 0 rgba(0,0,0,0.32)",
-  }}
->
-  <div className="p-6 flex justify-between items-center border-b border-white/10">
-    <h3 className="text-lg font-semibold text-white">Welcome </h3> 
-
-    <button
-      onClick={closeSlider}
-      className="text-white hover:bg-white hover:text-black p-2 rounded-full transition text-2xl"
-    >
-      &times;
-    </button>
-  </div>
-  <div className="flex flex-col">
-    {!user ? (
-      <>
-        <button
-          onClick={() => {
-            navigate("/login");
-            setShowSlider(false);
-          }}
-          className="text-white py-4 border-b border-white/10 hover:bg-white hover:text-black transition text-left px-6 rounded-none font-medium"
-        >
-          Login
-        </button>
-        <button
-          onClick={() => {
-            navigate("/register");
-            setShowSlider(false);
-          }}
-          className="text-white py-4 border-b border-white/10 hover:bg-white hover:text-black transition text-left px-6 rounded-none font-medium"
-        >
-          Register
-        </button>
-      </>
-    ) : (
-      <>
-        <button
-          onClick={() => {
-            navigate("/profile");
-            setShowSlider(false);
-          }}
-          className="text-white py-4 border-b border-white/10 hover:bg-white hover:text-black transition text-left px-6 rounded-none font-medium"
-        >
-          Profile Page
-        </button>
-        <button
-          onClick={() => {
-            navigate("manage-my-requests");
-            setShowSlider(false);
-          }}
-          className="text-white py-4 border-b border-white/10 hover:bg-white hover:text-black transition text-left px-6 rounded-none font-medium"
-        >
-          Manage My Requests
-        </button>
-        <button
-          onClick={() => {
-            navigate("manage-my-purchases");
-            setShowSlider(false);
-          }}
-          className="text-white py-4 border-b border-white/10 hover:bg-white hover:text-black transition text-left px-6 rounded-none font-medium"
-        >
-          Manage My Purchases
-        </button>
-        <button
-          onClick={() => setShowAdminSubmenu(!showAdminSubmenu)}
-          className="text-white py-4 border-b border-white/10 hover:bg-white hover:text-black transition text-left px-6 rounded-t-lg font-medium"
-        >
-          Admin Options
-        </button>
-        <div
-          className={`overflow-hidden transition-all duration-300 ease-in-out bg-black ${
-            showAdminSubmenu ? "max-h-[500px] shadow-inner" : "max-h-0"
-          }`}
-        >
-          <div className="pl-8 text-sm text-white">
-            <button
-              onClick={() => navigate("/manage-vehicles")}
-              className="block py-2 px-2 hover:underline hover:bg-white hover:text-black transition rounded"
-            >
-              Manage Vehicles
-            </button>
-            <button
-              onClick={() => navigate("/manage-users")}
-              className="block py-2 px-2 hover:underline hover:bg-white hover:text-black transition rounded"
-            >
-              Manage Users
-            </button>
-            <button
-              onClick={() => navigate("/manage-manufacturers")}
-              className="block py-2 px-2 hover:underline hover:bg-white hover:text-black transition rounded"
-            >
-              Manage Manufacturers
-            </button>
-            <button
-              onClick={() => navigate("/advice-queue")}
-              className="block py-2 px-2 hover:underline hover:bg-white hover:text-black transition rounded"
-            >
-              Advice Request Queue
-            </button>
-            <button
-              onClick={() => navigate("/manage-dealerships")}
-              className="block py-2 px-2 hover:underline hover:bg-white hover:text-black transition rounded"
-            >
-              Manage Dealerships
-            </button>
-            <button
-              onClick={() => navigate("/test-drive-dashboard")}
-              className="block py-2 px-2 hover:underline hover:bg-white hover:text-black transition rounded"
-            >
-              Test Drive Requests
-            </button>
-            <button
-              onClick={() => navigate("/customer-service-queue")}
-              className="block py-2 px-2 hover:underline hover:bg-white hover:text-black transition rounded"
-            >
-              Customer Service Queue
-            </button>
-          </div>
-        </div>
-        <button
-          onClick={handleLogout}
-          className="text-white py-4 border-b border-white/10 hover:bg-white hover:text-black transition text-left px-6 rounded-b-lg font-medium"
-        >
-          Logout
-        </button>
-      </>
-    )}
-  </div>
-</div>
       {/* User Slider (desktop only) */}
       <div
-        className={`fixed top-16 right-0 h-full w-72 bg-black border-l-2 border-white/10 font-normal z-50 transform transition-transform duration-300  ${
+        className={`fixed top-16 right-0 h-[calc(100vh-4rem)] w-72 bg-black border-l-2 border-white/10 font-normal z-50 transform transition-transform duration-300 flex flex-col ${
           showSlider ? "translate-x-0" : "translate-x-full"
         }`}
         style={{
@@ -283,7 +163,7 @@ const Navbar = () => {
           boxShadow: "0 8px 32px 0 rgba(0,0,0,0.32)",
         }}
       >
-        <div className="p-6 flex justify-between items-center border-b border-white/10">
+        <div className="p-6 flex justify-between items-center border-b border-white/10 flex-shrink-0">
           <h3 className="text-lg font-semibold text-white">
              Welcome
             {user && user.firstName ? `, ${user.firstName}` : ""} 
@@ -297,7 +177,7 @@ const Navbar = () => {
             &times;
           </button>
         </div>
-        <div className="flex flex-col">
+        <div ref={desktopScrollRef} className="flex flex-col flex-1 overflow-y-auto nav-scrollbar min-h-0 max-h-[calc(100vh-8rem)]">
           {!user ? (
             <>
               <button
@@ -348,6 +228,15 @@ const Navbar = () => {
               >
                 Manage My Purchases
               </button>
+              <button
+                onClick={() => {
+                  navigate("my-support-inquiries");
+                  setShowSlider(false);
+                }}
+                className="text-white py-4 border-b border-white/10 hover:bg-white hover:text-black transition text-left px-6 rounded-none font-medium"
+              >
+                My Support Inquiries
+              </button>
 
               {/* ADMIN ONLY: Admin Options and submenu */}
               {user?.roles?.some(role => ["Manufacturer", "Administrator"].includes(role) ) && (
@@ -358,16 +247,16 @@ const Navbar = () => {
                   >
                      <span>Admin Options</span>
                       <ChevronDown
-                        className={`w-5 h-5 ml-2 text-white transition-transform duration-200 ${showAdminSubmenuMobile ? "rotate-0" : ""}`}
+                        className={`w-5 h-5 ml-2 text-white transition-transform duration-200 ${showAdminSubmenu ? "rotate-180" : ""}`}
                       />
                   </button>
                     <div
-                      className={`overflow-hidden transition-all duration-300 ease-in-out bg-black ${
-                        showAdminSubmenu ? "max-h-[500px] shadow-inner" : "max-h-0"
+                      className={`transition-all duration-300 ease-in-out bg-black ${
+                        showAdminSubmenu ? "max-h-[50vh] shadow-inner" : "max-h-0 overflow-hidden"
                       }`}
                       >
 
-                        <div className="pl-8 text-sm text-white">
+                        <div className="pl-8 text-sm text-white overflow-y-auto admin-submenu-scrollbar max-h-[50vh] pr-4 py-2">
                         {user?.roles?.some(role => ["Manufacturer", "Administrator"].includes(role) ) && (
                           <button
                             onClick={() => navigate("/manage-vehicles")}
@@ -411,6 +300,17 @@ const Navbar = () => {
                         )}
 
                         {user?.roles?.some(role => [ "Administrator"].includes(role) ) && (
+                        <button onClick={() => navigate("/order-management")} className="block py-2 px-2 hover:underline hover:bg-white hover:text-black transition rounded" >
+                          Order Management
+                        </button>
+                        )}
+
+                        {user?.roles?.some(role => [ "Administrator"].includes(role) ) && (
+                        <button onClick={() => navigate("/logistics-dashboard")} className="block py-2 px-2 hover:underline hover:bg-white hover:text-black transition rounded" >
+                          Logistics Dashboard
+                        </button>
+                        )}
+                        {user?.roles?.some(role => [ "Administrator"].includes(role) ) && (
                           <button
                             onClick={() => navigate("/test-drive-dashboard")}
                             className="block py-2 px-2 hover:underline hover:bg-white hover:text-black transition rounded"
@@ -425,6 +325,14 @@ const Navbar = () => {
                             className="block py-2 px-2 hover:underline hover:bg-white hover:text-black transition rounded"
                           >
                             Customer Service Queue
+                          </button>
+                        )}
+                        {user?.roles?.some(role => [ "Administrator"].includes(role) ) && (
+                          <button
+                            onClick={() => navigate("/chatbot-inquiries")}
+                            className="block py-2 px-2 hover:underline hover:bg-white hover:text-black transition rounded"
+                          >
+                            Chatbot Inquiries
                           </button>
                         )}
 
@@ -447,7 +355,7 @@ const Navbar = () => {
 
       {/* Mobile Menu Slider */}
       <div
-        className={`fixed top-0 right-0 h-full w-64 bg-black  border-white/10  z-50 transform transition-transform duration-300 ${
+        className={`fixed top-0 right-0 h-screen w-64 bg-black border-white/10 z-50 transform transition-transform duration-300 flex flex-col ${
           showMobileMenu ? "translate-x-0" : "translate-x-full"
         }`}
         style={{
@@ -456,17 +364,13 @@ const Navbar = () => {
           boxShadow: "0 8px 32px 0 rgba(0,0,0,0.32)",
         }}
       >
-        <div className="p-6 flex justify-between items-center border-b border-white/10">
-        
-                 <div className="p-6 flex justify-between items-center border-b border-white/10">
+        <div className="p-6 flex justify-between items-center border-b border-white/10 flex-shrink-0">
           <h3 className="text-lg font-semibold text-white">
              Welcome
             {user && user.firstName ? `, ${user.firstName}` : ""} 
             <br/>
             {user && user.roles && user.roles.length > 0 ?  `Role: ${user.roles[0]}` : ""}
           </h3>
- 
-        </div>
           <button
             onClick={() => setShowMobileMenu(false)}
             className="text-white hover:bg-white hover:text-black p-2 rounded-full transition text-2xl"
@@ -474,7 +378,7 @@ const Navbar = () => {
             &times;
           </button>
         </div>
-        <div className=" flex flex-col">
+        <div ref={mobileScrollRef} className="flex flex-col flex-1 overflow-y-auto nav-scrollbar min-h-0 max-h-[calc(100vh-6rem)]">
           <Link
             to="/"
             onClick={() => setShowMobileMenu(false)}
@@ -552,13 +456,13 @@ const Navbar = () => {
               </button>
 
                   <div
-                    className={`overflow-hidden transition-all duration-300 ease-in-out bg-black ${
+                    className={`transition-all duration-300 ease-in-out bg-black ${
                       showAdminSubmenuMobile
-                        ? "max-h-[500px] shadow-inner"
-                        : "max-h-0"
+                        ? "max-h-[60vh] shadow-inner"
+                        : "max-h-0 overflow-hidden"
                     }`}
                   >
-                    <div className="pl-8 text-sm text-white">
+                    <div className="pl-8 text-sm text-white overflow-y-auto nav-scrollbar max-h-[60vh] pr-4 py-2">
                       <button
                         onClick={() => navigate("/approve")}
                         className="block py-2 px-2 hover:underline hover:bg-white hover:text-black transition rounded"

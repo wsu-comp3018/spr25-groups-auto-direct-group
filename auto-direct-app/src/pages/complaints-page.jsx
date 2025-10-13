@@ -1,9 +1,12 @@
 // ComplaintsPage.jsx – Complaint form for Autos Direct
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
+import { autoFillForm, fieldMappings } from "../utils/autoFillUtils";
 
 const ComplaintsPage = () => {
   const [formData, setFormData] = useState({
     customerName: "",
+    customerEmail: "",
+    customerPhone: "",
     hasAccount: "",
     accountNumber: "",
     isStaffRelated: "",
@@ -15,6 +18,11 @@ const ComplaintsPage = () => {
 
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submitMessage, setSubmitMessage] = useState("");
+
+  // Auto-fill form with user profile data when component loads
+  useEffect(() => {
+    autoFillForm(setFormData, fieldMappings.complaints);
+  }, []);
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
@@ -44,9 +52,11 @@ const ComplaintsPage = () => {
 
       if (response.ok) {
         const result = await response.json();
-        window.toast.success("Thank you! Your complaint has been submitted successfully. You will receive a response directly.");
+        setSubmitMessage(result.message || "Complaint submitted successfully. You will receive a response directly.");
         setFormData({
           customerName: "",
+          customerEmail: "",
+          customerPhone: "",
           hasAccount: "",
           accountNumber: "",
           isStaffRelated: "",
@@ -58,15 +68,15 @@ const ComplaintsPage = () => {
       } else {
         try {
           const errorData = await response.json();
-          window.toast.error(errorData.error || "There was an error submitting your complaint. Please try again or contact us directly.");
+          setSubmitMessage(errorData.error || "There was an error submitting your complaint. Please try again or contact us directly.");
         } catch (jsonError) {
           console.error('Error parsing error response:', jsonError);
-          window.toast.error(`Server error (${response.status}). Please try again or contact us directly.`);
+          setSubmitMessage(`Server error (${response.status}). Please try again or contact us directly.`);
         }
       }
     } catch (error) {
       console.error('Error submitting complaint:', error);
-      window.toast.error("There was an error submitting your complaint. Please try again or contact us directly.");
+      setSubmitMessage("There was an error submitting your complaint. Please try again or contact us directly.");
     } finally {
       setIsSubmitting(false);
     }
@@ -94,6 +104,36 @@ const ComplaintsPage = () => {
                   value={formData.customerName}
                   onChange={handleInputChange}
                   required
+                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-gray-500"
+                />
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  Email address
+                </label>
+                <input
+                  type="email"
+                  name="customerEmail"
+                  value={formData.customerEmail}
+                  onChange={handleInputChange}
+                  required
+                  placeholder="customer@example.com"
+                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-gray-500"
+                />
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  Phone number
+                </label>
+                <input
+                  type="tel"
+                  name="customerPhone"
+                  value={formData.customerPhone}
+                  onChange={handleInputChange}
+                  required
+                  placeholder="0412345678"
                   className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-gray-500"
                 />
               </div>
