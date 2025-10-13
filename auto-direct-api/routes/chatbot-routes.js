@@ -13,8 +13,11 @@ const generateSessionId = () => {
 };
 
 // Helper function to generate customer key from email/phone
-const generateCustomerKey = (email, phone) => {
-  const identifier = email || phone || 'anonymous';
+const generateCustomerKey = (email, phone, sessionId) => {
+  // Generate completely unique customer keys per browser session
+  // Use sessionId as the primary identifier to ensure absolute uniqueness
+  // Contact info is secondary and doesn't affect key uniqueness
+  const identifier = `session_${sessionId}`;
   return crypto.createHash('sha256').update(identifier).digest('hex');
 };
 
@@ -81,16 +84,10 @@ router.post('/register', async (req, res) => {
   try {
     const { customerName, customerEmail, customerPhone } = req.body;
     
-    // Validate required fields
-    if (!customerName || (!customerEmail && !customerPhone)) {
-      return res.status(400).json({ 
-        error: 'Name and either email or phone are required' 
-      });
-    }
-
-    // Generate session and customer identifiers
+    // All fields are now optional - no validation required
+    // Generate session and customer identifiers even without contact info
     const sessionId = generateSessionId();
-    const customerKey = generateCustomerKey(customerEmail, customerPhone);
+    const customerKey = generateCustomerKey(customerEmail, customerPhone, sessionId);
 
     // Check if customer already exists
     const existingCustomerQuery = `
@@ -123,9 +120,9 @@ router.post('/register', async (req, res) => {
         `;
         
         pool.query(createInquiryQuery, [
-          `Customer ${customerName} started a new conversation`,
-          customerEmail,
-          customerPhone,
+          `Customer ${customerName || 'Anonymous'} started a new conversation`,
+          customerEmail || null,
+          customerPhone || null,
           sessionId,
           customerKey
         ], (err, result) => {
@@ -154,7 +151,7 @@ router.post('/register', async (req, res) => {
 // POST /api/chatbot/message - Send a message in a conversation
 router.post('/message', async (req, res) => {
   try {
-    const { sessionId, customerKey, message, sender = 'user' } = req.body;
+    const { sessionId, customerKey, message, sender = 'user', customerEmail, customerName, customerPhone } = req.body;
     
     if (!sessionId || !message) {
       return res.status(400).json({ error: 'Session ID and message are required' });
@@ -179,6 +176,23 @@ router.post('/message', async (req, res) => {
       }
 
       const inquiryId = results[0].id;
+
+      // Update customer information if provided (for user messages)
+      if (sender === 'user' && (customerEmail || customerName || customerPhone)) {
+        const updateCustomerQuery = `
+          UPDATE customer_inquiries 
+          SET customer_email = COALESCE(?, customer_email),
+              customer_phone = COALESCE(?, customer_phone),
+              updated_at = NOW()
+          WHERE id = ?
+        `;
+        
+        pool.query(updateCustomerQuery, [customerEmail, customerPhone, inquiryId], (err) => {
+          if (err) {
+            console.error('Error updating customer info:', err);
+          }
+        });
+      }
 
       // Insert message into chatbot_messages table
       const insertMessageQuery = `
@@ -321,6 +335,52 @@ router.get('/inquiries', async (req, res) => {
   }
 });
 
+// GET /api/chatbot/my-inquiries - Get inquiries for a specific customer
+router.get('/my-inquiries', async (req, res) => {
+  try {
+    const { customerKey } = req.query;
+    
+    if (!customerKey) {
+      return res.status(400).json({ error: 'Customer key is required' });
+    }
+
+    const query = `
+      SELECT 
+        ci.id,
+        ci.customer_message,
+        ci.customer_email,
+        ci.customer_phone,
+        ci.status,
+        ci.created_at,
+        ci.updated_at,
+        ci.session_id,
+        ci.customer_key,
+        ci.assigned_to,
+        ci.priority,
+        COUNT(cm.id) as message_count,
+        MAX(cm.created_at) as last_message_time
+      FROM customer_inquiries ci
+      LEFT JOIN chatbot_messages cm ON ci.id = cm.inquiry_id
+      WHERE ci.customer_key = ?
+      GROUP BY ci.id
+      ORDER BY ci.created_at DESC
+    `;
+    
+    pool.query(query, [customerKey], (err, results) => {
+      if (err) {
+        console.error('Error fetching customer inquiries:', err);
+        return res.status(500).json({ error: 'Database error' });
+      }
+      
+      res.json({ inquiries: results });
+    });
+
+  } catch (error) {
+    console.error('Error in my-inquiries endpoint:', error);
+    res.status(500).json({ error: 'Internal server error' });
+  }
+});
+
 // GET /api/chatbot/messages/:inquiryId - Get all messages for a specific inquiry
 router.get('/messages/:inquiryId', async (req, res) => {
   try {
@@ -360,7 +420,10 @@ router.post('/reply', async (req, res) => {
   try {
     const { id: inquiryId, sessionId, replyText } = req.body;
     
+    console.log('Reply endpoint called with:', { inquiryId, sessionId, replyText });
+    
     if (!inquiryId || !replyText) {
+      console.log('Missing required fields:', { inquiryId: !!inquiryId, replyText: !!replyText });
       return res.status(400).json({ error: 'Inquiry ID and reply text are required' });
     }
 
@@ -391,10 +454,22 @@ router.post('/reply', async (req, res) => {
         // Emit real-time update via Socket.IO
         const io = req.app.get('io');
         if (io && sessionId) {
-          io.to(sessionId).emit('agent_reply', {
+          const eventData = {
+            inquiryId: inquiryId,
             message: replyText,
             timestamp: new Date().toISOString()
-          });
+          };
+          
+          console.log('Emitting agent_reply to session room:', sessionId, 'with data:', eventData);
+          
+          // Emit to the specific session room AND broadcast to all clients
+          io.to(sessionId).emit('agent_reply', eventData);
+          // Also emit to all clients for admin dashboard updates
+          io.emit('agent_reply', eventData);
+          
+          console.log('Agent reply emitted successfully');
+        } else {
+          console.log('Socket.IO not available or sessionId missing:', { io: !!io, sessionId });
         }
         
         res.json({
