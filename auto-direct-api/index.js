@@ -96,7 +96,7 @@ try {
         res.json(results);
       }
 
-      pool.destroy();
+      // pool.destroy(); // Commented out - not needed for connection pools
     });
   });
 

@@ -147,37 +147,23 @@ const ProfessionalOrderManagementPage = () => {
   // Fetch orders for table view
   const fetchAllOrders = async () => {
     setIsLoadingOrders(true);
-    console.log('🔄 fetchAllOrders called');
-    console.log('🌐 API URL:', `${api}/order-processing/get-all-orders`);
-    
     try {
       const token = Cookies.get("auto-direct-token");
-      console.log('🔑 Token from cookies:', token ? token.substring(0, 20) + '...' : 'No token found');
-      
       const response = await fetch(`${api}/order-processing/get-all-orders`, {
         method: 'GET',
         headers: {
           'Content-Type': 'application/json',
-          'Authorization': token  // Send raw token like PurchaseFlowPage does
+          'Authorization': `Bearer ${token}`
         }
       });
-      
-      console.log('📨 API Response status:', response.status);
-      console.log('📨 API Response headers:', response.headers);
 
       if (response.ok) {
         const ordersData = await response.json();
         setOrders(ordersData);
         setFilteredOrders(ordersData);
-        console.log('✅ Orders loaded from API:', ordersData);
+        console.log('✅ Orders loaded:', ordersData);
       } else {
-        console.log('❌ API call failed with status:', response.status);
-        const errorText = await response.text();
-        console.log('❌ API error response:', errorText);
-        console.log('🔑 Token used:', token ? token.substring(0, 20) + '...' : 'No token');
-        
         // Fallback to demo data for testing
-        console.log('📋 Using demo data as fallback');
         const demoOrders = [
           {
             orderID: 'SUBBE814UP',
@@ -231,18 +217,6 @@ const ProfessionalOrderManagementPage = () => {
     }
   }, [viewMode]);
 
-  // Filter orders by status
-  useEffect(() => {
-    if (orders.length > 0) {
-      if (statusFilter === 'All Status') {
-        setFilteredOrders(orders);
-      } else {
-        const filtered = orders.filter(order => order.status === statusFilter);
-        setFilteredOrders(filtered);
-      }
-    }
-  }, [statusFilter, orders]);
-
   // Search function
   const handleSearch = async () => {
     if (!selectedOrderID.trim()) {
@@ -265,7 +239,7 @@ const ProfessionalOrderManagementPage = () => {
         method: 'GET',
         headers: {
           'Content-Type': 'application/json',
-          'Authorization': token  // Send raw token like PurchaseFlowPage does
+          'Authorization': `Bearer ${token}`
         }
       });
 
@@ -447,7 +421,7 @@ const ProfessionalOrderManagementPage = () => {
             <div className="flex justify-between items-center p-6 border-b border-gray-200">
               <div className="flex items-center space-x-4">
                 <h2 className="text-xl font-semibold text-black">All Orders</h2>
-                <span className="text-gray-500 text-sm">({filteredOrders.length} of {orders.length} results)</span>
+                <span className="text-gray-500 text-sm">({orders.length} of {orders.length} results)</span>
               </div>
               
               {/* Search Controls */}
@@ -462,22 +436,14 @@ const ProfessionalOrderManagementPage = () => {
                     className="pl-10 pr-4 py-2 border border-gray-300 rounded-md text-sm focus:ring-2 focus:ring-black focus:border-black w-64"
                   />
                 </div>
-                <select 
-                  value={statusFilter}
-                  onChange={(e) => setStatusFilter(e.target.value)}
-                  className="border border-gray-300 rounded-md px-3 py-2 text-sm focus:ring-2 focus:ring-black focus:border-black"
-                >
+                <select className="border border-gray-300 rounded-md px-3 py-2 text-sm focus:ring-2 focus:ring-black focus:border-black">
                   <option>All Status</option>
                   <option>Processing</option>
                   <option>Confirmed</option>
                   <option>Delivered</option>
                 </select>
-                <button 
-                  onClick={fetchAllOrders}
-                  disabled={isLoadingOrders}
-                  className="bg-black text-white px-4 py-2 rounded-md text-sm font-medium hover:bg-gray-800 disabled:opacity-50"
-                >
-                  {isLoadingOrders ? 'Refreshing...' : 'Refresh'}
+                <button className="bg-black text-white px-4 py-2 rounded-md text-sm font-medium hover:bg-gray-800">
+                  Refresh
                 </button>
               </div>
             </div>
@@ -610,13 +576,13 @@ const ProfessionalOrderManagementPage = () => {
                           <div className="flex space-x-1">
                             <button 
                               onClick={() => handleSaveEdit(order.orderID)}
-                              className="bg-black text-white text-xs px-2 py-1 rounded hover:bg-gray-800 transition-colors"
+                              className="bg-green-600 text-white text-xs px-2 py-1 rounded hover:bg-green-700 transition-colors"
                             >
                               Save
                             </button>
                             <button 
                               onClick={handleCancelEdit}
-                              className="bg-white text-black text-xs px-2 py-1 rounded border border-gray-300 hover:bg-gray-50 transition-colors"
+                              className="bg-gray-500 text-white text-xs px-2 py-1 rounded hover:bg-gray-600 transition-colors"
                             >
                               Cancel
                             </button>
@@ -633,17 +599,17 @@ const ProfessionalOrderManagementPage = () => {
 
                       {/* More Actions */}
                       <div className="flex space-x-2">
-                        <button className="text-gray-500 hover:text-black transition-colors p-1 rounded hover:bg-gray-100">
+                        <button className="text-gray-400 hover:text-gray-600">
                           <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21L6.927 10.5a11.054 11.054 0 006.073 6.073l1.113-3.297a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z" />
                           </svg>
                         </button>
-                        <button className="text-gray-500 hover:text-black transition-colors p-1 rounded hover:bg-gray-100">
+                        <button className="text-gray-400 hover:text-gray-600">
                           <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" />
                           </svg>
                         </button>
-                        <button className="text-gray-500 hover:text-black transition-colors p-1 rounded hover:bg-gray-100">
+                        <button className="text-gray-400 hover:text-gray-600">
                           <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
                           </svg>
@@ -711,7 +677,7 @@ const ProfessionalOrderManagementPage = () => {
             <button
               onClick={handleSearch}
               disabled={isLoading}
-              className="bg-black text-white px-6 py-2 rounded-md font-medium hover:bg-gray-800 disabled:opacity-50 disabled:bg-gray-400"
+              className="bg-blue-600 text-white px-6 py-2 rounded-md font-medium hover:bg-blue-700 disabled:opacity-50"
             >
               {isLoading ? 'Searching...' : 'Search'}
             </button>
@@ -728,155 +694,6 @@ const ProfessionalOrderManagementPage = () => {
                     <p className="text-red-800 font-medium">❌ Order not found. Please check the order ID.</p>
                   </div>
                 ) : null}
-              </div>
-            )}
-
-            {/* Customer Details Form - Show when order is found */}
-            {orderFound && (
-              <div className="mt-6 bg-gray-50 border border-gray-200 rounded-lg p-6">
-                <h3 className="text-lg font-semibold text-black mb-4">👤 Customer Details</h3>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">First Name</label>
-                    <input
-                      type="text"
-                      name="firstName"
-                      value={formData.firstName}
-                      onChange={handleInputChange}
-                      className="w-full border border-gray-300 rounded-md px-3 py-2 focus:ring-2 focus:ring-black focus:border-black"
-                      readOnly
-                    />
-                  </div>
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">Last Name</label>
-                    <input
-                      type="text"
-                      name="lastName"
-                      value={formData.lastName}
-                      onChange={handleInputChange}
-                      className="w-full border border-gray-300 rounded-md px-3 py-2 focus:ring-2 focus:ring-black focus:border-black"
-                      readOnly
-                    />
-                  </div>
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">Email</label>
-                    <input
-                      type="email"
-                      name="email"
-                      value={formData.email}
-                      onChange={handleInputChange}
-                      className="w-full border border-gray-300 rounded-md px-3 py-2 focus:ring-2 focus:ring-black focus:border-black"
-                      readOnly
-                    />
-                  </div>
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">Phone</label>
-                    <input
-                      type="text"
-                      name="bestContact"
-                      value={formData.bestContact}
-                      onChange={handleInputChange}
-                      className="w-full border border-gray-300 rounded-md px-3 py-2 focus:ring-2 focus:ring-black focus:border-black"
-                      readOnly
-                    />
-                  </div>
-                </div>
-
-                <h3 className="text-lg font-semibold text-black mb-4">🚗 Vehicle Details</h3>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">Vehicle Model</label>
-                    <input
-                      type="text"
-                      name="vehicleModel"
-                      value={formData.vehicleModel}
-                      onChange={handleInputChange}
-                      className="w-full border border-gray-300 rounded-md px-3 py-2 focus:ring-2 focus:ring-black focus:border-black"
-                      readOnly
-                    />
-                  </div>
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">Manufacturer</label>
-                    <input
-                      type="text"
-                      name="manufacturer"
-                      value={formData.manufacturer}
-                      onChange={handleInputChange}
-                      className="w-full border border-gray-300 rounded-md px-3 py-2 focus:ring-2 focus:ring-black focus:border-black"
-                      readOnly
-                    />
-                  </div>
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">VIN Details</label>
-                    <input
-                      type="text"
-                      name="vinDetails"
-                      value={formData.vinDetails}
-                      onChange={handleInputChange}
-                      className="w-full border border-gray-300 rounded-md px-3 py-2 focus:ring-2 focus:ring-black focus:border-black"
-                      readOnly
-                    />
-                  </div>
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">Order Status</label>
-                    <input
-                      type="text"
-                      name="orderStatus"
-                      value={formData.orderStatus}
-                      onChange={handleInputChange}
-                      className="w-full border border-gray-300 rounded-md px-3 py-2 focus:ring-2 focus:ring-black focus:border-black"
-                      readOnly
-                    />
-                  </div>
-                </div>
-
-                <h3 className="text-lg font-semibold text-black mb-4">📋 Order Management</h3>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">Sales Representative</label>
-                    <input
-                      type="text"
-                      name="salesRep"
-                      value={formData.salesRep}
-                      onChange={handleInputChange}
-                      className="w-full border border-gray-300 rounded-md px-3 py-2 focus:ring-2 focus:ring-black focus:border-black"
-                      readOnly
-                    />
-                  </div>
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">Estimated Delivery</label>
-                    <input
-                      type="date"
-                      name="estimatedDelivery"
-                      value={formData.estimatedDelivery}
-                      onChange={handleInputChange}
-                      className="w-full border border-gray-300 rounded-md px-3 py-2 focus:ring-2 focus:ring-black focus:border-black"
-                      readOnly
-                    />
-                  </div>
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">Logistics Company</label>
-                    <input
-                      type="text"
-                      name="logisticsCompany"
-                      value={formData.logisticsCompany}
-                      onChange={handleInputChange}
-                      className="w-full border border-gray-300 rounded-md px-3 py-2 focus:ring-2 focus:ring-black focus:border-black"
-                      readOnly
-                    />
-                  </div>
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">Delivery Address</label>
-                    <textarea
-                      name="deliveryAddress"
-                      value={formData.deliveryAddress}
-                      onChange={handleInputChange}
-                      rows="3"
-                      className="w-full border border-gray-300 rounded-md px-3 py-2 focus:ring-2 focus:ring-black focus:border-black"
-                      readOnly
-                    />
-                  </div>
-                </div>
               </div>
             )}
           </div>
