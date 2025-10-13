@@ -97,7 +97,7 @@ function PurchaseFlowPage() {
     lastName: "",
     email: "",
     confirmEmail: "",
-    phone: "+61 ",
+  phone: "",
     streetNumber: "",
     streetName: "",
     suburb: "",
@@ -157,9 +157,9 @@ function PurchaseFlowPage() {
   }, []);
 
   // Auto-fill form with user profile data when logged in
-  useEffect(() => {
-    autoFillForm(setPurchaseForm, fieldMappings.purchase);
-  }, [userID, token]); // Re-run if authentication state changes
+  // useEffect(() => {
+  //   autoFillForm(setPurchaseForm, fieldMappings.purchase);
+  // }, [userID, token]); // Re-run if authentication state changes
 
   const fetchManufacturers = async () => {
     try {
@@ -185,27 +185,22 @@ function PurchaseFlowPage() {
     console.log('fetchManufacturerDetails called');
     console.log('car:', car);
     console.log('manufacturers:', manufacturers);
-    
     if (!car || manufacturers.length === 0) {
       console.log('Missing car or manufacturers data');
       return;
     }
-
     setLoadingManufacturerDetails(true);
     try {
       // Use manufacturerID directly from car data if available
       const manufacturerID = car.manufacturerID;
       const makeId = car.makeID || car.makeid || car.make_id;
       const makeName = car.makeName || car.make;
-      
       console.log('Looking for manufacturer with manufacturerID:', manufacturerID, 'makeID:', makeId, 'or makeName:', makeName);
-      
       // Try to find manufacturer by manufacturerID first (most reliable)
       let manufacturer = null;
       if (manufacturerID) {
         manufacturer = manufacturers.find(m => m.manufacturerID === manufacturerID);
       }
-      
       // Fallback to makeID or name matching if manufacturerID lookup fails
       if (!manufacturer && makeId) {
         manufacturer = manufacturers.find(m => m.makeID === makeId);
@@ -216,9 +211,7 @@ function PurchaseFlowPage() {
           m.manufacturerName?.toLowerCase() === makeName.toLowerCase()
         );
       }
-      
       console.log('Found manufacturer:', manufacturer);
-      
       if (manufacturer) {
         const response = await fetch(
           api + `/manage-dealerships/manufacturers/${manufacturer.manufacturerID}`
@@ -248,51 +241,10 @@ function PurchaseFlowPage() {
         });
       }
     } catch (error) {
-      console.error("Error fetching manufacturer details:", error);
+      console.error('Error fetching manufacturer details:', error);
       setManufacturerDetails(null);
     } finally {
       setLoadingManufacturerDetails(false);
-    }
-  };
-
-  const resetPurchaseForm = () => {
-    setCurrentPurchaseStep(1);
-    setPurchaseForm({
-      firstName: "",
-      lastName: "",
-      email: "",
-      confirmEmail: "",
-      phone: "+61 ",
-      streetNumber: "",
-      streetName: "",
-      suburb: "",
-      state: "",
-      postcode: "",
-      licenseFirstName: "",
-      licenseLastName: "",
-      licenseNumber: "",
-      licenseState: "",
-      licenseExpiryDate: "",
-      financingOption: "cash",
-      loanTerm: "36",
-      downPayment: "",
-      notes: ""
-    });
-  };
-
-  // Handle form input changes
-  const handleInputChange = (field, value) => {
-    setPurchaseForm(prev => ({
-      ...prev,
-      [field]: value
-    }));
-    
-    // Clear field error when user starts typing
-    if (fieldErrors[field]) {
-      setFieldErrors(prev => ({
-        ...prev,
-        [field]: false
-      }));
     }
   };
 
