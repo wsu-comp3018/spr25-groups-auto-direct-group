@@ -40,7 +40,7 @@ function UserPurchasePage() {
 		.then((res) => {
 			let data = res.json();
 			if(res.status != 200) { 
-				window.alert('cancel purcahse failed ' + data.error);
+				window.toast.error('Cancel purchase failed: ' + data.error);
 				return;
 			}
 
