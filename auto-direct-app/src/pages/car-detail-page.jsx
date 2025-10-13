@@ -36,7 +36,7 @@ function CarDetailPage() {
   // Toggle save/unsave via heart, silent and without redirect
   const handleSaveViaHeart = async () => {
     if (!token || !userID) {
-      window.alert('Please sign in to save vehicles.');
+      window.toast.warning('Please sign in to save vehicles.');
       return;
     }
     if (!car?.vehicleID || isSaving) return;
@@ -441,7 +441,7 @@ function CarDetailPage() {
         }),
       }
     );
-    alert("Thank you! Your request for advice has been sent.");
+    window.toast.success("Thank you! Your request for advice has been sent.");
     setAdviceForm({
       message: "",
     });

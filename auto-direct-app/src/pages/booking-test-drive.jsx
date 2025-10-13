@@ -66,27 +66,27 @@ function TestDrivePage({ car: providedCar, thumbnailPath, onClose }) {
     
     // Validate required fields
     if (!formData.name.trim()) {
-      alert("Please enter your full name.");
+      window.toast.error("Please enter your full name.");
       return;
     }
     if (!formData.email.trim()) {
-      alert("Please enter your email address.");
+      window.toast.error("Please enter your email address.");
       return;
     }
     if (!formData.phone.trim()) {
-      alert("Please enter your phone number.");
+      window.toast.error("Please enter your phone number.");
       return;
     }
     if (!formData.suburb.trim()) {
-      alert("Please enter your suburb.");
+      window.toast.error("Please enter your suburb.");
       return;
     }
     if (!formData.date) {
-      alert("Please select a date for your test drive.");
+      window.toast.error("Please select a date for your test drive.");
       return;
     }
     if (!formData.slot) {
-      alert("Please select a time slot for your test drive.");
+      window.toast.error("Please select a time slot for your test drive.");
       return;
     }
     
@@ -96,7 +96,7 @@ function TestDrivePage({ car: providedCar, thumbnailPath, onClose }) {
     const vehicleID = car?.vehicleID || car?.id || "";
     
     if (!token || !userID) {
-      alert("Please log in to send a request.");
+      window.toast.warning("Please log in to send a request.");
       return;
     }
 
@@ -137,7 +137,7 @@ function TestDrivePage({ car: providedCar, thumbnailPath, onClose }) {
         throw new Error(responseData.error || `Server returned ${res.status}: ${res.statusText}`);
       }
 
-      alert("Thank you! Your test drive request has been sent.");
+      window.toast.success("Thank you! Your test drive request has been sent.");
       setFormData({ 
         name: "", 
         email: "", 
@@ -157,7 +157,7 @@ function TestDrivePage({ car: providedCar, thumbnailPath, onClose }) {
       
     } catch (err) {
       console.error("Test drive booking error:", err);
-      alert(`Failed to book test drive: ${err.message}. Please try again.`);
+      window.toast.error(`Failed to book test drive: ${err.message}. Please try again.`);
     }
   };
 
