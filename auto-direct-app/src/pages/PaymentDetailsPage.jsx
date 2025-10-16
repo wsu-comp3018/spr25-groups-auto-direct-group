@@ -155,16 +155,8 @@ const PaymentDetailsPage = () => {
       console.log('⚠️ Background email processing had issues:', error);
     }
 
-    // Navigate to success page (existing purchase vehicle page)
-    navigate('/purchase-vehicle', {
-      state: {
-        orderID,
-        customerName,
-        purchaseFormData,
-        vehicleDetails,
-        manufacturerDetails
-      }
-    });
+    // Navigate to browse page after successful order
+    navigate('/browse');
   };
 
   return (

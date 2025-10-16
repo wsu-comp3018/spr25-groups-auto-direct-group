@@ -62,7 +62,7 @@ function ManageManufacturersPage() {
 		.then((res) => {
 			let data = res.json();
 			if(res.status != 200) { 
-				window.alert('toggle status failed ' + data.error);
+				window.toast.error('Toggle status failed: ' + data.error);
 				return;
 			}
 

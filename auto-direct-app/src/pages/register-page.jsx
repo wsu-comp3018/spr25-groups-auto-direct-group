@@ -137,11 +137,11 @@ const RegisterPage = () => {
         navigate("/");
       } else {
         console.error("Login failed after registration");
-        alert("Login failed after registration.");
+        window.toast.error("Login failed after registration.");
       }
     } catch (error) {
       console.error("Error submitting form:", error);
-      alert("An error occurred during registration.");
+      window.toast.error("An error occurred during registration.");
     }
   };
 
@@ -176,6 +176,7 @@ const RegisterPage = () => {
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M18 9v3m0 0v3m0-3h3m-3 0h-3m-2-5a4 4 0 11-8 0 4 4 0 018 0zM3 20a6 6 0 0112 0v1H3v-1z" />
             </svg>
           </div>
+        </div>
 
         {/* Registration Form */}
         <div className="bg-white bg-opacity-95 backdrop-blur-sm rounded-2xl shadow-xl border border-gray-200 p-8">
@@ -599,12 +600,11 @@ const RegisterPage = () => {
           >
             Register
           </button>
-        </form>
+          </form>
+        </div>
       </div>
     </div>
-    </div>
-    </div>
   );
-};
+}
 
 export default RegisterPage;

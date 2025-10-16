@@ -2,6 +2,7 @@ const express = require('express');
 const router = express.Router();
 const { v4: uuidv4 } = require('uuid');
 const verifyToken = require('../middleware/authentication.js');
+const { sendComparisonConfirmationEmail } = require('../service/email-service.js');
 
 // Submit new vehicle comparison request
 router.post('/submit-comparison', verifyToken, async (req, res) => {
@@ -45,6 +46,76 @@ router.post('/submit-comparison', verifyToken, async (req, res) => {
                 console.error('Database error in submit-comparison:', err);
                 return res.status(500).json({ error: 'Failed to submit comparison request' });
             }
+            
+            // Send confirmation email after successful submission
+            (async () => {
+                try {
+                    console.log('🚗 Vehicle comparison request created successfully, sending confirmation email...');
+                    
+                    // Get user information
+                    const userQuery = 'SELECT firstName, lastName, emailAddress, phone FROM users WHERE userID = ?';
+                    const userResult = await new Promise((resolve, reject) => {
+                        pool.query(userQuery, [userID], (err, result) => {
+                            if (err) reject(err);
+                            else resolve(result);
+                        });
+                    });
+                    
+                    // Get vehicle information for all selected vehicles
+                    const vehicleIds = [primaryVehicleID, secondaryVehicleID, tertiaryVehicleID].filter(id => id);
+                    const vehicleQuery = `
+                        SELECT v.vehicleID, v.modelName, v.price, v.bodyType, v.colour, v.description, m.makeName 
+                        FROM vehicles v 
+                        LEFT JOIN makes m ON v.makeID = m.makeID 
+                        WHERE v.vehicleID IN (${vehicleIds.map(() => '?').join(',')})
+                    `;
+                    
+                    const vehicleResult = await new Promise((resolve, reject) => {
+                        pool.query(vehicleQuery, vehicleIds, (err, result) => {
+                            if (err) reject(err);
+                            else resolve(result);
+                        });
+                    });
+                    
+                    if (userResult && userResult.length > 0) {
+                        const user = userResult[0];
+                        
+                        // Prepare customer data for email
+                        const customerData = {
+                            firstName: user.firstName || '',
+                            lastName: user.lastName || '',
+                            email: user.emailAddress || '',
+                            phone: user.phone || '',
+                            message: customerNotes || ''
+                        };
+                        
+                        // Prepare vehicle data for email
+                        const vehicleData = vehicleResult.map(vehicle => ({
+                            makeName: vehicle.makeName || '',
+                            modelName: vehicle.modelName || '',
+                            year: 'N/A', // Year not available in database
+                            price: vehicle.price || '',
+                            bodyType: vehicle.bodyType || '',
+                            colour: vehicle.colour || '',
+                            description: vehicle.description || ''
+                        }));
+                        
+                        console.log('📧 Sending vehicle comparison confirmation email to:', customerData.email);
+                        const emailResult = await sendComparisonConfirmationEmail(customerData, vehicleData);
+                        
+                        if (emailResult.success) {
+                            console.log('✅ Vehicle comparison confirmation email sent successfully!');
+                        } else {
+                            console.warn('⚠️ Failed to send vehicle comparison confirmation email:', emailResult.error);
+                        }
+                    } else {
+                        console.warn('⚠️ Could not retrieve user data for email confirmation');
+                    }
+                } catch (emailError) {
+                    console.error('❌ Error sending vehicle comparison confirmation email:', emailError);
+                    // Don't fail the request if email fails
+                }
+            })();
             
             res.status(201).json({
                 success: true,

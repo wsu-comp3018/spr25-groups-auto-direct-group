@@ -31,39 +31,60 @@ const PurchaseVehiclePage = () => {
         if (response.ok) {
           const vehicles = await response.json();
           
-          // Group vehicles by category/body type and get representative images
+          // Group vehicles by category (simplified)
           const categories = [
             {
               name: "Everyday and Convenience",
               description: "Cars that give you the freedom for everyday living",
-              bodyTypes: ["Hatchback", "Sedan"],
-              vehicle: vehicles.find(v => ["Hatchback", "Sedan"].includes(v.bodyType))
+              vehicle: vehicles.find(v => v.bodyType === "Sedan" || v.bodyType === "Hatchback") || vehicles[0]
             },
             {
               name: "Families and Road Trippers", 
               description: "Cars that give you the space to move people or pack heavy",
-              bodyTypes: ["SUV", "Wagon"],
-              vehicle: vehicles.find(v => ["SUV", "Wagon"].includes(v.bodyType))
+              vehicle: vehicles.find(v => v.bodyType === "SUV" || v.bodyType === "Wagon") || vehicles[1]
             },
             {
               name: "Work and Play",
-              description: "Tough and rugged for both work and fun play on the weekend", 
-              bodyTypes: ["Ute", "Truck"],
-              vehicle: vehicles.find(v => ["Ute", "Truck"].includes(v.bodyType))
+              description: "Tough and rugged for both work and fun play on the weekend",
+              vehicle: vehicles.find(v => v.bodyType === "Ute" || v.bodyType === "Truck") || vehicles[2]
             },
             {
               name: "Environmentally Conscious",
               description: "Electric and hybrid cars with the environment in mind",
-              bodyTypes: ["Electric", "Hybrid"],
-              vehicle: vehicles.find(v => v.fuelType === "Electric" || v.fuelType === "Hybrid")
+              vehicle: vehicles.find(v => v.fuelType === "Electric" || v.fuelType === "Hybrid") || vehicles[3]
             }
           ];
           
           setVehicleCategories(categories);
+        } else {
+          console.log('Failed to fetch vehicles, using fallback data');
+          // Fallback data with placeholder images
+          setVehicleCategories([
+            {
+              name: "Everyday and Convenience",
+              description: "Cars that give you the freedom for everyday living",
+              vehicle: { mainImage: "images-1748525162487-593468754.jpg" }
+            },
+            {
+              name: "Families and Road Trippers",
+              description: "Cars that give you the space to move people or pack heavy",
+              vehicle: { mainImage: "images-1748525162488-652785063.jpg" }
+            },
+            {
+              name: "Work and Play",
+              description: "Tough and rugged for both work and fun play on the weekend",
+              vehicle: { mainImage: "images-1748525162489-301950156.png" }
+            },
+            {
+              name: "Environmentally Conscious",
+              description: "Electric and hybrid cars with the environment in mind",
+              vehicle: { mainImage: "images-1748525162496-568069999.jpg" }
+            }
+          ]);
         }
       } catch (error) {
-        console.error("Failed to fetch vehicle categories:", error);
-        // Fallback to static data if API fails
+        console.error('Error fetching vehicles:', error);
+        // Fallback data with placeholder images
         setVehicleCategories([
           {
             name: "Everyday and Convenience",
@@ -71,7 +92,7 @@ const PurchaseVehiclePage = () => {
             vehicle: { mainImage: "images-1748525162487-593468754.jpg" }
           },
           {
-            name: "Families and Road Trippers", 
+            name: "Families and Road Trippers",
             description: "Cars that give you the space to move people or pack heavy",
             vehicle: { mainImage: "images-1748525162488-652785063.jpg" }
           },
@@ -93,14 +114,14 @@ const PurchaseVehiclePage = () => {
   }, []);
 
   const handleClose = () => {
-    // Navigate back to car detail page with purchase completed state
-    navigate('/car/' + (vehicleDetails?.vehicleID || '1'), {
+    // Navigate to payment instructions page
+    navigate('/payment-instructions', {
       state: {
-        purchaseCompleted: true,
         orderID: orderID,
-        manufacturerDetails: manufacturerDetails,
+        customerName: customerName,
+        purchaseFormData: purchaseFormData,
         vehicleDetails: vehicleDetails,
-        purchaseFormData: purchaseFormData // Pass back the form data
+        manufacturerDetails: manufacturerDetails
       }
     });
   };
@@ -108,9 +129,7 @@ const PurchaseVehiclePage = () => {
   const handleCategoryClick = (category) => {
     // Navigate to browse page with filter applied
     navigate('/browse', { 
-      state: { 
-        filterBy: category.bodyTypes 
-      } 
+      state: { filterByCategory: category.name } 
     });
   };
 
@@ -119,9 +138,9 @@ const PurchaseVehiclePage = () => {
       {/* Header */}
       <header className="bg-white border-b border-gray-200 px-6 py-4">
         <div className="flex items-center justify-between max-w-7xl mx-auto">
-          <div className="flex items-center space-x-3">
-            <div className="w-8 h-8 bg-blue-600 rounded flex items-center justify-center">
-              <span className="text-white font-bold">A</span>
+          <div className="flex items-center space-x-2">
+            <div className="w-6 h-6 bg-black rounded-sm flex items-center justify-center">
+              <span className="text-white text-xs font-bold">AD</span>
             </div>
             <span className="font-bold text-lg">Autos Direct</span>
           </div>
@@ -129,15 +148,13 @@ const PurchaseVehiclePage = () => {
           <nav className="hidden md:flex space-x-8">
             <a href="/" className="text-gray-600 hover:text-gray-900">Home</a>
             <a href="/browse" className="text-gray-600 hover:text-gray-900">Browse Cars</a>
-            <a href="/saved" className="text-gray-600 hover:text-gray-900">Saved Cars</a>
+            <a href="/saved-cars" className="text-gray-600 hover:text-gray-900">Saved Cars</a>
           </nav>
           
-          <button className="p-2 text-gray-600 hover:text-gray-900">
-            <div className="w-6 h-6">
-              <svg className="w-full h-full" fill="currentColor" viewBox="0 0 20 20">
-                <path fillRule="evenodd" d="M3 5a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zM3 10a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zM3 15a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1z" clipRule="evenodd" />
-              </svg>
-            </div>
+          <button className="p-2">
+            <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
+            </svg>
           </button>
         </div>
       </header>
@@ -207,29 +224,30 @@ const PurchaseVehiclePage = () => {
           <h3 className="text-xl font-semibold text-gray-900 mb-6 text-center">Discover vehicles</h3>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
             {vehicleCategories.map((category, index) => (
-              <div key={index} className="text-center group cursor-pointer" onClick={() => handleCategoryClick(category)}>
-                <div className="bg-white rounded-xl p-4 mb-4 shadow-sm hover:shadow-md transition-shadow duration-300 border border-gray-100">
-                  <div className="w-full h-32 rounded-lg mb-3 overflow-hidden">
-                    {category.vehicle?.mainImage ? (
-                      <img 
-                        src={`${api}/vehicle-images/${category.vehicle.mainImage}`}
-                        alt={`${category.name} Car`}
-                        className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
-                        onError={(e) => {
-                          // Fallback to placeholder if image fails to load
-                          e.target.src = '/assets/sedan.png';
-                        }}
-                      />
-                    ) : (
-                      <div className="w-full h-full bg-gradient-to-br from-gray-100 to-gray-200 flex items-center justify-center rounded-lg">
-                        <span className="text-gray-500 text-sm">No Image</span>
-                      </div>
-                    )}
+              <div 
+                key={index} 
+                className="text-center cursor-pointer hover:bg-gray-100 p-4 rounded-lg transition-colors"
+                onClick={() => handleCategoryClick(category)}
+              >
+                <div className="bg-gray-200 rounded-lg p-4 mb-3 h-32 flex items-center justify-center">
+                  {category.vehicle?.mainImage ? (
+                    <img 
+                      src={`${api}/uploads/${category.vehicle.mainImage}`} 
+                      alt={category.name}
+                      className="w-full h-full object-cover rounded"
+                      onError={(e) => {
+                        e.target.style.display = 'none';
+                        e.target.nextSibling.style.display = 'flex';
+                      }}
+                    />
+                  ) : null}
+                  <div className="text-gray-500 text-sm" style={{ display: category.vehicle?.mainImage ? 'none' : 'flex' }}>
+                    No Image
                   </div>
                 </div>
-                <h4 className="font-semibold text-sm mb-2 text-gray-800">{category.name}</h4>
-                <p className="text-xs text-gray-600 mb-3 leading-relaxed px-2">{category.description}</p>
-                <button className="text-xs text-blue-600 hover:text-blue-800 hover:underline font-medium transition-colors duration-200">
+                <p className="text-sm font-medium text-gray-900 mb-1">{category.name}</p>
+                <p className="text-xs text-gray-600 mb-2">{category.description}</p>
+                <button className="text-xs text-blue-600 hover:underline">
                   See them all →
                 </button>
               </div>
@@ -239,13 +257,10 @@ const PurchaseVehiclePage = () => {
       </div>
 
       {/* Footer */}
-      <footer className="bg-white border-t border-gray-200 py-4 px-6 mt-12">
-        <div className="max-w-7xl mx-auto text-center">
-          <p className="text-xs text-gray-500">
-            © 2025 Autos Direct. All rights reserved. | 
-            <a href="#" className="hover:underline ml-1">Contact</a> | 
-            <a href="#" className="hover:underline ml-1">Privacy Policy</a> | 
-            <a href="#" className="hover:underline ml-1">Glossary</a>
+      <footer className="bg-white border-t border-gray-200 mt-12">
+        <div className="max-w-7xl mx-auto px-6 py-4">
+          <p className="text-center text-xs text-gray-500">
+            © 2025 Autos Direct. All rights reserved. | Contact | Privacy Policy | Glossary
           </p>
         </div>
       </footer>
