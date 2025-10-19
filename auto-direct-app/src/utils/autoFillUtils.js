@@ -1,4 +1,4 @@
-a// Auto-fill utility functions for user profile data
+// Auto-fill utility functions for user profile data
 import Cookies from "js-cookie";
 import api from "../data/api-calls";
 
