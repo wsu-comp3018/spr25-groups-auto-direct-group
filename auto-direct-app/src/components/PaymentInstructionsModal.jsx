@@ -6,7 +6,8 @@ const PaymentInstructionsModal = ({
   orderID, 
   manufacturerDetails,
   vehicleDetails,
-  onNext
+  onNext,
+  onBack
 }) => {
   const [paymentForm, setPaymentForm] = useState({
     nameOfManufacturer: manufacturerDetails?.manufacturerName || 'BSB',
@@ -180,8 +181,14 @@ const PaymentInstructionsModal = ({
           </div>
         </div>
 
-        {/* Next Button */}
-        <div className="flex justify-center mb-6">
+        {/* Navigation Buttons */}
+        <div className="flex justify-between items-center mb-6">
+          <button
+            onClick={onBack || onClose}
+            className="bg-gray-200 text-gray-700 px-8 py-3 rounded hover:bg-gray-300 transition-colors font-semibold"
+          >
+            Back to Vehicle Details
+          </button>
           <button
             onClick={onNext}
             className="bg-black text-white px-8 py-3 rounded hover:bg-gray-800 transition-colors font-semibold"

@@ -53,7 +53,7 @@ function ManageDealershipsPage() {
       }
     } catch (error) {
       console.error("Error fetching manufacturers:", error);
-      alert(
+      window.toast.error(
         "Failed to load manufacturers from database. Please refresh the page."
       );
       setManufacturers([]);
@@ -126,7 +126,7 @@ function ManageDealershipsPage() {
   // Save updated dealership data
   const handleSaveEdit = async () => {
     if (!editData.dealerName.trim() || !editData.address.trim()) {
-      alert("Please fill in both name and address fields");
+      window.toast.error("Please fill in both name and address fields");
       return;
     }
 
@@ -151,13 +151,13 @@ function ManageDealershipsPage() {
         // Refresh the dealership list to get updated data
         await fetchDealerships();
         setEditingId(null);
-        alert("Dealership updated successfully!");
+        window.toast.success("Dealership updated successfully!");
       } else {
-        alert(data.error || "Error updating dealership");
+        window.toast.error(data.error || "Error updating dealership");
       }
     } catch (error) {
       console.error("Error updating dealership:", error);
-      alert("Error updating dealership");
+      window.toast.error("Error updating dealership");
     } finally {
       setIsUpdating(false);
     }
@@ -175,7 +175,7 @@ function ManageDealershipsPage() {
       !addDealerForm.address.trim() ||
       !addDealerForm.manufacturerID
     ) {
-      alert("Please fill in all required fields");
+      window.toast.error("Please fill in all required fields");
       return;
     }
 
@@ -207,7 +207,7 @@ function ManageDealershipsPage() {
           address: "",
           manufacturerID: "",
         });
-        alert("Dealership added successfully!");
+        window.toast.success("Dealership added successfully!");
       } else {
         console.error("Server error:", data);
 
@@ -219,11 +219,11 @@ function ManageDealershipsPage() {
             errorMessage += `\n- ${m.manufacturerName}: ${m.manufacturerID}`;
           });
         }
-        alert(errorMessage);
+        window.toast.error(errorMessage);
       }
     } catch (error) {
       console.error("Network error adding dealership:", error);
-      alert("Network error adding dealership. Check your connection.");
+      window.toast.error("Network error adding dealership. Check your connection.");
     } finally {
       setIsAdding(false);
     }
@@ -242,14 +242,14 @@ function ManageDealershipsPage() {
           // Remove from local state
           setDealerships(dealerships.filter((d) => d.dealerID !== id));
           if (editingId === id) setEditingId(null);
-          alert("Dealership deleted successfully!");
+          window.toast.success("Dealership deleted successfully!");
         } else {
           const data = await response.json();
-          alert(data.error || "Error deleting dealership");
+          window.toast.error(data.error || "Error deleting dealership");
         }
       } catch (error) {
         console.error("Error deleting dealership:", error);
-        alert("Error deleting dealership");
+        window.toast.error("Error deleting dealership");
       }
     }
   };

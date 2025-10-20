@@ -44,14 +44,15 @@ const PaymentInstructionsPage = () => {
   };
 
   const handleBack = () => {
-    // Navigate back to car detail page
-    navigate('/car/' + (vehicleDetails?.vehicleID || '1'), {
+    // Navigate back to Purchase Vehicle Form page
+    console.log('🔙 Navigating back to Purchase Vehicle Form');
+    navigate('/purchase-vehicle', {
       state: {
-        purchaseCompleted: true,
         orderID: orderID,
-        manufacturerDetails: manufacturerDetails,
+        customerName: customerName,
+        purchaseFormData: purchaseFormData,
         vehicleDetails: vehicleDetails,
-        purchaseFormData: purchaseFormData
+        manufacturerDetails: manufacturerDetails
       }
     });
   };

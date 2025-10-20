@@ -384,6 +384,161 @@ const emailService = {
       confirmationData.manufacturerDetails || {},
       confirmationData.orderID
     );
+  },
+
+  // Test Drive Booking Confirmation Email
+  async sendTestDriveConfirmationEmail(customerData, vehicleData) {
+    console.log('📧 Sending test drive confirmation email...');
+    console.log('Customer:', customerData);
+    console.log('Vehicle:', vehicleData);
+    
+    try {
+      const transporter = this.createTransporter();
+      
+      const mailOptions = {
+        from: this.auth.user,
+        to: customerData.email,
+        subject: 'Test Drive Booking Confirmation - Autos Direct',
+        html: `
+          <!DOCTYPE html>
+          <html lang="en">
+          <head>
+            <meta charset="UTF-8">
+            <meta name="viewport" content="width=device-width, initial-scale=1.0">
+            <title>Test Drive Booking Confirmation</title>
+          </head>
+          <body style="margin: 0; padding: 20px; background-color: #ffffff; color: black; font-family: Arial, sans-serif;">
+            <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px; line-height: 1.6; color: black;">
+              <h2 style="color: black; border-bottom: 2px solid black; padding-bottom: 10px;">Test Drive Booking Confirmation</h2>
+              
+              <p style="color: black;">Dear ${customerData.firstName} ${customerData.lastName},</p>
+              
+              <p style="color: black;">Thank you for booking a test drive with <strong>Autos Direct</strong>. We have received your request and our team will contact you shortly to confirm the appointment details.</p>
+              
+              <div style="background-color: #f8f9fa; border: 1px solid #dee2e6; border-radius: 5px; padding: 20px; margin: 20px 0;">
+                <h3 style="color: black; margin-top: 0;">Booking Details</h3>
+                <p style="color: black; margin: 8px 0;"><strong>Vehicle:</strong> ${vehicleData.makeName} ${vehicleData.modelName}</p>
+                <p style="color: black; margin: 8px 0;"><strong>Year:</strong> ${vehicleData.year}</p>
+                <p style="color: black; margin: 8px 0;"><strong>Customer Name:</strong> ${customerData.firstName} ${customerData.lastName}</p>
+                <p style="color: black; margin: 8px 0;"><strong>Email:</strong> ${customerData.email}</p>
+                <p style="color: black; margin: 8px 0;"><strong>Phone:</strong> ${customerData.phone}</p>
+                <p style="color: black; margin: 8px 0;"><strong>Preferred Date:</strong> ${customerData.preferredDate}</p>
+                <p style="color: black; margin: 8px 0;"><strong>Preferred Time:</strong> ${customerData.preferredTime}</p>
+              </div>
+              
+              <p style="color: black;">Our sales team will contact you within 24 hours to confirm your test drive appointment and provide you with the exact location and any additional details.</p>
+              
+              <p style="color: black;">If you have any questions or need to make changes to your booking, please don't hesitate to contact us.</p>
+              
+              <p style="color: black;">Thank you for choosing Autos Direct!</p>
+              
+              <p style="color: black;">Best regards,<br>
+              <strong>The Autos Direct Team</strong></p>
+              
+              <hr style="border: none; border-top: 1px solid #dee2e6; margin: 30px 0;">
+              <p style="color: #6c757d; font-size: 12px; text-align: center;">
+                This is an automated confirmation email. Please do not reply to this email.
+              </p>
+            </div>
+          </body>
+          </html>
+        `
+      };
+      
+      const result = await transporter.sendMail(mailOptions);
+      console.log('✅ Test drive confirmation email sent successfully!');
+      console.log('Message ID:', result.messageId);
+      
+      return { success: true, messageId: result.messageId };
+    } catch (error) {
+      console.error('❌ Failed to send test drive confirmation email:', error);
+      return { success: false, error: error.message };
+    }
+  },
+
+  // Vehicle Comparison Confirmation Email
+  async sendComparisonConfirmationEmail(customerData, vehicleData) {
+    console.log('📧 Sending vehicle comparison confirmation email...');
+    console.log('Customer:', customerData);
+    console.log('Vehicles:', vehicleData);
+    
+    try {
+      const transporter = this.createTransporter();
+      
+      // Build vehicle list HTML
+      let vehicleListHtml = '';
+      if (Array.isArray(vehicleData) && vehicleData.length > 0) {
+        vehicleListHtml = vehicleData.map(vehicle => `
+          <div style="background-color: #f8f9fa; border: 1px solid #dee2e6; border-radius: 5px; padding: 15px; margin: 10px 0;">
+            <h4 style="color: black; margin: 0 0 10px 0;">${vehicle.makeName} ${vehicle.modelName}</h4>
+            <p style="color: black; margin: 5px 0;"><strong>Year:</strong> ${vehicle.year}</p>
+            <p style="color: black; margin: 5px 0;"><strong>Price:</strong> $${vehicle.price ? Number(vehicle.price).toLocaleString() : 'Contact for pricing'}</p>
+            ${vehicle.description ? `<p style="color: black; margin: 5px 0;"><strong>Description:</strong> ${vehicle.description}</p>` : ''}
+          </div>
+        `).join('');
+      } else {
+        vehicleListHtml = '<p style="color: black;">Vehicle details will be provided separately.</p>';
+      }
+      
+      const mailOptions = {
+        from: this.auth.user,
+        to: customerData.email,
+        subject: 'Vehicle Comparison Request Confirmation - Autos Direct',
+        html: `
+          <!DOCTYPE html>
+          <html lang="en">
+          <head>
+            <meta charset="UTF-8">
+            <meta name="viewport" content="width=device-width, initial-scale=1.0">
+            <title>Vehicle Comparison Request Confirmation</title>
+          </head>
+          <body style="margin: 0; padding: 20px; background-color: #ffffff; color: black; font-family: Arial, sans-serif;">
+            <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px; line-height: 1.6; color: black;">
+              <h2 style="color: black; border-bottom: 2px solid black; padding-bottom: 10px;">Vehicle Comparison Request Confirmation</h2>
+              
+              <p style="color: black;">Dear ${customerData.firstName} ${customerData.lastName},</p>
+              
+              <p style="color: black;">Thank you for requesting a vehicle comparison with <strong>Autos Direct</strong>. We have received your request and our team will prepare a detailed comparison for you.</p>
+              
+              <div style="background-color: #f8f9fa; border: 1px solid #dee2e6; border-radius: 5px; padding: 20px; margin: 20px 0;">
+                <h3 style="color: black; margin-top: 0;">Request Details</h3>
+                <p style="color: black; margin: 8px 0;"><strong>Customer Name:</strong> ${customerData.firstName} ${customerData.lastName}</p>
+                <p style="color: black; margin: 8px 0;"><strong>Email:</strong> ${customerData.email}</p>
+                <p style="color: black; margin: 8px 0;"><strong>Phone:</strong> ${customerData.phone}</p>
+                ${customerData.message ? `<p style="color: black; margin: 8px 0;"><strong>Additional Notes:</strong> ${customerData.message}</p>` : ''}
+              </div>
+              
+              <h3 style="color: black;">Vehicles for Comparison</h3>
+              ${vehicleListHtml}
+              
+              <p style="color: black;">Our sales team will prepare a comprehensive comparison including specifications, pricing, and features for the vehicles you've selected. You can expect to receive this comparison within 24-48 hours.</p>
+              
+              <p style="color: black;">If you have any questions or would like to add more vehicles to your comparison, please don't hesitate to contact us.</p>
+              
+              <p style="color: black;">Thank you for choosing Autos Direct!</p>
+              
+              <p style="color: black;">Best regards,<br>
+              <strong>The Autos Direct Team</strong></p>
+              
+              <hr style="border: none; border-top: 1px solid #dee2e6; margin: 30px 0;">
+              <p style="color: #6c757d; font-size: 12px; text-align: center;">
+                This is an automated confirmation email. Please do not reply to this email.
+              </p>
+            </div>
+          </body>
+          </html>
+        `
+      };
+      
+      const result = await transporter.sendMail(mailOptions);
+      console.log('✅ Vehicle comparison confirmation email sent successfully!');
+      console.log('Message ID:', result.messageId);
+      
+      return { success: true, messageId: result.messageId };
+    } catch (error) {
+      console.error('❌ Failed to send vehicle comparison confirmation email:', error);
+      return { success: false, error: error.message };
+    }
   }
 };
 
@@ -391,5 +546,7 @@ const emailService = {
 module.exports = {
   sendPurchaseNotification: emailService.sendPurchaseNotification.bind(emailService),
   sendCustomerConfirmation: emailService.sendCustomerConfirmation.bind(emailService),
+  sendTestDriveConfirmationEmail: emailService.sendTestDriveConfirmationEmail.bind(emailService),
+  sendComparisonConfirmationEmail: emailService.sendComparisonConfirmationEmail.bind(emailService),
   emailService
 };

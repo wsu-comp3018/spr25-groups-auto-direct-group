@@ -10,6 +10,7 @@ import { Toaster } from "react-hot-toast";
 import Navbar from "./components/Navbar";
 import Dropzone from "./components/Dropzone";
 import EditVehicleForm from "./components/edit-vehicle";
+import "./utils/toast"; // Initialize toast system
 import BrowsePage from "./pages/browse-page";
 import CarDetailPage from "./pages/car-detail-page";
 import ContactPage from "./pages/contact-page";
@@ -34,11 +35,11 @@ import UserManagePurchasesPage from "./pages/user-manage-purchases-page"; // thi
 import InternalRegisterPage from "./pages/internal-register-page";
 import Chatbot from "./components/Chatbot";
 import ChatbotInquiries from "./pages/chatbot-inquiries";
+import CustomerChatbotInquiries from "./pages/customer-chatbot-inquiries";
 import DbConnectionTestPage from "./pages/db-connection-test-page"; // to be deleted before handover
 import SAPDatabasePage from "./pages/sap-database-page"; // Admin-only SAP database management
 import PurchaseVehiclePage from "./pages/PurchaseVehiclePage"; // Purchase vehicle form page
 import PurchaseFlowPage from "./pages/PurchaseFlowPage"; // New dedicated purchase flow page
-import OrderManagementPage from "./pages/OrderManagementPage"; // Admin-only order management dashboard
 import ProfessionalOrderManagementPage from "./pages/ProfessionalOrderManagementPage"; // Enhanced professional order management
 import LogisticsDashboard from "./pages/LogisticsDashboard"; // Logistics coordination dashboard
 // import PurchaseVehiclePage from "./pages/PurchaseVehiclePage"; // Purchase vehicle form page
@@ -70,6 +71,8 @@ function App() {
           <Route path="/register" element={<RegisterPage />} />
           <Route path="/internal-register" element={<InternalRegisterPage />} />
           <Route path="/manage-my-purchases" element={<UserManagePurchasesPage />} />
+          <Route path="/manage-my-requests" element={<ManageMyRequestsPage />} />
+          <Route path="/my-support-inquiries" element={<CustomerChatbotInquiries />} />
           <Route path="/purchase-flow" element={<PurchaseFlowPage />} />
           <Route path="/profile" element={<ProfilePage />} />
           <Route path="/privacy-policy" element={<PrivacyPolicyPage />} />
@@ -171,7 +174,7 @@ function App() {
               path="/order-management"
               element={
                 <ProtectedRoute allowedRoles={["Administrator"]}>
-                  <OrderManagementPage />
+                  <ProfessionalOrderManagementPage />
                 </ProtectedRoute>
               }
             />

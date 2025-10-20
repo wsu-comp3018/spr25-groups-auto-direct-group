@@ -86,7 +86,9 @@ function PurchaseFlowPage() {
     { title: "Purchase Options", description: "Payment & financing" },
     { title: "Manufacturer Details", description: "Vehicle specifications" },
     { title: "Additional Notes", description: "Special requests" },
-    { title: "Confirmation", description: "Review & submit" }
+    { title: "Confirmation", description: "Review & submit" },
+    { title: "Payment Instructions", description: "Bank transfer details" },
+    { title: "Payment Details", description: "Complete your payment" }
   ]);
 
   // Form states
@@ -121,6 +123,14 @@ function PurchaseFlowPage() {
   const [showPaymentInstructionsModal, setShowPaymentInstructionsModal] = useState(false);
   const [showAdminPaymentModal, setShowAdminPaymentModal] = useState(false);
   const [generatedOrderID, setGeneratedOrderID] = useState("");
+
+  // Payment form state
+  const [paymentForm, setPaymentForm] = useState({
+    nameOfManufacturer: '',
+    accountNumber: '',
+    accountName: '',
+    paymentReference: ''
+  });
 
   // Field validation state
   const [fieldErrors, setFieldErrors] = useState({
@@ -365,7 +375,7 @@ function PurchaseFlowPage() {
   };
 
   // Handle moving to next step
-  const handleNextStep = () => {
+  const handleNextStep = async () => {
     console.log('🔥 handleNextStep called, currentStep:', currentPurchaseStep, 'totalSteps:', purchaseSteps.length);
     console.log('🔍 Condition check: currentStep < totalSteps?', currentPurchaseStep < purchaseSteps.length);
     
@@ -383,13 +393,24 @@ function PurchaseFlowPage() {
       setFieldErrors(prev => ({ ...prev, ...stepErrors }));
     }
 
-    if (currentPurchaseStep < purchaseSteps.length) {
+    if (currentPurchaseStep === 6) {
+      // Step 6 is Confirmation - process the purchase and move to Payment Instructions
+      console.log('🚀 Confirmation step - processing purchase and moving to Payment Instructions');
+      await handleConfirmPurchase();
+      setCurrentPurchaseStep(prev => prev + 1);
+    } else if (currentPurchaseStep < purchaseSteps.length) {
       console.log('⏭️ Moving to next step:', currentPurchaseStep + 1);
       setCurrentPurchaseStep(prev => prev + 1);
     } else {
-      // Final step - submit purchase directly (skip modal)
-      console.log('🚀 Final step reached, calling handleConfirmPurchase');
-      handleConfirmPurchase();
+      // Final step (Payment Details) - complete the flow
+      console.log('🎉 Purchase flow completed!');
+      toast.success("Purchase completed! You will receive confirmation shortly.");
+      
+      // Navigate back to homepage after a brief delay
+      setTimeout(() => {
+        console.log('🔄 Navigating back to homepage after purchase completion');
+        navigate('/');
+      }, 2000);
     }
   };  // Handle moving to previous step
   const handlePrevStep = () => {
@@ -494,31 +515,59 @@ function PurchaseFlowPage() {
         console.log('✅ Purchase successful!');
         setGeneratedOrderID(newOrderID);
         
-        // Navigate directly to purchase vehicle page with order data (skip modal)
-        navigate('/purchase-vehicle', {
-          state: {
-            orderID: newOrderID,
-            customerName: `${purchaseForm.firstName} ${purchaseForm.lastName}`,
-            purchaseFormData: purchaseForm,
-            vehicleDetails: {
-              vehicleID: car.vehicleID,
-              makeID: car.makeID || car.makeid,
-              makeName: car.make || car.makeName,
-              modelName: car.model || car.modelName,
-              year: car.year || car.modelYear,
-              price: car.price,
-              fuelType: car.fuelType,
-              transmission: car.transmission,
-              bodyType: car.bodyType,
-              driveType: car.driveType,
-              color: car.color,
-              mileage: car.mileage
+        // IMPORTANT: Also send order data to Order Management system
+        try {
+          console.log('📋 Sending order data to Order Management system...');
+          const orderProcessingResponse = await fetch(api + "/order-processing/process-order-purchase", {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json"
             },
-            manufacturerDetails: manufacturerDetails
+            body: JSON.stringify({
+              orderID: newOrderID,
+              customerName: `${purchaseForm.firstName} ${purchaseForm.lastName}`,
+              customerEmail: purchaseForm.email,
+              customerPhone: purchaseForm.phone,
+              customerAddress: `${purchaseForm.streetNumber} ${purchaseForm.streetName}, ${purchaseForm.suburb}, ${purchaseForm.state} ${purchaseForm.postcode}`,
+              vehicleDetails: {
+                vehicleID: car.vehicleID,
+                makeID: car.makeID || car.makeid,
+                makeName: car.make || car.makeName,
+                modelName: car.model || car.modelName,
+                year: car.year || car.modelYear,
+                price: car.price,
+                fuelType: car.fuelType,
+                transmission: car.transmission,
+                bodyType: car.bodyType,
+                driveType: car.driveType,
+                color: car.color || car.colour,
+                mileage: car.mileage,
+                vin: car.vin || car.vehicleID
+              },
+              manufacturerDetails: manufacturerDetails
+            })
+          });
+
+          if (orderProcessingResponse.ok) {
+            console.log('✅ Order data sent to Order Management system successfully!');
+          } else {
+            console.log('⚠️ Failed to send order data to Order Management system, but purchase still successful');
           }
+        } catch (orderError) {
+          console.error('❌ Error sending order data to Order Management:', orderError);
+          console.log('⚠️ Order Management integration failed, but purchase still successful');
+        }
+        
+        // Store order ID and set up payment form for next steps
+        setGeneratedOrderID(newOrderID);
+        setPaymentForm({
+          nameOfManufacturer: manufacturerDetails?.manufacturerName || 'Volkswagen Group',
+          accountNumber: '',
+          accountName: '',
+          paymentReference: newOrderID
         });
         
-        toast.success("Purchase request submitted successfully!");
+        toast.success("Purchase request submitted successfully! Please complete payment instructions.");
       } else {
         const data = await response.json();
         console.log('❌ API returned error status:', response.status);
@@ -1186,6 +1235,172 @@ function PurchaseFlowPage() {
           </div>
         );
 
+      case 7:
+        return (
+          <div className="space-y-6">
+            <div className="bg-green-50 border border-green-200 rounded-md p-4 mb-6">
+              <p className="text-green-800 font-medium">✅ Order Confirmed - ID: {generatedOrderID}</p>
+            </div>
+
+            <h3 className="text-lg font-semibold text-gray-800 mb-4">Payment Instructions</h3>
+            
+            {/* Payment Form */}
+            <div className="space-y-6 mb-8">
+              {/* Name of Manufacturer and BSB Row */}
+              <div className="grid grid-cols-2 gap-6">
+                <div>
+                  <label className="block text-sm font-medium text-gray-600 mb-2">
+                    Name of Manufacturer
+                  </label>
+                  <input
+                    type="text"
+                    value={paymentForm.nameOfManufacturer}
+                    onChange={(e) => setPaymentForm(prev => ({...prev, nameOfManufacturer: e.target.value}))}
+                    className="w-full px-4 py-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-black focus:border-black bg-gray-50"
+                    readOnly
+                  />
+                </div>
+                <div>
+                  <div className="flex justify-end mb-2">
+                    <span className="text-sm font-medium text-gray-600">BSB</span>
+                  </div>
+                  <input
+                    type="text"
+                    value="BSB"
+                    className="w-full px-4 py-3 border border-gray-300 rounded-md bg-gray-50 text-center"
+                    readOnly
+                  />
+                </div>
+              </div>
+
+              {/* Account Number and Account Name Row */}
+              <div className="grid grid-cols-2 gap-6">
+                <div>
+                  <label className="block text-sm font-medium text-gray-600 mb-2">
+                    Account Number
+                  </label>
+                  <input
+                    type="text"
+                    value={paymentForm.accountNumber}
+                    onChange={(e) => setPaymentForm(prev => ({...prev, accountNumber: e.target.value}))}
+                    className="w-full px-4 py-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-black focus:border-black"
+                    placeholder="Enter account number"
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-600 mb-2">
+                    Account Name
+                  </label>
+                  <input
+                    type="text"
+                    value={paymentForm.accountName}
+                    onChange={(e) => setPaymentForm(prev => ({...prev, accountName: e.target.value}))}
+                    className="w-full px-4 py-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-black focus:border-black"
+                    placeholder="Enter account name"
+                  />
+                </div>
+              </div>
+
+              {/* Payment Reference */}
+              <div>
+                <label className="block text-sm font-medium text-gray-600 mb-2">
+                  Payment Reference
+                </label>
+                <input
+                  type="text"
+                  value={paymentForm.paymentReference}
+                  onChange={(e) => setPaymentForm(prev => ({...prev, paymentReference: e.target.value}))}
+                  className="w-full px-4 py-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-black focus:border-black bg-gray-50"
+                  readOnly
+                />
+              </div>
+            </div>
+
+            {/* Vehicle Overview */}
+            <div className="bg-gray-50 p-6 rounded-lg">
+              <h4 className="text-lg font-semibold text-gray-800 mb-4">Vehicle Overview</h4>
+              <div className="grid grid-cols-2 gap-y-4 gap-x-8 text-sm">
+                <div className="flex items-center">
+                  <span className="text-gray-600 w-4 h-4 mr-3">🚗</span>
+                  <span className="text-gray-600 mr-2">Make:</span>
+                  <span className="font-medium ml-auto">{car?.make || car?.makeName}</span>
+                </div>
+                <div className="flex items-center">
+                  <span className="text-gray-600 w-4 h-4 mr-3">📋</span>
+                  <span className="text-gray-600 mr-2">Model:</span>
+                  <span className="font-medium ml-auto">{car?.model || car?.modelName}</span>
+                </div>
+                <div className="flex items-center">
+                  <span className="text-gray-600 w-4 h-4 mr-3">💰</span>
+                  <span className="text-gray-600 mr-2">Price:</span>
+                  <span className="font-medium ml-auto">${car?.price?.toLocaleString()}</span>
+                </div>
+                <div className="flex items-center">
+                  <span className="text-gray-600 w-4 h-4 mr-3">🎨</span>
+                  <span className="text-gray-600 mr-2">Color:</span>
+                  <span className="font-medium ml-auto">{car?.color || car?.colour || 'N/A'}</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        );
+
+      case 8:
+        return (
+          <div className="space-y-6">
+            <div className="bg-blue-50 border border-blue-200 rounded-md p-4 mb-6">
+              <p className="text-blue-800 font-medium">📋 Complete Your Payment</p>
+            </div>
+
+            <div className="bg-white border border-gray-300 rounded-lg p-6">
+              <h3 className="text-lg font-semibold text-gray-800 mb-4">Payment Summary</h3>
+              
+              <div className="space-y-4 mb-6">
+                <div className="flex justify-between">
+                  <span className="text-gray-600">Order ID:</span>
+                  <span className="font-medium">{generatedOrderID}</span>
+                </div>
+                <div className="flex justify-between">
+                  <span className="text-gray-600">Vehicle:</span>
+                  <span className="font-medium">{car?.make || car?.makeName} {car?.model || car?.modelName}</span>
+                </div>
+                <div className="flex justify-between">
+                  <span className="text-gray-600">Customer:</span>
+                  <span className="font-medium">{purchaseForm.firstName} {purchaseForm.lastName}</span>
+                </div>
+                <div className="flex justify-between text-lg font-semibold border-t pt-4">
+                  <span>Total Amount:</span>
+                  <span>${car?.price?.toLocaleString()}</span>
+                </div>
+              </div>
+
+              <div className="bg-yellow-50 border border-yellow-200 rounded-md p-4 mb-6">
+                <p className="text-yellow-800 text-sm">
+                  <strong>Payment Instructions:</strong> Please transfer the full amount to the account details provided in the previous step. 
+                  Use your Order ID "{generatedOrderID}" as the payment reference to ensure proper processing.
+                </p>
+              </div>
+
+              <div className="text-center">
+                <p className="text-gray-600 mb-4">Once payment is completed, you will receive:</p>
+                <ul className="text-left text-gray-600 space-y-2 max-w-md mx-auto">
+                  <li>✅ Payment confirmation email</li>
+                  <li>📋 Order processing notification</li>
+                  <li>🚚 Delivery tracking information</li>
+                  <li>📞 Contact from our delivery team</li>
+                </ul>
+              </div>
+            </div>
+
+            <div className="bg-red-50 border-l-4 border-red-400 rounded p-4">
+              <p className="text-sm text-red-700">
+                <strong>Important:</strong> Payment must include the Order ID "{generatedOrderID}" as reference. 
+                Incomplete payments may result in processing delays.
+              </p>
+            </div>
+          </div>
+        );
+
       default:
         return null;
     }
@@ -1264,7 +1479,7 @@ function PurchaseFlowPage() {
                 }}
                 className="px-6 py-2 bg-black text-white rounded-lg font-medium hover:bg-gray-800"
               >
-                Next
+                {currentPurchaseStep === purchaseSteps.length ? 'Complete Purchase' : 'Next'}
               </button>
             </div>
           </div>
@@ -1276,14 +1491,11 @@ function PurchaseFlowPage() {
         <PurchaseConfirmationModal
           isOpen={showConfirmationModal}
           onClose={() => setShowConfirmationModal(false)}
-          onConfirm={handleConfirmPurchase}
-          customerData={{
-            name: `${purchaseForm.firstName} ${purchaseForm.lastName}`,
-            email: purchaseForm.email,
-            phone: purchaseForm.phone,
-            address: `${purchaseForm.streetNumber} ${purchaseForm.streetName}, ${purchaseForm.suburb}, ${purchaseForm.stateTerritory}`
-          }}
-          vehicleData={car}
+          orderID={generatedOrderID}
+          customerName={`${purchaseForm.firstName} ${purchaseForm.lastName}`}
+          vehicleDetails={car}
+          manufacturerDetails={manufacturerDetails}
+          purchaseFormData={purchaseForm}
         />
       )}
 
@@ -1297,6 +1509,11 @@ function PurchaseFlowPage() {
           onNext={() => {
             setShowPaymentInstructionsModal(false);
             setShowAdminPaymentModal(true);
+          }}
+          onBack={() => {
+            // Just close the payment instructions modal to return to the Purchase Vehicle Form
+            console.log('🔙 Closing payment instructions to return to Purchase Vehicle Form');
+            setShowPaymentInstructionsModal(false);
           }}
         />
       )}

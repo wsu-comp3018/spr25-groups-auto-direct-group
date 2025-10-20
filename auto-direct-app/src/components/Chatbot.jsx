@@ -22,6 +22,32 @@ function Chatbot() {
   const [showYesNoButtons, setShowYesNoButtons] = useState(false);
   const messagesEndRef = useRef(null);
   const socketRef = useRef(null);
+
+  // Restore customer key and session ID from localStorage on component mount
+  useEffect(() => {
+    const storedCustomerKey = localStorage.getItem('customer-key');
+    const storedSessionId = localStorage.getItem('session-id');
+    const storedContactInfo = localStorage.getItem('customer-contact-info');
+    
+    if (storedCustomerKey && storedSessionId) {
+      setCustomerKey(storedCustomerKey);
+      setSessionId(storedSessionId);
+      setIsRegistered(true);
+      console.log('Restored customer session:', { customerKey: storedCustomerKey, sessionId: storedSessionId });
+      
+      // Also restore contact information if available
+      if (storedContactInfo) {
+        const contactInfo = JSON.parse(storedContactInfo);
+        setRegistrationData(prev => ({
+          ...prev,
+          customerName: contactInfo.firstName || '',
+          customerEmail: contactInfo.email || '',
+          customerPhone: contactInfo.phone || ''
+        }));
+        console.log('Restored contact info:', contactInfo);
+      }
+    }
+  }, []);
   
   // Environment-based configuration
   const API_BASE_URL = process.env.NODE_ENV === 'production' 
@@ -149,6 +175,15 @@ function Chatbot() {
       if (response.ok) {
         setSessionId(data.sessionId);
         setCustomerKey(data.customerKey);
+        // Store customer key in localStorage for persistence across page navigation
+        localStorage.setItem('customer-key', data.customerKey);
+        localStorage.setItem('session-id', data.sessionId);
+        // Store contact information for the customer inquiries page
+        localStorage.setItem('customer-contact-info', JSON.stringify({
+          firstName: registrationData.customerName,
+          email: registrationData.customerEmail,
+          phone: registrationData.customerPhone
+        }));
         setIsRegistered(true);
         setShowRegistration(false);
         
@@ -156,7 +191,7 @@ function Chatbot() {
         setMessages([{
           id: Date.now(),
           sender: 'ai',
-          message: `Hello ${registrationData.customerName}! Welcome to Auto Direct. I'm here to help you with information about our vehicles, services, and more. How can I assist you today?`,
+          message: `Hello ${registrationData.customerName || 'there'}! Welcome to Auto Direct. I'm here to help you with information about our vehicles, services, and more. How can I assist you today?`,
           timestamp: new Date().toISOString()
         }]);
         toast.success('Registration successful! Welcome to Auto Direct.');
@@ -260,7 +295,10 @@ function Chatbot() {
           sessionId,
           customerKey,
           message: messageText,
-          sender: 'user'
+          sender: 'user',
+          customerEmail: registrationData.customerEmail,
+          customerName: registrationData.customerName,
+          customerPhone: registrationData.customerPhone
         }),
       });
 
@@ -293,10 +331,9 @@ function Chatbot() {
     if (!isOpen) {
       setIsOpen(true);
       setIsMinimized(false);
-      if (!isRegistered) {
-        setShowRegistration(true);
-        toast.success('Welcome! Please register to start chatting with our support team.');
-      }
+      // Always show registration form to allow users to provide contact info
+      setShowRegistration(true);
+      toast.success('Welcome! You can provide your contact details (optional) or skip to start chatting.');
     } else {
       setIsMinimized(!isMinimized);
     }
@@ -364,16 +401,14 @@ function Chatbot() {
                   <form onSubmit={handleRegistration} className="space-y-3">
                     <input
                       type="text"
-                      placeholder="Your Name *"
-                      required
+                      placeholder="Your Name (Optional)"
                       value={registrationData.customerName}
                       onChange={(e) => setRegistrationData(prev => ({ ...prev, customerName: e.target.value }))}
                       className="w-full px-3 py-2 border border-gray-300 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-black"
                     />
                     <input
                       type="email"
-                      placeholder="Email Address *"
-                      required
+                      placeholder="Email Address (Optional)"
                       value={registrationData.customerEmail}
                       onChange={(e) => setRegistrationData(prev => ({ ...prev, customerEmail: e.target.value }))}
                       className="w-full px-3 py-2 border border-gray-300 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-black"
@@ -385,12 +420,73 @@ function Chatbot() {
                       onChange={(e) => setRegistrationData(prev => ({ ...prev, customerPhone: e.target.value }))}
                       className="w-full px-3 py-2 border border-gray-300 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-black"
                     />
-                    <button
-                      type="submit"
-                      className="w-full bg-black text-white py-2 rounded-md hover:bg-gray-800 text-sm"
-                    >
-                      Start Chat
-                    </button>
+                    <div className="flex space-x-2">
+                      <button
+                        type="button"
+                        onClick={async () => {
+                          // Skip registration - register with empty contact info
+                          try {
+                            const response = await fetch(`${API_BASE_URL}/api/chatbot/register`, {
+                              method: 'POST',
+                              headers: {
+                                'Content-Type': 'application/json',
+                              },
+                              body: JSON.stringify({
+                                customerName: '',
+                                customerEmail: '',
+                                customerPhone: ''
+                              }),
+                            });
+
+                            const data = await response.json();
+
+                            if (response.ok) {
+                              setSessionId(data.sessionId);
+                              setCustomerKey(data.customerKey);
+                              // Store customer key in localStorage for persistence across page navigation
+                              localStorage.setItem('customer-key', data.customerKey);
+                              localStorage.setItem('session-id', data.sessionId);
+                              // Store empty contact information
+                              localStorage.setItem('customer-contact-info', JSON.stringify({
+                                firstName: '',
+                                email: '',
+                                phone: ''
+                              }));
+                              setRegistrationData({
+                                customerName: '',
+                                customerEmail: '',
+                                customerPhone: ''
+                              });
+                              setIsRegistered(true);
+                              setShowRegistration(false);
+                              
+                              // Add welcome message
+                              setMessages([{
+                                id: Date.now(),
+                                sender: 'ai',
+                                message: `Hello there! Welcome to Auto Direct. I'm here to help you with information about our vehicles, services, and more. How can I assist you today?`,
+                                timestamp: new Date().toISOString()
+                              }]);
+                              toast.success('Chat started! You can provide contact info later if needed.');
+                            } else {
+                              toast.error('Failed to start chat: ' + data.error);
+                            }
+                          } catch (error) {
+                            console.error('Error skipping registration:', error);
+                            toast.error('Failed to start chat. Please try again.');
+                          }
+                        }}
+                        className="flex-1 border border-gray-300 text-gray-700 py-2 rounded-md hover:bg-gray-50 text-sm"
+                      >
+                        Skip
+                      </button>
+                      <button
+                        type="submit"
+                        className="flex-1 bg-black text-white py-2 rounded-md hover:bg-gray-800 text-sm"
+                      >
+                        Start Chat
+                      </button>
+                    </div>
                   </form>
                 </div>
               )}

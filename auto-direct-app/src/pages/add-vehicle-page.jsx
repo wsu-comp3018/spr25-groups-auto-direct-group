@@ -34,7 +34,7 @@ const AddVehiclePage = () => {
     e.preventDefault();
 
     if (files.length === 0) {
-      alert("Please upload at least one image.");
+      window.toast.error("Please upload at least one image.");
       return;
     }
 
