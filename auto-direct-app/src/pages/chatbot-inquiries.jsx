@@ -362,14 +362,14 @@ function ChatbotInquiries() {
                   <MessageCircle className="h-8 w-8 text-white" />
                 </div>
                 <div>
-                  <h1 className="text-3xl font-bold text-gray-900">Customer Support Dashboard</h1>
+                  <h1 className="text-3xl font-bold text-black">Customer Support Dashboard</h1>
                   <p className="text-gray-600 mt-1">Manage chatbot inquiries and customer conversations</p>
                   {availableAgents.length > 0 && (
                     <div className="mt-2 flex items-center space-x-2">
                       <span className="text-sm text-gray-500">Active Agents:</span>
                       <div className="flex space-x-1">
                         {availableAgents.map((agentName, index) => (
-                          <span key={index} className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-green-100 text-green-800">
+                          <span key={index} className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-gray-200 text-black">
                             {agentName}
                           </span>
                         ))}
@@ -428,8 +428,8 @@ function ChatbotInquiries() {
         </div>
 
         {error && (
-          <div className="mb-6 p-4 rounded-lg border border-red-200 bg-red-50 text-red-700 flex items-center space-x-2">
-            <svg className="h-5 w-5 text-red-500" fill="currentColor" viewBox="0 0 20 20">
+          <div className="mb-6 p-4 rounded-lg border border-gray-300 bg-gray-50 text-black flex items-center space-x-2">
+            <svg className="h-5 w-5 text-gray-500" fill="currentColor" viewBox="0 0 20 20">
               <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clipRule="evenodd" />
             </svg>
             <span className="font-medium">{error}</span>
@@ -499,10 +499,10 @@ function ChatbotInquiries() {
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap text-sm">
                         <span className={`inline-flex items-center px-3 py-1.5 text-xs font-semibold rounded-full shadow-sm ${
-                          q.status === 'pending' ? 'bg-amber-100 text-amber-800 border border-amber-200' :
-                          q.status === 'ai_handled' ? 'bg-indigo-100 text-indigo-800 border border-indigo-200' :
-                          q.status === 'responded' ? 'bg-emerald-100 text-emerald-800 border border-emerald-200' :
-                          q.status === 'closed' ? 'bg-gray-100 text-gray-800 border border-gray-200' : 'bg-gray-100 text-gray-800 border border-gray-200'
+                          q.status === 'pending' ? 'bg-gray-200 text-black border border-gray-300' :
+                          q.status === 'ai_handled' ? 'bg-gray-300 text-black border border-gray-400' :
+                          q.status === 'responded' ? 'bg-gray-300 text-black border border-gray-400' :
+                          q.status === 'closed' ? 'bg-gray-400 text-white border border-gray-500' : 'bg-gray-200 text-black border border-gray-300'
                         }`}>
                           {q.status === 'closed' ? (
                             <>
@@ -653,10 +653,10 @@ function ChatbotInquiries() {
                         <div
                           className={`max-w-xs lg:max-w-md px-4 py-2 rounded-lg ${
                             message.sender === 'user'
-                              ? 'bg-blue-600 text-white'
+                              ? 'bg-black text-white'
                               : message.sender === 'agent'
-                              ? 'bg-green-100 text-green-800'
-                              : 'bg-gray-200 text-gray-800'
+                              ? 'bg-gray-300 text-black'
+                              : 'bg-gray-200 text-black'
                           }`}
                         >
                           <p className="text-sm">{message.message}</p>
@@ -684,14 +684,14 @@ function ChatbotInquiries() {
                 <div className="flex gap-2">
                   <input
                     type="text"
-                    className="flex-1 px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                    className="flex-1 px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-black focus:outline-none"
                     placeholder="Type a reply..."
                     value={replyMap[selectedInquiry.id] || ''}
                     onChange={(e) => setReplyMap(prev => ({ ...prev, [selectedInquiry.id]: e.target.value }))}
                   />
                   <button
                     onClick={() => sendReply(selectedInquiry)}
-                    className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700"
+                    className="px-4 py-2 bg-black text-white rounded-md hover:bg-gray-800"
                   >
                     Send Reply
                   </button>

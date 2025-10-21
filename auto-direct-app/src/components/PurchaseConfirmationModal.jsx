@@ -1,3 +1,4 @@
+
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
 
@@ -6,9 +7,9 @@ const PurchaseConfirmationModal = ({
   onClose, 
   orderID, 
   customerName, 
-  vehicleDetails,
-  manufacturerDetails,
-  purchaseFormData,
+  vehicleDetails, 
+  manufacturerDetails, 
+  purchaseFormData, 
   onProcessPayment 
 }) => {
   const navigate = useNavigate();
@@ -65,22 +66,18 @@ const PurchaseConfirmationModal = ({
               A unique 10-digit Order ID, <span className="font-bold text-blue-600">{orderID}</span>, 
               has been generated, and detailed instructions have been sent to your registered email address.
             </p>
-            
             <p>
               To complete your purchase, please make a direct bank transfer to the manufacturer using the 
               account details provided. Please be sure to include your Order ID as the payment reference.
             </p>
-            
             <p>
               Once your payment is confirmed, you will receive a notification with updates regarding 
               delivery and logistics.
             </p>
-            
             <p>
               If you also requested a test drive, our Test Drive Team will contact you directly to schedule 
               a suitable appointment.
             </p>
-            
             <p>
               For any inquiries, please contact our Customer Service Team at{' '}
               <a href="mailto:autodirectsupport@gmail.com" className="text-blue-600 hover:underline">

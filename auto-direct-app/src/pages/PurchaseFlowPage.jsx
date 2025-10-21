@@ -1387,7 +1387,7 @@ function PurchaseFlowPage() {
 
             <h3 className="text-lg font-semibold text-gray-800 mb-4">Payment Instructions</h3>
             
-            {/* Payment Form */}
+            {/* Payment Form - All fields are READ-ONLY */}
             <div className="space-y-6 mb-8">
               {/* Name of Manufacturer and BSB Row */}
               <div className="grid grid-cols-2 gap-6">
@@ -1397,10 +1397,10 @@ function PurchaseFlowPage() {
                   </label>
                   <input
                     type="text"
-                    value={paymentForm.nameOfManufacturer}
-                    onChange={(e) => setPaymentForm(prev => ({...prev, nameOfManufacturer: e.target.value}))}
-                    className="w-full px-4 py-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-black focus:border-black bg-gray-50"
+                    value="Volkswagen Group"
+                    className="w-full px-4 py-3 border border-gray-300 rounded-md bg-gray-50 text-gray-700 cursor-not-allowed"
                     readOnly
+                    disabled
                   />
                 </div>
                 <div>
@@ -1409,9 +1409,10 @@ function PurchaseFlowPage() {
                   </div>
                   <input
                     type="text"
-                    value="BSB"
-                    className="w-full px-4 py-3 border border-gray-300 rounded-md bg-gray-50 text-center"
+                    value="062-000"
+                    className="w-full px-4 py-3 border border-gray-300 rounded-md bg-gray-50 text-center text-gray-700 cursor-not-allowed"
                     readOnly
+                    disabled
                   />
                 </div>
               </div>
@@ -1424,10 +1425,10 @@ function PurchaseFlowPage() {
                   </label>
                   <input
                     type="text"
-                    value={paymentForm.accountNumber}
-                    onChange={(e) => setPaymentForm(prev => ({...prev, accountNumber: e.target.value}))}
-                    className="w-full px-4 py-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-black focus:border-black"
-                    placeholder="Enter account number"
+                    value="1234567890"
+                    className="w-full px-4 py-3 border border-gray-300 rounded-md bg-gray-50 text-gray-700 cursor-not-allowed"
+                    readOnly
+                    disabled
                   />
                 </div>
                 <div>
@@ -1436,10 +1437,10 @@ function PurchaseFlowPage() {
                   </label>
                   <input
                     type="text"
-                    value={paymentForm.accountName}
-                    onChange={(e) => setPaymentForm(prev => ({...prev, accountName: e.target.value}))}
-                    className="w-full px-4 py-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-black focus:border-black"
-                    placeholder="Enter account name"
+                    value="Auto Direct Pty Ltd"
+                    className="w-full px-4 py-3 border border-gray-300 rounded-md bg-gray-50 text-gray-700 cursor-not-allowed"
+                    readOnly
+                    disabled
                   />
                 </div>
               </div>
@@ -1451,10 +1452,10 @@ function PurchaseFlowPage() {
                 </label>
                 <input
                   type="text"
-                  value={paymentForm.paymentReference}
-                  onChange={(e) => setPaymentForm(prev => ({...prev, paymentReference: e.target.value}))}
-                  className="w-full px-4 py-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-black focus:border-black bg-gray-50"
+                  value={generatedOrderID}
+                  className="w-full px-4 py-3 border border-gray-300 rounded-md bg-gray-50 text-gray-700 cursor-not-allowed"
                   readOnly
+                  disabled
                 />
               </div>
             </div>
@@ -1464,22 +1465,18 @@ function PurchaseFlowPage() {
               <h4 className="text-lg font-semibold text-gray-800 mb-4">Vehicle Overview</h4>
               <div className="grid grid-cols-2 gap-y-4 gap-x-8 text-sm">
                 <div className="flex items-center">
-                  <span className="text-gray-600 w-4 h-4 mr-3">🚗</span>
                   <span className="text-gray-600 mr-2">Make:</span>
                   <span className="font-medium ml-auto">{car?.make || car?.makeName}</span>
                 </div>
                 <div className="flex items-center">
-                  <span className="text-gray-600 w-4 h-4 mr-3">📋</span>
                   <span className="text-gray-600 mr-2">Model:</span>
                   <span className="font-medium ml-auto">{car?.model || car?.modelName}</span>
                 </div>
                 <div className="flex items-center">
-                  <span className="text-gray-600 w-4 h-4 mr-3">💰</span>
                   <span className="text-gray-600 mr-2">Price:</span>
                   <span className="font-medium ml-auto">${car?.price?.toLocaleString()}</span>
                 </div>
                 <div className="flex items-center">
-                  <span className="text-gray-600 w-4 h-4 mr-3">🎨</span>
                   <span className="text-gray-600 mr-2">Color:</span>
                   <span className="font-medium ml-auto">{car?.color || car?.colour || 'N/A'}</span>
                 </div>
@@ -1492,7 +1489,7 @@ function PurchaseFlowPage() {
         return (
           <div className="space-y-6">
             <div className="bg-blue-50 border border-blue-200 rounded-md p-4 mb-6">
-              <p className="text-blue-800 font-medium">📋 Complete Your Payment</p>
+              <p className="text-blue-800 font-medium">Complete Your Payment</p>
             </div>
 
             <div className="bg-white border border-gray-300 rounded-lg p-6">
@@ -1526,12 +1523,12 @@ function PurchaseFlowPage() {
 
               <div className="text-center">
                 <p className="text-gray-600 mb-4">Once payment is completed, you will receive:</p>
-                <ul className="text-left text-gray-600 space-y-2 max-w-md mx-auto">
-                  <li>✅ Payment confirmation email</li>
-                  <li>📋 Order processing notification</li>
-                  <li>🚚 Delivery tracking information</li>
-                  <li>📞 Contact from our delivery team</li>
-                </ul>
+                <div className="grid grid-cols-2 gap-4 text-left text-gray-600 max-w-2xl mx-auto">
+                  <div>Payment confirmation email</div>
+                  <div>Order processing notification</div>
+                  <div>Delivery tracking information</div>
+                  <div>Contact from our delivery team</div>
+                </div>
               </div>
             </div>
 

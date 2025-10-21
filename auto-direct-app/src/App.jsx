@@ -35,7 +35,6 @@ import UserManagePurchasesPage from "./pages/user-manage-purchases-page"; // thi
 import InternalRegisterPage from "./pages/internal-register-page";
 import Chatbot from "./components/Chatbot";
 import ChatbotInquiries from "./pages/chatbot-inquiries";
-import CustomerChatbotInquiries from "./pages/customer-chatbot-inquiries";
 import DbConnectionTestPage from "./pages/db-connection-test-page"; // to be deleted before handover
 import SAPDatabasePage from "./pages/sap-database-page"; // Admin-only SAP database management
 import PurchaseVehiclePage from "./pages/PurchaseVehiclePage"; // Purchase vehicle form page
@@ -71,8 +70,6 @@ function App() {
           <Route path="/register" element={<RegisterPage />} />
           <Route path="/internal-register" element={<InternalRegisterPage />} />
           <Route path="/manage-my-purchases" element={<UserManagePurchasesPage />} />
-          <Route path="/manage-my-requests" element={<ManageMyRequestsPage />} />
-          <Route path="/my-support-inquiries" element={<CustomerChatbotInquiries />} />
           <Route path="/purchase-flow" element={<PurchaseFlowPage />} />
           <Route path="/profile" element={<ProfilePage />} />
           <Route path="/privacy-policy" element={<PrivacyPolicyPage />} />
