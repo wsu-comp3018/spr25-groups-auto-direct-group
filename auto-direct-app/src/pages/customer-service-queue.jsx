@@ -90,13 +90,13 @@ function CustomerServiceQueue() {
   const getTypeColor = (type) => {
     switch (type) {
       case 'Comparison':
-        return 'bg-blue-100 text-blue-800';
+        return 'bg-gray-200 text-black';
       case 'Test Drive':
-        return 'bg-green-100 text-green-800';
+        return 'bg-gray-300 text-black';
       case 'General Inquiry':
-        return 'bg-gray-100 text-gray-800';
+        return 'bg-gray-100 text-black';
       default:
-        return 'bg-gray-100 text-gray-800';
+        return 'bg-gray-100 text-black';
     }
   };
 
@@ -238,8 +238,8 @@ function CustomerServiceQueue() {
         <div className="mb-8">
           <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4 mb-4">
             <div>
-              <h1 className="text-3xl font-bold text-gray-900 flex items-center gap-3 mb-2">
-                <FileText className="text-gray-700" size={32} />
+              <h1 className="text-3xl font-bold text-black flex items-center gap-3 mb-2">
+                <FileText className="text-black" size={32} />
                 Customer Service Queue
               </h1>
               <p className="text-gray-600">Manage vehicle comparisons and customer inquiries</p>
@@ -247,7 +247,7 @@ function CustomerServiceQueue() {
           </div>
           <div className="inline-block bg-gray-100 px-4 py-2 rounded-lg border">
             <div className="text-sm text-gray-600 font-medium">Total Requests</div>
-            <div className="text-2xl font-bold text-gray-900">{requests.length}</div>
+            <div className="text-2xl font-bold text-black">{requests.length}</div>
           </div>
         </div>
 
@@ -259,7 +259,7 @@ function CustomerServiceQueue() {
               <input
                 type="text"
                 placeholder="Search by name, email, or vehicle..."
-                className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-black focus:outline-none"
                 value={search}
                 onChange={(e) => setSearch(e.target.value)}
               />
@@ -268,7 +268,7 @@ function CustomerServiceQueue() {
               <div className="relative">
                 <Filter className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" size={16} />
                 <select
-                  className="pl-10 pr-8 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent appearance-none bg-white"
+                  className="pl-10 pr-8 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-black focus:outline-none appearance-none bg-white"
                   value={typeFilter}
                   onChange={(e) => setTypeFilter(e.target.value)}
                 >
@@ -471,8 +471,8 @@ function CustomerServiceQueue() {
                   </div>
 
                   {/* Dealer Assignment */}
-                  <div className="bg-blue-50 p-4 rounded-lg">
-                    <h3 className="text-lg font-semibold text-gray-900 mb-3 flex items-center gap-2">
+                  <div className="bg-gray-50 p-4 rounded-lg border border-gray-300">
+                    <h3 className="text-lg font-semibold text-black mb-3 flex items-center gap-2">
                       <UserPlus size={20} />
                       Dealer Assignment
                     </h3>
@@ -482,12 +482,12 @@ function CustomerServiceQueue() {
                         placeholder="Enter Dealer ID"
                         value={dealerInput}
                         onChange={(e) => setDealerInput(e.target.value)}
-                        className="flex-1 px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                        className="flex-1 px-3 py-2 border border-gray-300 rounded focus:ring-2 focus:ring-black focus:outline-none"
                       />
                       <button
                         onClick={() => handleAssignDealer(selectedRequest)}
                         disabled={actionLoading}
-                        className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 disabled:opacity-50 transition-colors"
+                        className="px-4 py-2 bg-black text-white rounded hover:bg-gray-800 disabled:opacity-50 transition-colors"
                       >
                         {actionLoading ? "Assigning..." : "Assign"}
                       </button>
@@ -499,7 +499,7 @@ function CustomerServiceQueue() {
                     <button
                       onClick={() => handleMarkCompleted(selectedRequest)}
                       disabled={actionLoading}
-                      className="flex items-center justify-center gap-2 px-4 py-2 bg-green-600 text-white rounded-md hover:bg-green-700 disabled:opacity-50 transition-colors"
+                      className="flex items-center justify-center gap-2 px-4 py-2 bg-black text-white rounded hover:bg-gray-800 disabled:opacity-50 transition-colors"
                     >
                       <CheckCircle size={16} />
                       Mark Completed
@@ -507,14 +507,14 @@ function CustomerServiceQueue() {
                     <button
                       onClick={() => handleCancelRequest(selectedRequest)}
                       disabled={actionLoading}
-                      className="flex items-center justify-center gap-2 px-4 py-2 bg-red-600 text-white rounded-md hover:bg-red-700 disabled:opacity-50 transition-colors"
+                      className="flex items-center justify-center gap-2 px-4 py-2 bg-black text-white rounded hover:bg-gray-800 disabled:opacity-50 transition-colors"
                     >
                       <XCircle size={16} />
                       Cancel Request
                     </button>
                     <button
                       onClick={() => setSelectedRequest(null)}
-                      className="flex items-center justify-center gap-2 px-4 py-2 bg-gray-600 text-white rounded-md hover:bg-gray-700 transition-colors"
+                      className="flex items-center justify-center gap-2 px-4 py-2 bg-black text-white rounded hover:bg-gray-800 transition-colors"
                     >
                       Close
                     </button>

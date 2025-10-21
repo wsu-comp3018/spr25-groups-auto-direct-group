@@ -32,7 +32,7 @@ const UserRow = ({userData, handleSave, handleDelete, handleReactivate}) => {
 		<tr
 			key={user.userID}
 			className={`border-b border-gray-200 hover:bg-gray-50 transition ${
-				user.user_status === 'Inactive' ? 'bg-red-50 opacity-75' : ''
+				user.user_status === 'Inactive' ? 'bg-gray-100 opacity-75' : ''
 			}`}
 		>
 			{isEditing ? (
@@ -98,13 +98,13 @@ const UserRow = ({userData, handleSave, handleDelete, handleReactivate}) => {
 				<td className="py-3 px-4 text-right flex gap-2 justify-end">
 				<button
 					onClick={() => handleSaveClick()}
-					className="text-sm bg-blue-600 text-white px-3 py-1 rounded hover:bg-blue-700"
+					className="text-sm bg-black text-white px-3 py-1 rounded hover:bg-gray-800"
 				>
 					Save
 				</button>
 				<button
 					onClick={() => toggleEdit()}
-					className="text-sm border px-3 py-1 rounded hover:bg-gray-100"
+					className="text-sm bg-white text-black border border-gray-300 px-3 py-1 rounded hover:bg-gray-100"
 				>
 					Cancel
 				</button>
@@ -128,8 +128,8 @@ const UserRow = ({userData, handleSave, handleDelete, handleReactivate}) => {
 				<td className="py-3 px-4">
 					<span className={`px-2 py-1 rounded text-xs font-medium ${
 						user.user_status === 'Active' 
-							? 'bg-green-100 text-green-800' 
-							: 'bg-red-100 text-red-800'
+							? 'bg-gray-200 text-black' 
+							: 'bg-gray-400 text-white'
 					}`}>
 						{user.user_status}
 					</span>
@@ -140,21 +140,21 @@ const UserRow = ({userData, handleSave, handleDelete, handleReactivate}) => {
 				<td className="py-3 px-4 text-right flex gap-2 justify-end">
 				<button
 					onClick={() => toggleEdit()}
-					className="text-sm border px-3 py-1 rounded hover:bg-gray-100"
+					className="text-sm bg-black text-white px-3 py-1 rounded hover:bg-gray-800"
 				>
 					Edit
 				</button>
 				{user.user_status === 'Inactive' ? (
 					<button
 						onClick={() => handleReactivateClick()}
-						className="text-sm border px-3 py-1 rounded text-green-600 hover:bg-green-50"
+						className="text-sm bg-black text-white px-3 py-1 rounded hover:bg-gray-800"
 					>
 						Reactivate
 					</button>
 				) : (
 					<button
 						onClick={() => handleDeleteClick()}
-						className="text-sm border px-3 py-1 rounded text-red-600 hover:bg-red-50"
+						className="text-sm bg-black text-white px-3 py-1 rounded hover:bg-gray-800"
 					>
 						Delete
 					</button>

@@ -77,7 +77,7 @@ function ManageManufacturersPage() {
 
   return (
     <div className="p-8 max-w-7xl mx-auto pt-20">
-      <h2 className="text-3xl font-bold mb-6 text-gray-800">
+      <h2 className="text-3xl font-bold mb-6 text-black">
         Manage Manufacturers
       </h2>
 
@@ -88,8 +88,8 @@ function ManageManufacturersPage() {
             <button
               key={status}
               onClick={() => setFilterStatus(status)}
-              className={`text-sm px-4 py-2 rounded border hover:bg-gray-100 ${
-                filterStatus === status ? "bg-gray-200 font-semibold" : ""
+              className={`text-sm px-4 py-2 rounded hover:bg-gray-800 transition ${
+                filterStatus === status ? "bg-black text-white font-semibold" : "bg-white text-black border border-gray-300"
               }`}
             >
               {status}
@@ -99,7 +99,7 @@ function ManageManufacturersPage() {
         <div className="flex gap-3">
           <button
             onClick={handleAdd}
-            className="flex items-center gap-2 text-sm px-4 py-2 rounded border hover:bg-gray-100"
+            className="flex items-center gap-2 px-4 py-2 bg-black text-white rounded hover:bg-gray-800 transition"
           >
             <span className="text-xl leading-none">＋</span> Add Manufacturer
           </button>
@@ -107,9 +107,9 @@ function ManageManufacturersPage() {
       </div>
 
 		<div className="overflow-x-auto">
-			<table className="min-w-full border-collapse text-left text-sm text-gray-700">
+			<table className="min-w-full border-collapse text-left text-sm">
 				<thead>
-					<tr className="border-b border-gray-300">
+					<tr className="bg-black text-white">
 					<th className="py-3 px-4 font-medium">Name</th>
 					<th className="py-3 px-4 font-medium">Country</th>
 					<th className="py-3 px-4 font-medium">ABN</th>

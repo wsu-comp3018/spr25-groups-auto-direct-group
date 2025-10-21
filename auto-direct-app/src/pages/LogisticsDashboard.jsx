@@ -293,25 +293,25 @@ const LogisticsDashboard = () => {
             </svg>
             Back
           </button>
-          <h1 className="text-3xl font-bold text-gray-900">Logistics Management Dashboard</h1>
+          <h1 className="text-3xl font-bold text-black">Logistics Management Dashboard</h1>
           <p className="text-gray-600 mt-2">Vehicle delivery coordination and shipment tracking</p>
         </div>
 
         {/* Logistics Analytics */}
         <div className="grid grid-cols-1 md:grid-cols-5 gap-4 mb-8">
-          <div className="bg-gray-800 text-white rounded-lg p-4">
+          <div className="bg-black text-white rounded-lg p-4">
             <h3 className="text-sm font-medium opacity-90">Total Shipments</h3>
             <p className="text-2xl font-bold">{logisticsStats.totalShipments}</p>
           </div>
-          <div className="bg-gray-700 text-white rounded-lg p-4">
+          <div className="bg-black text-white rounded-lg p-4">
             <h3 className="text-sm font-medium opacity-90">In Transit</h3>
             <p className="text-2xl font-bold">{logisticsStats.inTransit}</p>
           </div>
-          <div className="bg-gray-600 text-white rounded-lg p-4">
+          <div className="bg-black text-white rounded-lg p-4">
             <h3 className="text-sm font-medium opacity-90">Delivered</h3>
             <p className="text-2xl font-bold">{logisticsStats.delivered}</p>
           </div>
-          <div className="bg-gray-500 text-white rounded-lg p-4">
+          <div className="bg-black text-white rounded-lg p-4">
             <h3 className="text-sm font-medium opacity-90">Avg Delivery</h3>
             <p className="text-2xl font-bold">{logisticsStats.avgDeliveryTime} days</p>
           </div>
@@ -349,12 +349,12 @@ const LogisticsDashboard = () => {
                   value={searchDeliveryNumber}
                   onChange={(e) => setSearchDeliveryNumber(e.target.value)}
                   placeholder="Search delivery number..."
-                  className="flex-1 px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm"
+                  className="flex-1 px-4 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-black text-sm"
                 />
                 <button
                   onClick={handleSearchDelivery}
                   disabled={isLoading}
-                  className="bg-gray-800 text-white px-6 py-2 rounded-md hover:bg-black disabled:opacity-50 font-medium"
+                  className="bg-black text-white px-6 py-2 rounded hover:bg-gray-800 disabled:opacity-50 font-medium"
                 >
                   {isLoading ? 'Searching...' : 'Search'}
                 </button>
@@ -370,7 +370,7 @@ const LogisticsDashboard = () => {
                   value={deliveryData.deliveryNumber}
                   onChange={handleInputChange}
                   placeholder="e.g., DEL2025001"
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  className="w-full px-3 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-black"
                 />
               </div>
 
@@ -383,7 +383,7 @@ const LogisticsDashboard = () => {
                     value={vehicleId}
                     onChange={(e) => handleVehicleIdChange(index, e.target.value)}
                     placeholder={`Order ID ${index + 1} (e.g., SUBBE814UP)`}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 mb-2"
+                    className="w-full px-3 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-black mb-2"
                   />
                 ))}
               </div>
@@ -394,7 +394,7 @@ const LogisticsDashboard = () => {
                   name="deliveryStatus"
                   value={deliveryData.deliveryStatus}
                   onChange={handleInputChange}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  className="w-full px-3 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-black"
                 >
                   <option value="pending">Pending</option>
                   <option value="pending_pickup">Pending Pickup</option>
@@ -438,16 +438,16 @@ const LogisticsDashboard = () => {
 
             {/* Search Results */}
             {deliveryFound && (
-              <div className="mt-4 p-4 bg-green-50 border border-green-300 rounded-md">
-                <p className="text-sm font-medium text-green-700">
+              <div className="mt-4 p-4 bg-gray-50 border border-gray-300 rounded">
+                <p className="text-sm font-medium text-black">
                   ✅ Delivery found! Details loaded automatically.
                 </p>
               </div>
             )}
 
             {deliveryNotFound && (
-              <div className="mt-4 p-4 bg-red-50 border border-red-300 rounded-md">
-                <p className="text-sm font-medium text-red-700">
+              <div className="mt-4 p-4 bg-gray-100 border border-gray-300 rounded">
+                <p className="text-sm font-medium text-black">
                   ❌ Delivery number not found. You can create a new logistics order.
                 </p>
               </div>
@@ -484,13 +484,13 @@ const LogisticsDashboard = () => {
                     <div className="flex gap-2">
                       <button
                         onClick={() => handleUpdateDeliveryStatus(shipment.deliveryNumber, 'in_transit')}
-                        className="bg-gray-700 text-white px-3 py-1 rounded text-xs hover:bg-gray-800 font-medium"
+                        className="bg-black text-white px-3 py-1 rounded text-xs hover:bg-gray-800 font-medium"
                       >
                         Mark In Transit
                       </button>
                       <button
                         onClick={() => handleUpdateDeliveryStatus(shipment.deliveryNumber, 'delivered')}
-                        className="bg-gray-800 text-white px-3 py-1 rounded text-xs hover:bg-black font-medium"
+                        className="bg-black text-white px-3 py-1 rounded text-xs hover:bg-gray-800 font-medium"
                       >
                         Mark Delivered
                       </button>

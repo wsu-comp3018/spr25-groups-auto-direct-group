@@ -187,24 +187,18 @@ function ManageUsersPage() {
   return (
     <div className="p-8 w-auto max-w-max mx-auto pt-20">
       <div className="flex justify-between items-center mb-6">
-        <h2 className="text-3xl font-bold text-gray-800">Manage Users</h2>
+        <h2 className="text-3xl font-bold text-black">Manage Users</h2>
         <div className="flex gap-3">
           <button
             onClick={() => setShowInviteUserModal(true)}
-            className="bg-gray-600 text-white px-4 py-2 rounded-md hover:bg-gray-700 transition-colors flex items-center"
+            className="bg-black text-white px-4 py-2 rounded hover:bg-gray-800 transition"
           >
-            <svg className="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 8l7.89 4.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
-            </svg>
             Invite User
           </button>
           <button
             onClick={() => setShowAddUserModal(true)}
-            className="bg-black text-white px-4 py-2 rounded-md hover:bg-gray-800 transition-colors flex items-center"
+            className="bg-black text-white px-4 py-2 rounded hover:bg-gray-800 transition"
           >
-            <svg className="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
-            </svg>
             Add User
           </button>
         </div>
@@ -218,7 +212,7 @@ function ManageUsersPage() {
               onClick={() => setActiveTab("users")}
               className={`py-2 px-1 border-b-2 font-medium text-sm ${
                 activeTab === "users"
-                  ? "border-blue-500 text-blue-600"
+                  ? "border-black text-black"
                   : "border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300"
               }`}
             >
@@ -228,7 +222,7 @@ function ManageUsersPage() {
               onClick={() => setActiveTab("pending")}
               className={`py-2 px-1 border-b-2 font-medium text-sm ${
                 activeTab === "pending"
-                  ? "border-blue-500 text-blue-600"
+                  ? "border-black text-black"
                   : "border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300"
               }`}
             >
@@ -248,8 +242,8 @@ function ManageUsersPage() {
                 <button
                   key={role}
                   onClick={() => setFilterRole(role)}
-                  className={`text-sm px-4 py-2 rounded border hover:bg-gray-100 ${
-                    filterRole === role ? "bg-gray-200 font-semibold" : ""
+                  className={`text-sm px-4 py-2 rounded hover:bg-gray-800 transition ${
+                    filterRole === role ? "bg-black text-white font-semibold" : "bg-white text-black border border-gray-300"
                   }`}
                 >
                   {role}
@@ -262,10 +256,8 @@ function ManageUsersPage() {
                 <button
                   key={status}
                   onClick={() => setFilterStatus(status)}
-                  className={`text-sm px-4 py-2 rounded border hover:bg-gray-100 ${
-                    filterStatus === status ? "bg-gray-200 font-semibold" : ""
-                  } ${
-                    status === "Inactive" ? "border-red-300 text-red-700" : ""
+                  className={`text-sm px-4 py-2 rounded hover:bg-gray-800 transition ${
+                    filterStatus === status ? "bg-black text-white font-semibold" : "bg-white text-black border border-gray-300"
                   }`}
                 >
                   {status}
@@ -278,9 +270,9 @@ function ManageUsersPage() {
             <p className="text-gray-500">No users found.</p>
           ) : (
             <div className="overflow-x-auto">
-              <table className="min-w-full border-collapse text-left text-sm text-gray-700">
+              <table className="min-w-full border-collapse text-left text-sm">
                 <thead>
-                  <tr className="border-b border-gray-300">
+                  <tr className="bg-black text-white">
                     <th className="py-3 px-4 font-medium">First Name</th>
                     <th className="py-3 px-4 font-medium">Last Name</th>
                     <th className="py-3 px-4 font-medium">Email</th>
@@ -306,9 +298,9 @@ function ManageUsersPage() {
             <p className="text-gray-500">No pending registrations found.</p>
           ) : (
             <div className="overflow-x-auto">
-              <table className="min-w-full border-collapse text-left text-sm text-gray-700">
+              <table className="min-w-full border-collapse text-left text-sm">
                 <thead>
-                  <tr className="border-b border-gray-300">
+                  <tr className="bg-black text-white">
                     <th className="py-3 px-4 font-medium">Email</th>
                     <th className="py-3 px-4 font-medium">Roles</th>
                     <th className="py-3 px-4 font-medium">Invited</th>
@@ -335,13 +327,13 @@ function ManageUsersPage() {
                         <div className="flex gap-2 justify-end">
                           <button
                             onClick={() => handleResendInvitation(pending.token)}
-                            className="text-blue-600 hover:text-blue-800 text-sm font-medium"
+                            className="px-3 py-1 bg-black text-white rounded hover:bg-gray-800 transition text-xs"
                           >
                             Resend Email
                           </button>
                           <button
                             onClick={() => handleRevokeInvitation(pending.token)}
-                            className="text-red-600 hover:text-red-800 text-sm font-medium"
+                            className="px-3 py-1 bg-black text-white rounded hover:bg-gray-800 transition text-xs"
                           >
                             Revoke
                           </button>

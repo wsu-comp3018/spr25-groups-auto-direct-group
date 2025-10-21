@@ -155,37 +155,37 @@ function AdviceRequestQueue() {
 
   return (
     <div className="p-8 max-w-7xl mx-auto pt-20">
-      <h2 className="text-3xl font-bold mb-6 text-gray-800">
+      <h2 className="text-3xl font-bold mb-6 text-black">
         Advice Request Queue
       </h2>
       <div className="mb-4 flex justify-between items-center">
         <div className="flex gap-3">
           <button
             onClick={() => handleFilterClick("unassigned")}
-            className={`text-sm px-4 py-2 rounded border font-semibold ${
+            className={`text-sm px-4 py-2 rounded font-semibold transition ${
               activeFilter === "unassigned"
                 ? "bg-black text-white"
-                : "bg-gray-100 text-gray-700 hover:bg-gray-300"
+                : "bg-white text-black border border-gray-300 hover:bg-gray-800 hover:text-white"
             }`}
           >
             Unassigned
           </button>
           <button
             onClick={() => handleFilterClick("in-progress")}
-            className={`text-sm px-4 py-2 rounded border font-semibold ${
+            className={`text-sm px-4 py-2 rounded font-semibold transition ${
               activeFilter === "in-progress"
                 ? "bg-black text-white"
-                : "bg-gray-100 text-gray-700 hover:bg-gray-300"
+                : "bg-white text-black border border-gray-300 hover:bg-gray-800 hover:text-white"
             }`}
           >
             In Progress
           </button>
           <button
             onClick={() => handleFilterClick("completed")}
-            className={`text-sm px-4 py-2 rounded border font-semibold ${
+            className={`text-sm px-4 py-2 rounded font-semibold transition ${
               activeFilter === "completed"
                 ? "bg-black text-white"
-                : "bg-gray-100 text-gray-700 hover:bg-gray-300"
+                : "bg-white text-black border border-gray-300 hover:bg-gray-800 hover:text-white"
             }`}
           >
             Completed
@@ -198,7 +198,7 @@ function AdviceRequestQueue() {
             placeholder="Search requests by email address"
             value={searchQuery}
             onChange={handleSearchChange}
-            className="flex items-center gap-2 text-sm px-4 py-2 rounded border hover:bg-gray-100 w-70"
+            className="px-4 py-2 border border-gray-300 rounded focus:ring-2 focus:ring-black focus:outline-none w-70"
           />
         </div>
       </div>
@@ -207,9 +207,9 @@ function AdviceRequestQueue() {
         <p className="text-gray-500">No {activeFilter} requests found.</p>
       ) : (
         <div className="overflow-x-auto">
-          <table className="min-w-full border-collapse text-left text-sm text-gray-700">
+          <table className="min-w-full border-collapse text-left text-sm">
             <thead>
-              <tr className="border-b border-gray-300">
+              <tr className="bg-black text-white">
                 <th className="py-3 px-4 font-medium">Name</th>
                 <th className="py-3 px-4 font-medium">Email</th>
                 <th className="py-3 px-4 font-medium">Phone</th>
@@ -237,14 +237,9 @@ function AdviceRequestQueue() {
                           makeName: req.carMake,
                           modelName: req.carModel
                         })}
-                        className="hover:bg-gray-100 p-1 rounded"
+                        className="bg-black text-white px-3 py-1 rounded hover:bg-gray-800 text-xs"
                       >
-                        <img
-                          src="../../public/assets/speech_bubble.png"
-                          alt="View question"
-                          title="View question"
-                          className="w-6 h-6"
-                        />
+                        View
                       </button>
                     </td>
                     <td className="py-3 px-4 ">
@@ -280,7 +275,7 @@ function AdviceRequestQueue() {
                       {showSave[req.id] && (
                         <button
                           onClick={() => handleAssignEmployee(req.id, assignments[req.id])}
-                          className="bg-black hover:bg-gray-700 text-white font-bold py-1 px-3 rounded"
+                          className="bg-black hover:bg-gray-800 text-white px-3 py-1 rounded"
                         >
                           Save
                         </button>
@@ -305,7 +300,7 @@ function AdviceRequestQueue() {
             <div className="mt-6 text-right">
               <button
                 onClick={closeRequest}
-                className="bg-black hover:bg-gray-700 text-white font-bold py-2 px-4 rounded"
+                className="bg-black hover:bg-gray-800 text-white px-4 py-2 rounded"
               >
                 Close
               </button>
