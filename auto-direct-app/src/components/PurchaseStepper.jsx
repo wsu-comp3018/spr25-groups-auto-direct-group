@@ -69,22 +69,6 @@ const PurchaseStepper = ({ currentStep, steps, className = "" }) => {
           );
         })}
       </div>
-      
-      {/* Progress Bar */}
-      <div className="mt-6">
-        <div className="flex justify-between text-xs text-gray-600 mb-2">
-          <span>Progress</span>
-          <span>{Math.round(((currentStep - 1) / (steps.length - 1)) * 100)}%</span>
-        </div>
-        <div className="w-full bg-gray-200 rounded-full h-2">
-          <div 
-            className="bg-blue-500 h-2 rounded-full transition-all duration-300 ease-out"
-            style={{ 
-              width: `${Math.max(0, ((currentStep - 1) / (steps.length - 1)) * 100)}%` 
-            }}
-          />
-        </div>
-      </div>
     </div>
   );
 };
