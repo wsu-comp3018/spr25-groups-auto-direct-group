@@ -115,6 +115,25 @@ const Navbar = () => {
 
             {/* Right side icons */}
             <div className="flex items-center gap-4 pr-6">
+              {/* User Welcome Text (desktop only) */}
+              {user && (
+                <div className="hidden md:flex items-center gap-3 text-sm bg-white px-4 py-3 rounded-xl border border-gray-200 shadow-sm hover:shadow-md transition-all duration-200">
+                  <div className="w-8 h-8 bg-gradient-to-br from-gray-700 to-gray-900 rounded-full flex items-center justify-center">
+                    <svg className="w-4 h-4 text-white" fill="currentColor" viewBox="0 0 20 20">
+                      <path fillRule="evenodd" d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z" clipRule="evenodd" />
+                    </svg>
+                  </div>
+                  <div className="flex flex-col">
+                    <span className="text-gray-900 font-semibold text-sm leading-tight">
+                      {user.firstName || 'User'}
+                    </span>
+                    <span className="text-gray-500 text-xs font-medium leading-tight">
+                      {user.roles && user.roles.length > 0 ? user.roles[0] : 'User'}
+                    </span>
+                  </div>
+                </div>
+              )}
+
               {/* Hamburger for mobile */}
               <button
                 className="md:hidden focus:outline-none"
@@ -165,10 +184,7 @@ const Navbar = () => {
       >
         <div className="p-6 flex justify-between items-center border-b border-white/10 flex-shrink-0">
           <h3 className="text-lg font-semibold text-white">
-             Welcome
-            {user && user.firstName ? `, ${user.firstName}` : ""} 
-            <br/>
-            {user && user.roles && user.roles.length > 0 ?  `Role: ${user.roles[0]}` : ""}
+            Menu
           </h3>
           <button
             onClick={closeSlider}
@@ -365,12 +381,24 @@ const Navbar = () => {
         }}
       >
         <div className="p-6 flex justify-between items-center border-b border-white/10 flex-shrink-0">
-          <h3 className="text-lg font-semibold text-white">
-             Welcome
-            {user && user.firstName ? `, ${user.firstName}` : ""} 
-            <br/>
-            {user && user.roles && user.roles.length > 0 ?  `Role: ${user.roles[0]}` : ""}
-          </h3>
+          <div className="flex flex-col">
+            <h3 className="text-lg font-semibold text-white">
+              Menu
+            </h3>
+            {user && (
+              <div className="flex items-center gap-3 text-sm text-white mt-2 p-3 bg-white/10 rounded-lg backdrop-blur-sm">
+                <div className="w-7 h-7 bg-gradient-to-br from-gray-600 to-gray-800 rounded-full flex items-center justify-center">
+                  <svg className="w-3.5 h-3.5 text-white" fill="currentColor" viewBox="0 0 20 20">
+                    <path fillRule="evenodd" d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z" clipRule="evenodd" />
+                  </svg>
+                </div>
+                <div className="flex flex-col">
+                  <span className="font-semibold text-sm leading-tight">{user.firstName || 'User'}</span>
+                  <span className="text-xs text-gray-300 leading-tight">{user.roles && user.roles.length > 0 ? user.roles[0] : 'User'}</span>
+                </div>
+              </div>
+            )}
+          </div>
           <button
             onClick={() => setShowMobileMenu(false)}
             className="text-white hover:bg-white hover:text-black p-2 rounded-full transition text-2xl"
