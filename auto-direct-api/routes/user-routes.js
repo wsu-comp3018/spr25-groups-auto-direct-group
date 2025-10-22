@@ -86,11 +86,11 @@ router.post('/login', async (req, res) => {
 		}
 
 		let user = rows[0];
-		// Temporarily bypass password check for development
-		// const passwordMatch = bcrypt.compareSync(password, user.passwordHash);
-		// if (!passwordMatch) {
-		// 	return res.status(401).json({ message: 'Email and password do not match.' });
-		// }
+		// Verify password
+		const passwordMatch = bcrypt.compareSync(password, user.passwordHash);
+		if (!passwordMatch) {
+			return res.status(401).json({ message: 'Email and password do not match.' });
+		}
 
 		const token = jwt.sign({ userId: user.userID }, jwtKey, {	expiresIn: '1d' });
 		const rolesData = await getUserRolesByID(user.userID);

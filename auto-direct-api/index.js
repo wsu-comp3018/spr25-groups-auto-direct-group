@@ -62,14 +62,6 @@ try {
     socket.on('join', (sessionId) => {
       if (typeof sessionId === 'string' && sessionId.length > 0) {
         socket.join(sessionId);
-        console.log(`Socket ${socket.id} joined room: ${sessionId}`);
-      }
-    });
-    
-    socket.on('leave', (sessionId) => {
-      if (typeof sessionId === 'string' && sessionId.length > 0) {
-        socket.leave(sessionId);
-        console.log(`Socket ${socket.id} left room: ${sessionId}`);
       }
     });
   });

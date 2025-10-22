@@ -7,4 +7,8 @@ dist/
 build/
 coverage/
 .vscode/
+git-history.csv
+auto-direct-api/.DS_Store
+auto-direct-app/.DS_Store
+deployment/.DS_Store
 package-lock.json

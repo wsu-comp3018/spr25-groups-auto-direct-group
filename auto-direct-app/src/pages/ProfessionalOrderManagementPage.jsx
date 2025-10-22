@@ -10,7 +10,6 @@ const ProfessionalOrderManagementPage = () => {
 
   // State for view mode
   const [viewMode, setViewMode] = useState('table'); // 'search' or 'table' - Default to table like the league system
-  const [showAnalytics, setShowAnalytics] = useState(false);
   
   // Enhanced form data with professional fields
   const [formData, setFormData] = useState({
@@ -42,7 +41,9 @@ const ProfessionalOrderManagementPage = () => {
 
   const [selectedOrderID, setSelectedOrderID] = useState('');
   const [searchBy, setSearchBy] = useState('Order ID');
-  const [statusFilter, setStatusFilter] = useState('All Status');
+  const [statusFilter, setStatusFilter] = useState('Status: All');
+  const [dateFilter, setDateFilter] = useState('Date: Today');
+  const [quickSearch, setQuickSearch] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const [orderFound, setOrderFound] = useState(false);
   const [orderNotFound, setOrderNotFound] = useState(false);
@@ -52,6 +53,10 @@ const ProfessionalOrderManagementPage = () => {
   const [orders, setOrders] = useState([]);
   const [filteredOrders, setFilteredOrders] = useState([]);
   const [isLoadingOrders, setIsLoadingOrders] = useState(false);
+  
+  // Pagination state
+  const [currentPage, setCurrentPage] = useState(1);
+  const [ordersPerPage] = useState(10); // Show 10 orders per page
   
   // Edit functionality state
   const [editingOrderId, setEditingOrderId] = useState(null);
@@ -231,17 +236,33 @@ const ProfessionalOrderManagementPage = () => {
     }
   }, [viewMode]);
 
-  // Filter orders by status
+  // Filter orders by status and quick search
   useEffect(() => {
     if (orders.length > 0) {
-      if (statusFilter === 'All Status') {
-        setFilteredOrders(orders);
-      } else {
-        const filtered = orders.filter(order => order.status === statusFilter);
-        setFilteredOrders(filtered);
+      let filtered = orders;
+      
+      // Filter by status
+      if (statusFilter !== 'Status: All' && statusFilter !== 'All') {
+        filtered = filtered.filter(order => order.status === statusFilter);
       }
+      
+      // Filter by quick search (search in order ID, customer name, vehicle)
+      if (quickSearch.trim()) {
+        const searchLower = quickSearch.toLowerCase();
+        filtered = filtered.filter(order => 
+          order.orderID?.toLowerCase().includes(searchLower) ||
+          order.customerName?.toLowerCase().includes(searchLower) ||
+          order.customerEmail?.toLowerCase().includes(searchLower) ||
+          order.vehicleMake?.toLowerCase().includes(searchLower) ||
+          order.vehicleModel?.toLowerCase().includes(searchLower) ||
+          `${order.vehicleMake} ${order.vehicleModel}`.toLowerCase().includes(searchLower)
+        );
+      }
+      
+      setFilteredOrders(filtered);
+      setCurrentPage(1); // Reset to first page when filters change
     }
-  }, [statusFilter, orders]);
+  }, [statusFilter, quickSearch, orders]);
 
   // Search function
   const handleSearch = async () => {
@@ -385,14 +406,18 @@ const ProfessionalOrderManagementPage = () => {
 
   return (
     <div className="min-h-screen bg-white p-8">
-      <div className="mb-8 text-center bg-gray-50 p-4 rounded">
-        <h1 className="text-3xl font-bold text-black mb-2" style={{color: '#000000', fontSize: '28px'}}>Order Management</h1>
+      <div className="mb-8 text-center bg-gray-50 p-6 rounded">
+        <h1 className="text-3xl font-bold text-black mb-2" style={{color: '#000000', fontSize: '32px', lineHeight: '1.3', paddingTop: '8px'}}>Order Management</h1>
         <p className="text-gray-600">Manage and track all vehicle orders</p>
       </div>
 
-        {/* Professional Tab Navigation - Black & White Theme */}
-        <div className="flex justify-between items-center mb-8">
-          <div className="flex space-x-1 bg-gray-100 p-1 rounded-lg">
+      {/* Main Content with Overview Sidebar */}
+      <div className="flex gap-8">
+        {/* Left Side - Main Content */}
+        <div className="flex-1">
+          {/* Professional Tab Navigation - Black & White Theme */}
+          <div className="flex justify-between items-center mb-8">
+            <div className="flex space-x-1 bg-gray-100 p-1 rounded-lg">
             <button
               onClick={() => setViewMode('table')}
               className={`px-6 py-2 text-sm font-medium rounded-md transition-colors ${
@@ -413,30 +438,10 @@ const ProfessionalOrderManagementPage = () => {
             >
               Search Individual Order
             </button>
-            <button
-              onClick={() => setShowAnalytics(!showAnalytics)}
-              className={`px-6 py-2 text-sm font-medium rounded-md transition-colors ${
-                showAnalytics
-                  ? 'bg-black text-white shadow-sm'
-                  : 'text-gray-700 hover:text-black hover:bg-white'
-              }`}
-            >
-              Show Statistics
-            </button>
           </div>
           
           {/* Quick Actions */}
           <div className="flex items-center space-x-3">
-            <button
-              onClick={fetchAllOrders}
-              disabled={isLoadingOrders}
-              className="flex items-center text-gray-600 hover:text-gray-800 font-medium text-sm"
-            >
-              <svg className="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
-              </svg>
-              Refresh
-            </button>
           </div>
         </div>
 
@@ -458,19 +463,31 @@ const ProfessionalOrderManagementPage = () => {
                   </svg>
                   <input
                     type="text"
-                    placeholder="Search orders, customers, vehicles..."
+                    value={quickSearch}
+                    onChange={(e) => setQuickSearch(e.target.value)}
+                    placeholder="Quick Search"
                     className="pl-10 pr-4 py-2 border border-gray-300 rounded-md text-sm focus:ring-2 focus:ring-black focus:border-black w-64"
                   />
                 </div>
                 <select 
                   value={statusFilter}
                   onChange={(e) => setStatusFilter(e.target.value)}
-                  className="border border-gray-300 rounded-md px-3 py-2 text-sm focus:ring-2 focus:ring-black focus:border-black"
+                  className="border border-gray-300 rounded px-3 py-2 text-sm focus:ring-2 focus:ring-black focus:border-black"
                 >
-                  <option>All Status</option>
+                  <option>Status: All</option>
                   <option>Processing</option>
                   <option>Confirmed</option>
                   <option>Delivered</option>
+                </select>
+                <select 
+                  value={dateFilter}
+                  onChange={(e) => setDateFilter(e.target.value)}
+                  className="border border-gray-300 rounded px-3 py-2 text-sm focus:ring-2 focus:ring-black focus:border-black"
+                >
+                  <option>Date: Today</option>
+                  <option>This Week</option>
+                  <option>This Month</option>
+                  <option>All Time</option>
                 </select>
                 <button 
                   onClick={fetchAllOrders}
@@ -484,14 +501,14 @@ const ProfessionalOrderManagementPage = () => {
 
             {/* Table Headers */}
             <div className="bg-black text-white px-6 py-3">
-              <div className="grid grid-cols-7 gap-4 text-sm font-medium">
+              <div className="grid gap-4 text-sm font-medium" style={{ gridTemplateColumns: '1.2fr 1.2fr 1fr 0.8fr 0.8fr 1fr 1fr' }}>
                 <div>ORDER DETAILS</div>
                 <div>CUSTOMER INFO</div>
                 <div>VEHICLE DETAILS</div>
-                <div>STATUS & PROGRESS</div>
+                <div>STATUS</div>
+                <div>PROGRESS</div>
                 <div>FINANCIAL</div>
                 <div>QUICK ACTIONS</div>
-                <div></div>
               </div>
             </div>
 
@@ -503,9 +520,11 @@ const ProfessionalOrderManagementPage = () => {
             ) : filteredOrders.length > 0 ? (
               /* Order Rows */
               <div className="divide-y divide-gray-100">
-                {filteredOrders.map((order, index) => (
+                {filteredOrders
+                  .slice((currentPage - 1) * ordersPerPage, currentPage * ordersPerPage)
+                  .map((order, index) => (
                   <div key={order.orderID || index} className="px-6 py-4 hover:bg-gray-50 transition-colors">
-                    <div className="grid grid-cols-7 gap-4 items-center">
+                    <div className="grid gap-4 items-center" style={{ gridTemplateColumns: '1.2fr 1.2fr 1fr 0.8fr 0.8fr 1fr 1fr' }}>
                       {/* Order Details */}
                       <div className="flex items-center">
                         <div className="w-10 h-10 bg-gray-800 rounded-full flex items-center justify-center text-white text-sm font-medium mr-3">
@@ -549,7 +568,7 @@ const ProfessionalOrderManagementPage = () => {
                           <>
                             <div className="font-medium text-black text-sm">{order.customerName}</div>
                             <div className="text-sm text-gray-600">{order.customerEmail}</div>
-                            <div className="text-xs text-gray-500">📞 {order.customerPhone}</div>
+                            <div className="text-xs text-gray-500">{order.customerPhone}</div>
                             <div className="text-xs text-gray-500">Rep: {order.salesRep || 'Sarah Johnson'}</div>
                           </>
                         )}
@@ -563,33 +582,70 @@ const ProfessionalOrderManagementPage = () => {
                         <div className="text-xs font-mono text-gray-600">{order.orderID}***</div>
                       </div>
 
-                      {/* Status & Progress */}
+                      {/* Status */}
                       <div>
-                        <div className="flex items-center mb-1">
-                          <div className={`w-2 h-2 rounded-full mr-2 ${
-                            order.status === 'Delivered' ? 'bg-gray-800' :
-                            order.status === 'Processing' ? 'bg-gray-600' :
-                            order.status === 'Confirmed' ? 'bg-gray-800' :
-                            'bg-gray-400'
-                          }`}></div>
-                          <span className="text-sm font-medium text-black">
-                            {order.status || 'Confirmed'}
-                          </span>
-                        </div>
-                        <div className="text-xs text-gray-500">📅 {order.estimatedDelivery || '2025-10-10'}</div>
+                        {editingOrderId === order.orderID ? (
+                          <select
+                            name="status"
+                            value={editFormData.status || order.status}
+                            onChange={handleEditInputChange}
+                            className="text-sm font-medium text-black border border-gray-300 rounded px-2 py-1 w-full"
+                          >
+                            <option value="Processing">Processing</option>
+                            <option value="Confirmed">Confirmed</option>
+                            <option value="Delivered">Delivered</option>
+                            <option value="Cancelled">Cancelled</option>
+                          </select>
+                        ) : (
+                          <div className="flex items-center">
+                            <div className={`w-2 h-2 rounded-full mr-2 ${
+                              order.status === 'Delivered' ? 'bg-gray-800' :
+                              order.status === 'Processing' ? 'bg-blue-500' :
+                              order.status === 'Confirmed' ? 'bg-green-500' :
+                              'bg-gray-400'
+                            }`}></div>
+                            <span className="text-sm font-medium text-black">
+                              {order.status || 'Confirmed'}
+                            </span>
+                          </div>
+                        )}
+                      </div>
+
+                      {/* Progress */}
+                      <div>
+                        <div className="text-sm text-gray-500">{order.estimatedDelivery || '2025-10-10'}</div>
                       </div>
 
                       {/* Financial */}
                       <div>
-                        <div className="font-bold text-black text-base">$50,000</div>
-                        <div className="flex items-center text-xs text-gray-600">
-                          <span className="mr-1">💳</span>
-                          <span>Financing Available</span>
+                        <div className="font-bold text-black text-base">${order.totalPrice || order.price || '50,000'}</div>
+                        <div className="text-xs text-gray-600">
+                          {order.financingOption === 'cash' || order.financingOption === 'Cash Purchase' ? 'Cash Payment' : 
+                           order.financingOption === 'finance' || order.financingOption === 'Finance' ? 'Financing Available' :
+                           order.financingOption === 'lease' || order.financingOption === 'Lease' ? 'Lease Agreement' :
+                           order.paymentType === 'Cash Purchase' ? 'Cash Payment' :
+                           order.paymentType === 'Finance' ? 'Financing Available' :
+                           order.paymentType === 'Lease' ? 'Lease Agreement' :
+                           'Payment Pending'}
                         </div>
-                        <div className="flex items-center text-xs mt-1 text-gray-600">
-                          <span className="mr-1">⚠️</span>
-                          <span>Pending</span>
-                        </div>
+                        {editingOrderId === order.orderID ? (
+                          <select
+                            name="paymentStatus"
+                            value={editFormData.paymentStatus || order.paymentStatus || order.financingStatus || 'Pending'}
+                            onChange={handleEditInputChange}
+                            className="text-xs mt-1 text-gray-600 border border-gray-300 rounded px-2 py-1 w-full"
+                          >
+                            <option value="Pending">Pending</option>
+                            <option value="Paid">Paid</option>
+                            <option value="Confirmed">Confirmed</option>
+                            <option value="Failed">Failed</option>
+                            <option value="Refunded">Refunded</option>
+                          </select>
+                        ) : (
+                          <div className="text-xs mt-1 text-gray-600">
+                            {order.paymentStatus || order.financingStatus || 'Pending'}
+                          </div>
+                        )}
                       </div>
 
                       {/* Quick Actions */}
@@ -604,7 +660,7 @@ const ProfessionalOrderManagementPage = () => {
                           }}
                           className="bg-black text-white text-xs px-3 py-2 rounded hover:bg-gray-800 transition-colors font-medium"
                         >
-                          📋 View Details
+                          View Details
                         </button>
                         {editingOrderId === order.orderID ? (
                           <div className="flex space-x-1">
@@ -624,30 +680,11 @@ const ProfessionalOrderManagementPage = () => {
                         ) : (
                           <button 
                             onClick={() => handleEditOrder(order)}
-                            className="bg-gray-800 text-white text-xs px-3 py-2 rounded hover:bg-gray-700 transition-colors font-medium"
+                            className="bg-black text-white text-xs px-3 py-2 rounded hover:bg-gray-800 transition-colors font-medium"
                           >
-                            ✏️ Edit Order
+                            Edit
                           </button>
                         )}
-                      </div>
-
-                      {/* More Actions */}
-                      <div className="flex space-x-2">
-                        <button className="text-gray-500 hover:text-black transition-colors p-1 rounded hover:bg-gray-100">
-                          <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21L6.927 10.5a11.054 11.054 0 006.073 6.073l1.113-3.297a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z" />
-                          </svg>
-                        </button>
-                        <button className="text-gray-500 hover:text-black transition-colors p-1 rounded hover:bg-gray-100">
-                          <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" />
-                          </svg>
-                        </button>
-                        <button className="text-gray-500 hover:text-black transition-colors p-1 rounded hover:bg-gray-100">
-                          <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
-                          </svg>
-                        </button>
                       </div>
                     </div>
                   </div>
@@ -656,6 +693,112 @@ const ProfessionalOrderManagementPage = () => {
             ) : (
               <div className="text-center py-12">
                 <p className="text-gray-500">No orders found</p>
+              </div>
+            )}
+
+            {/* Pagination Controls */}
+            {filteredOrders.length > ordersPerPage && (
+              <div className="flex justify-between items-center px-6 py-4 border-t border-gray-200">
+                <div className="text-sm text-gray-600">
+                  Showing {((currentPage - 1) * ordersPerPage) + 1} to {Math.min(currentPage * ordersPerPage, filteredOrders.length)} of {filteredOrders.length} results
+                </div>
+                
+                <div className="flex items-center space-x-2">
+                  {/* Previous Button */}
+                  <button
+                    onClick={() => setCurrentPage(prev => Math.max(prev - 1, 1))}
+                    disabled={currentPage === 1}
+                    className={`px-3 py-1 rounded border ${
+                      currentPage === 1
+                        ? 'border-gray-200 text-gray-400 cursor-not-allowed'
+                        : 'border-gray-300 text-gray-700 hover:bg-gray-50'
+                    }`}
+                  >
+                    ‹
+                  </button>
+
+                  {/* Page Numbers */}
+                  {(() => {
+                    const totalPages = Math.ceil(filteredOrders.length / ordersPerPage);
+                    const pageNumbers = [];
+                    const maxVisiblePages = 5;
+                    
+                    let startPage = Math.max(1, currentPage - Math.floor(maxVisiblePages / 2));
+                    let endPage = Math.min(totalPages, startPage + maxVisiblePages - 1);
+                    
+                    if (endPage - startPage < maxVisiblePages - 1) {
+                      startPage = Math.max(1, endPage - maxVisiblePages + 1);
+                    }
+
+                    // First page
+                    if (startPage > 1) {
+                      pageNumbers.push(
+                        <button
+                          key={1}
+                          onClick={() => setCurrentPage(1)}
+                          className="px-3 py-1 rounded border border-gray-300 text-gray-700 hover:bg-gray-50"
+                        >
+                          1
+                        </button>
+                      );
+                      if (startPage > 2) {
+                        pageNumbers.push(
+                          <span key="ellipsis1" className="px-2 text-gray-500">...</span>
+                        );
+                      }
+                    }
+
+                    // Middle pages
+                    for (let i = startPage; i <= endPage; i++) {
+                      pageNumbers.push(
+                        <button
+                          key={i}
+                          onClick={() => setCurrentPage(i)}
+                          className={`px-3 py-1 rounded border ${
+                            currentPage === i
+                              ? 'bg-black text-white border-black'
+                              : 'border-gray-300 text-gray-700 hover:bg-gray-50'
+                          }`}
+                        >
+                          {i}
+                        </button>
+                      );
+                    }
+
+                    // Last page
+                    if (endPage < totalPages) {
+                      if (endPage < totalPages - 1) {
+                        pageNumbers.push(
+                          <span key="ellipsis2" className="px-2 text-gray-500">...</span>
+                        );
+                      }
+                      pageNumbers.push(
+                        <button
+                          key={totalPages}
+                          onClick={() => setCurrentPage(totalPages)}
+                          className="px-3 py-1 rounded border border-gray-300 text-gray-700 hover:bg-gray-50"
+                        >
+                          {totalPages}
+                        </button>
+                      );
+                    }
+
+                    return pageNumbers;
+                  })()}
+
+                  {/* Next Button */}
+                  <button
+                    onClick={() => setCurrentPage(prev => Math.min(prev + 1, Math.ceil(filteredOrders.length / ordersPerPage)))}
+                    disabled={currentPage === Math.ceil(filteredOrders.length / ordersPerPage)}
+                    className={`px-3 py-1 rounded border ${
+                      currentPage === Math.ceil(filteredOrders.length / ordersPerPage)
+                        ? 'border-gray-200 text-gray-400 cursor-not-allowed'
+                        : 'border-gray-300 text-gray-700 hover:bg-gray-50'
+                    }`}
+                  >
+                    ›
+                  </button>
+                </div>
               </div>
             )}
           </div>
@@ -734,7 +877,7 @@ const ProfessionalOrderManagementPage = () => {
             {/* Customer Details Form - Show when order is found */}
             {orderFound && (
               <div className="mt-6 bg-gray-50 border border-gray-200 rounded-lg p-6">
-                <h3 className="text-lg font-semibold text-black mb-4">👤 Customer Details</h3>
+                <h3 className="text-lg font-semibold text-black mb-4">Customer Details</h3>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
                   <div>
                     <label className="block text-sm font-medium text-gray-700 mb-2">First Name</label>
@@ -782,7 +925,7 @@ const ProfessionalOrderManagementPage = () => {
                   </div>
                 </div>
 
-                <h3 className="text-lg font-semibold text-black mb-4">🚗 Vehicle Details</h3>
+                <h3 className="text-lg font-semibold text-black mb-4">Vehicle Details</h3>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
                   <div>
                     <label className="block text-sm font-medium text-gray-700 mb-2">Vehicle Model</label>
@@ -830,7 +973,7 @@ const ProfessionalOrderManagementPage = () => {
                   </div>
                 </div>
 
-                <h3 className="text-lg font-semibold text-black mb-4">📋 Order Management</h3>
+                <h3 className="text-lg font-semibold text-black mb-4">Order Management</h3>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div>
                     <label className="block text-sm font-medium text-gray-700 mb-2">Sales Representative</label>
@@ -881,112 +1024,47 @@ const ProfessionalOrderManagementPage = () => {
             )}
           </div>
         )}
+        </div>
 
-        {/* Statistics Dashboard */}
-        {showAnalytics && (
-          <div className="mt-8">
-            <div className="bg-white border border-gray-300 rounded p-6 shadow-sm">
-              <h2 className="text-xl font-semibold text-black mb-6">📊 Order Statistics</h2>
-              
-              {/* Key Metrics */}
-              <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
-                <div className="bg-white border border-gray-300 rounded p-4 text-center shadow-sm">
-                  <div className="text-2xl font-bold text-black">{orders.length}</div>
-                  <div className="text-sm text-gray-600">Total Orders</div>
-                </div>
-                <div className="bg-white border border-gray-300 rounded p-4 text-center shadow-sm">
-                  <div className="text-2xl font-bold text-black">{orders.filter(o => o.status === 'Delivered').length}</div>
-                  <div className="text-sm text-gray-600">Completed</div>
-                </div>
-                <div className="bg-white border border-gray-300 rounded p-4 text-center shadow-sm">
-                  <div className="text-2xl font-bold text-black">{orders.filter(o => o.status === 'Processing').length}</div>
-                  <div className="text-sm text-gray-600">In Progress</div>
-                </div>
-                <div className="bg-white border border-gray-300 rounded p-4 text-center shadow-sm">
-                  <div className="text-2xl font-bold text-black">{orders.filter(o => o.status === 'Confirmed').length}</div>
-                  <div className="text-sm text-gray-600">Pending Delivery</div>
+        {/* Right Side - Overview Statistics Sidebar */}
+        <div className="w-80 flex-shrink-0">
+          <div className="bg-gray-50 rounded-lg p-8 sticky top-8 min-h-screen">
+            <h3 className="text-xs font-semibold text-gray-500 mb-8 uppercase">OVERVIEW</h3>
+
+            {/* Statistics - Vertical Layout */}
+            <div className="space-y-10">
+              {/* Orders Today */}
+              <div>
+                <div className="text-gray-500 text-xs mb-3">Orders Today</div>
+                <div className="text-6xl font-bold text-black">{filteredOrders.length}</div>
+              </div>
+
+              {/* Pending Orders */}
+              <div>
+                <div className="text-gray-500 text-xs mb-3">Pending Orders</div>
+                <div className="text-6xl font-bold text-black">
+                  {filteredOrders.filter(o => o.status === 'Processing').length}
                 </div>
               </div>
 
-              {/* Recent Activity */}
-              <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                <div className="bg-white border border-gray-300 rounded p-6 shadow-sm">
-                  <h3 className="text-lg font-semibold text-black mb-4">📈 Order Trends</h3>
-                  <div className="space-y-3">
-                    <div className="flex justify-between items-center py-2 border-b border-gray-200">
-                      <span className="text-gray-600">This Month</span>
-                      <span className="font-semibold text-black">{orders.length} orders</span>
-                    </div>
-                    <div className="flex justify-between items-center py-2 border-b border-gray-200">
-                      <span className="text-gray-600">Average Order Value</span>
-                      <span className="font-semibold text-black">$45,000</span>
-                    </div>
-                    <div className="flex justify-between items-center py-2 border-b border-gray-200">
-                      <span className="text-gray-600">Popular Vehicle</span>
-                      <span className="font-semibold text-black">Toyota Camry</span>
-                    </div>
-                    <div className="flex justify-between items-center py-2">
-                      <span className="text-gray-600">Top Sales Rep</span>
-                      <span className="font-semibold text-black">Mike Johnson</span>
-                    </div>
-                  </div>
-                </div>
-
-                <div className="bg-white border border-gray-300 rounded p-6 shadow-sm">
-                  <h3 className="text-lg font-semibold text-black mb-4">🚗 Vehicle Categories</h3>
-                  <div className="space-y-3">
-                    <div className="flex justify-between items-center py-2">
-                      <span className="text-gray-600">Sedans</span>
-                      <div className="flex items-center">
-                        <div className="w-16 bg-gray-200 rounded-full h-2 mr-2">
-                          <div className="bg-black h-2 rounded-full" style={{width: '60%'}}></div>
-                        </div>
-                        <span className="text-sm text-black font-medium">60%</span>
-                      </div>
-                    </div>
-                    <div className="flex justify-between items-center py-2">
-                      <span className="text-gray-600">SUVs</span>
-                      <div className="flex items-center">
-                        <div className="w-16 bg-gray-200 rounded-full h-2 mr-2">
-                          <div className="bg-black h-2 rounded-full" style={{width: '25%'}}></div>
-                        </div>
-                        <span className="text-sm text-black font-medium">25%</span>
-                      </div>
-                    </div>
-                    <div className="flex justify-between items-center py-2">
-                      <span className="text-gray-600">Trucks</span>
-                      <div className="flex items-center">
-                        <div className="w-16 bg-gray-200 rounded-full h-2 mr-2">
-                          <div className="bg-black h-2 rounded-full" style={{width: '15%'}}></div>
-                        </div>
-                        <span className="text-sm text-black font-medium">15%</span>
-                      </div>
-                    </div>
-                  </div>
+              {/* Delivered */}
+              <div>
+                <div className="text-gray-500 text-xs mb-3">Delivered</div>
+                <div className="text-6xl font-bold text-black">
+                  {filteredOrders.filter(o => o.status === 'Delivered').length}
+                  <span className="text-base text-red-500 ml-2">-3%</span>
                 </div>
               </div>
 
-              {/* Performance Metrics */}
-              <div className="mt-6 bg-white border border-gray-300 rounded p-6 shadow-sm">
-                <h3 className="text-lg font-semibold text-black mb-4">📊 Performance Metrics</h3>
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                  <div className="text-center py-4 border-r border-gray-200">
-                    <div className="text-2xl font-bold text-black">92%</div>
-                    <div className="text-sm text-gray-600">Customer Satisfaction</div>
-                  </div>
-                  <div className="text-center py-4 border-r border-gray-200">
-                    <div className="text-2xl font-bold text-black">7 days</div>
-                    <div className="text-sm text-gray-600">Avg. Processing Time</div>
-                  </div>
-                  <div className="text-center py-4">
-                    <div className="text-2xl font-bold text-black">$2.1M</div>
-                    <div className="text-sm text-gray-600">Total Revenue</div>
-                  </div>
-                </div>
+              {/* Cancelled */}
+              <div>
+                <div className="text-gray-500 text-xs mb-3">Cancelled</div>
+                <div className="text-6xl font-bold text-black">0</div>
               </div>
             </div>
           </div>
-        )}
+        </div>
+      </div>
 
         <ToastContainer />
     </div>

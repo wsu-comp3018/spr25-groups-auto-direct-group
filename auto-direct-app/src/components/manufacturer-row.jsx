@@ -68,13 +68,13 @@ const manufacturerRow = ({manufacturerData, handleSave, handleToggleStatus, canc
 				<td className="py-3 px-4 text-right flex gap-2 justify-end">
 				<button
 					onClick={() => handleSaveClick()}
-					className="text-sm border px-3 py-1 rounded hover:bg-gray-100"
+					className="text-sm bg-black text-white px-3 py-1 rounded hover:bg-gray-800"
 				>
 					Save
 				</button>
 				<button
 					onClick={() => toggleEdit()}
-					className="text-sm border px-3 py-1 rounded hover:bg-gray-100"
+					className="text-sm bg-white text-black border border-gray-300 px-3 py-1 rounded hover:bg-gray-100"
 				>
 					Cancel
 				</button>
@@ -89,7 +89,7 @@ const manufacturerRow = ({manufacturerData, handleSave, handleToggleStatus, canc
 				<td className="py-3 px-4 text-right flex gap-2 justify-end">
 				<button
 					onClick={() => toggleEdit()}
-					className="text-sm border px-3 py-1 rounded hover:bg-gray-100"
+					className="text-sm bg-black text-white px-3 py-1 rounded hover:bg-gray-800"
 				>
 					Edit
 				</button>
@@ -97,7 +97,7 @@ const manufacturerRow = ({manufacturerData, handleSave, handleToggleStatus, canc
 					name="manufacturerStatus"
 					value={ m.manufacturerStatus == "Active" ? "Inactive" : "Active"}
 					onClick={(e) => handleToggleStatusClick(e)}
-					className="text-sm border px-3 py-1 rounded hover:bg-gray-100 text-red-600"
+					className="text-sm bg-black text-white px-3 py-1 rounded hover:bg-gray-800"
 				>
 					{ m.manufacturerStatus == "Active" ? "Disable" : "Enable"}
 				</button>

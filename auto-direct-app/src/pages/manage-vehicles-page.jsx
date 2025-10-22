@@ -335,7 +335,7 @@ function ManageVehiclesPage() {
 
   return (
     <div className="p-8 max-w-7xl mx-auto pt-20">
-      <h2 className="text-3xl font-bold mb-6 text-gray-800">Manage Vehicles</h2>
+      <h2 className="text-3xl font-bold mb-6 text-black">Manage Vehicles</h2>
 
       <div className="mb-4 flex justify-between items-center">
         <div className="flex gap-3">
@@ -344,10 +344,10 @@ function ManageVehiclesPage() {
               <button
                 key={approvalStatus}
                 onClick={() => setFilterStatus(approvalStatus)}
-                className={`text-sm px-4 py-2 rounded border hover:bg-gray-100 ${
+                className={`text-sm px-4 py-2 rounded hover:bg-gray-800 transition ${
                   filterStatus === approvalStatus
-                    ? "bg-gray-200 font-semibold"
-                    : ""
+                    ? "bg-black text-white font-semibold"
+                    : "bg-white text-black border border-gray-300"
                 }`}
               >
                 {approvalStatus}
@@ -361,11 +361,11 @@ function ManageVehiclesPage() {
             placeholder="Search Vehicles"
             value={search}
             onChange={handleSearchChange}
-            className="flex items-center gap-2 text-sm px-4 py-2 rounded border hover:bg-gray-100"
+            className="px-4 py-2 border border-gray-300 rounded focus:ring-2 focus:ring-black focus:outline-none"
           />
           <button
             onClick={() => navigate("/add-vehicle")}
-            className="flex items-center gap-2 text-sm px-4 py-2 rounded border hover:bg-gray-100"
+            className="flex items-center gap-2 px-4 py-2 bg-black text-white rounded hover:bg-gray-800 transition"
           >
             <span className="text-xl leading-none">＋</span> Add Vehicle
           </button>
@@ -378,9 +378,9 @@ function ManageVehiclesPage() {
         <p className="text-gray-500">No cars found.</p>
       ) : (
         <div className="overflow-x-auto">
-          <table className="min-w-full border-collapse text-left text-sm text-gray-700">
+          <table className="min-w-full border-collapse text-left text-sm">
             <thead>
-              <tr className="border-b border-gray-300">
+              <tr className="bg-black text-white">
                 <th className="py-3 px-4 font-medium">Make</th>
                 <th className="py-3 px-4 font-medium">Model Name</th>
                 <th className="py-3 px-4 font-medium">Price</th>
@@ -418,49 +418,29 @@ function ManageVehiclesPage() {
                         <>
                           <button
                             onClick={() => handleApprove(car)}
-                            className="hover:bg-gray-100"
+                            className="px-3 py-1 bg-black text-white rounded hover:bg-gray-800 transition text-xs"
                           >
-                            <img
-                              src="../../public/assets/approve_icon.png"
-                              alt="Approve Vehicle"
-                              title="Approve Vehicle"
-                              className="w-6 h-6"
-                            />
+                            Approve
                           </button>
                           <button
                             onClick={() => handleReject(car)}
-                            className="hover:bg-gray-100"
+                            className="px-3 py-1 bg-black text-white rounded hover:bg-gray-800 transition text-xs"
                           >
-                            <img
-                              src="../../public/assets/reject_icon.png"
-                              alt="Reject Vehicle"
-                              title="Reject Vehicle"
-                              className="w-6 h-6"
-                            />
+                            Reject
                           </button>
                         </>
                       )}
                       <button
                         onClick={() => handleEdit(car)}
-                        className="hover:bg-gray-100"
+                        className="px-3 py-1 bg-black text-white rounded hover:bg-gray-800 transition text-xs"
                       >
-                        <img
-                          src="../../public/assets/edit_icon.png"
-                          alt="Edit Vehicle"
-                          title="Edit Vehicle"
-                          className="w-6 h-6"
-                        />
+                        Edit
                       </button>
                       <button
                         onClick={() => handleDelete(car)}
-                        className="hover:bg-gray-100"
+                        className="px-3 py-1 bg-black text-white rounded hover:bg-gray-800 transition text-xs"
                       >
-                        <img
-                          src="../../public/assets/delete_icon.png"
-                          alt="Delete Vehicle"
-                          title="Delete Vehicle"
-                          className="w-6 h-6"
-                        />
+                        Delete
                       </button>
                     </td>
                   </>
@@ -758,7 +738,7 @@ function ManageVehiclesPage() {
 
               <button
                 type="submit"
-                className={`bg-black text-white text-lg font-semibold px-6 py-3 rounded-md hover:bg-gray-700 transition shadow-md`}
+                className="bg-black text-white text-lg font-semibold px-6 py-3 rounded hover:bg-gray-800 transition"
               >
                 Save Changes
               </button>
@@ -795,7 +775,7 @@ function ManageVehiclesPage() {
               </button>
               <button
                 onClick={confirmDelete}
-                className="px-4 py-2 bg-red-600 text-white rounded-md hover:bg-red-700 transition"
+                className="px-4 py-2 bg-black text-white rounded hover:bg-gray-800 transition"
               >
                 Delete
               </button>
@@ -830,7 +810,7 @@ function ManageVehiclesPage() {
             <div className="flex justify-end gap-3 mt-6">
               <button
                 onClick={() => window.location.reload()}
-                className="px-4 py-2 bg-black text-white font-semibold rounded-md hover:bg-gray-700 transition shadow-md mx-auto"
+                className="px-4 py-2 bg-black text-white font-semibold rounded hover:bg-gray-800 transition mx-auto"
               >
                 OK
               </button>

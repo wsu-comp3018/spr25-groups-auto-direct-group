@@ -256,7 +256,7 @@ function ManageDealershipsPage() {
 
   return (
     <div className="p-8 max-w-7xl mx-auto pt-20">
-      <h2 className="text-3xl font-bold mb-6 text-gray-800">
+      <h2 className="text-3xl font-bold mb-6 text-black">
         Manage Dealerships
       </h2>
 
@@ -264,7 +264,7 @@ function ManageDealershipsPage() {
       <div className="mb-4 flex justify-end">
         <button
           onClick={() => setShowAddDealerForm(true)}
-          className="flex items-center gap-2 text-sm px-4 py-2 rounded border hover:bg-gray-100"
+          className="flex items-center gap-2 px-4 py-2 bg-black text-white rounded hover:bg-gray-800 transition disabled:opacity-50"
           disabled={manufacturers.length === 0}
         >
           <span className="text-xl leading-none">＋</span> Add Dealership
@@ -273,9 +273,9 @@ function ManageDealershipsPage() {
 
       {/* Warning if no manufacturers */}
       {manufacturers.length === 0 && (
-        <div className="mb-4 p-4 bg-red-50 border border-red-200 rounded">
-          <p className="text-red-800 font-medium">Cannot add dealerships</p>
-          <p className="text-red-700 text-sm">
+        <div className="mb-4 p-4 bg-gray-100 border border-gray-300 rounded">
+          <p className="text-black font-medium">Cannot add dealerships</p>
+          <p className="text-gray-700 text-sm">
             Manufacturers failed to load from database. Please refresh the page
             or check your server connection.
           </p>
@@ -284,9 +284,9 @@ function ManageDealershipsPage() {
 
       {/* Dealership Table */}
       <div className="overflow-x-auto">
-        <table className="min-w-full border-collapse text-left text-sm text-gray-700">
+        <table className="min-w-full border-collapse text-left text-sm">
           <thead>
-            <tr className="border-b border-gray-300">
+            <tr className="bg-black text-white">
               <th className="py-3 px-4 font-medium">Name</th>
               <th className="py-3 px-4 font-medium">Address</th>
               <th className="py-3 px-4 font-medium">Manufacturer</th>
@@ -345,14 +345,14 @@ function ManageDealershipsPage() {
                       <button
                         onClick={handleSaveEdit}
                         disabled={isUpdating}
-                        className="text-sm border px-3 py-1 rounded hover:bg-gray-100 disabled:opacity-50"
+                        className="text-sm bg-black text-white px-3 py-1 rounded hover:bg-gray-800 disabled:opacity-50"
                       >
                         {isUpdating ? "Saving..." : "Save"}
                       </button>
                       <button
                         onClick={handleCancelEdit}
                         disabled={isUpdating}
-                        className="text-sm border px-3 py-1 rounded hover:bg-gray-100 disabled:opacity-50"
+                        className="text-sm bg-white text-black border border-gray-300 px-3 py-1 rounded hover:bg-gray-100 disabled:opacity-50"
                       >
                         Cancel
                       </button>
@@ -369,13 +369,13 @@ function ManageDealershipsPage() {
                     <td className="py-3 px-4 flex gap-2">
                       <button
                         onClick={() => handleEdit(d)}
-                        className="text-sm border px-3 py-1 rounded hover:bg-gray-100"
+                        className="text-sm bg-black text-white px-3 py-1 rounded hover:bg-gray-800"
                       >
                         Edit
                       </button>
                       <button
                         onClick={() => handleDelete(d.dealerID)}
-                        className="text-sm border px-3 py-1 rounded text-red-600 hover:bg-gray-100"
+                        className="text-sm bg-black text-white px-3 py-1 rounded hover:bg-gray-800"
                       >
                         Delete
                       </button>
@@ -419,7 +419,7 @@ function ManageDealershipsPage() {
                   })
                 }
                 placeholder="Enter dealership name"
-                className="w-full border p-2 rounded focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                className="w-full border p-2 rounded focus:ring-2 focus:ring-black focus:outline-none"
                 required
               />
             </div>
@@ -443,7 +443,7 @@ function ManageDealershipsPage() {
                   })
                 }
                 placeholder="123 Main Street, Sydney NSW 2000, Australia"
-                className="w-full border p-2 rounded h-20 resize-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                className="w-full border p-2 rounded h-20 resize-none focus:ring-2 focus:ring-black focus:outline-none"
                 required
               />
             </div>
@@ -466,7 +466,7 @@ function ManageDealershipsPage() {
                     manufacturerID: e.target.value,
                   });
                 }}
-                className="w-full border p-2 rounded focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                className="w-full border p-2 rounded focus:ring-2 focus:ring-black focus:outline-none"
                 required
                 disabled={isLoadingManufacturers || manufacturers.length === 0}
               >
@@ -489,7 +489,7 @@ function ManageDealershipsPage() {
             </div>
 
             {/* Help message */}
-            <div className="text-sm text-gray-600 mb-4 p-3 bg-blue-50 rounded">
+            <div className="text-sm text-gray-600 mb-4 p-3 bg-gray-50 rounded">
               <strong>Address Tips:</strong>
               <ul className="list-disc list-inside mt-1 text-xs">
                 <li>
@@ -506,7 +506,7 @@ function ManageDealershipsPage() {
               <button
                 onClick={() => setShowAddDealerForm(false)}
                 disabled={isAdding}
-                className="px-4 py-2 border rounded hover:bg-gray-100 disabled:opacity-50"
+                className="px-4 py-2 bg-white text-black border border-gray-300 rounded hover:bg-gray-100 disabled:opacity-50"
               >
                 Cancel
               </button>
@@ -517,7 +517,7 @@ function ManageDealershipsPage() {
                   isLoadingManufacturers ||
                   manufacturers.length === 0
                 }
-                className="bg-black text-white px-6 py-2 rounded hover:bg-white hover:text-black border font-semibold text-lg disabled:opacity-50"
+                className="bg-black text-white px-6 py-2 rounded hover:bg-gray-800 disabled:opacity-50"
               >
                 {isAdding ? "Adding..." : "Add Dealership"}
               </button>
