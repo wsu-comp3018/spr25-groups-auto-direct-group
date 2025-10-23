@@ -117,7 +117,7 @@ const Navbar = () => {
             <div className="flex items-center gap-4 pr-6">
               {/* User Welcome Text (desktop only) */}
               {user && (
-                <div className="hidden md:flex items-center gap-3 text-sm bg-white px-4 py-3 rounded-xl border border-gray-200 shadow-sm hover:shadow-md transition-all duration-200">
+                <div className="hidden md:flex items-center gap-3 text-sm bg-white px-4 py-3 rounded-xl transition-all duration-200">
                   <div className="w-8 h-8 bg-gradient-to-br from-gray-700 to-gray-900 rounded-full flex items-center justify-center">
                     <svg className="w-4 h-4 text-white" fill="currentColor" viewBox="0 0 20 20">
                       <path fillRule="evenodd" d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z" clipRule="evenodd" />
@@ -188,7 +188,7 @@ const Navbar = () => {
           </h3>
           <button
             onClick={closeSlider}
-            className="text-white hover:bg-white hover:text-black p-2 rounded-full transition text-2xl"
+            className="text-white hover:bg-white hover:text-black p-2 rounded-full transition text-2xl w-10 h-10 flex items-center justify-center hover:rounded-full"
           >
             &times;
           </button>
@@ -401,7 +401,7 @@ const Navbar = () => {
           </div>
           <button
             onClick={() => setShowMobileMenu(false)}
-            className="text-white hover:bg-white hover:text-black p-2 rounded-full transition text-2xl"
+            className="text-white hover:bg-white hover:text-black p-2 rounded-full transition text-2xl w-10 h-10 flex items-center justify-center hover:rounded-full"
           >
             &times;
           </button>
