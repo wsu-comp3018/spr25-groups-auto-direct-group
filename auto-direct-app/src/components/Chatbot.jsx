@@ -580,7 +580,7 @@ function Chatbot() {
 
               {/* Message Input */}
               {isRegistered && (
-                <div className="px-4 py-4 pb-6">
+                <div className="px-4 pt-10 pb-6">
                   <form onSubmit={handleSubmit} className="flex gap-2">
                     <input
                       type="text"
