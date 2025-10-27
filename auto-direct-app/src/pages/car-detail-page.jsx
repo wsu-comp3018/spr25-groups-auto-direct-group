@@ -1489,177 +1489,191 @@ function CarDetailPage() {
   }
 
   return (
-    <div className="p-8 max-w-6xl mx-auto pt-20 space-y-16">
-        <div className="relative mb-3 flex justify-between items-center">
-            <button
-              onClick={() => navigate(-1)}
-              className="flex items-center gap-1 px-2 py-2 bg-white  hover:bg-gray-100 transition text-sm"
-            >
-              <svg className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" d="M15 19l-7-7 7-7" />
-              </svg>
-              Back
-            </button>
-        </div>
-      {/* Top Section */}
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-10 items-start">
-        {/* Image Carousel */}
-        <div className="relative w-full">
-          <img
-            src={api + `/vehicle-images/${images[currentImageIndex]?.path}`}
-            alt={car.name}
-            className="w-full h-[400px] object-cover rounded-xl shadow-sm cursor-pointer hover:opacity-90 transition-opacity"
-            onClick={handleImageClick}
-          />
-          <button
-            onClick={handlePrev}
-            className="absolute top-0 left-0 w-[10%] h-full flex items-center justify-start hover:bg-black/10 transition"
-          >
-            <div className="bg-white/60 rounded-full p-2 m-4">
-              <svg
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="black"
-                strokeWidth="2"
-                className="w-3 h-3"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  d="M15 19l-7-7 7-7"
-                />
-              </svg>
-            </div>
-          </button>
-          <button
-            onClick={handleNext}
-            className="absolute top-0 right-0 w-[10%] h-full flex items-center justify-end hover:bg-black/10 transition"
-          >
-            <div className="bg-white/60 rounded-full p-2 m-4">
-              <svg
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="black"
-                strokeWidth="2"
-                className="w-3 h-3"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  d="M9 5l7 7-7 7"
-                />
-              </svg>
-            </div>
-          </button>
-          <div className="flex justify-center gap-2 mt-4 flex-wrap">
-            {images.map((img, idx) => (
+    <>
+    <div className="bg-gray-50 min-h-screen">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-24 pb-8">
+        {/* Back Button */}
+        <button
+          onClick={() => navigate(-1)}
+          className="mb-6 flex items-center gap-2 text-gray-700 hover:text-gray-900 transition-colors group"
+        >
+          <svg className="w-5 h-5 transform group-hover:-translate-x-1 transition-transform" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" d="M15 19l-7-7 7-7" />
+          </svg>
+          <span className="font-medium">Back to Results</span>
+        </button>
+
+        {/* Main Content Grid */}
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+          {/* Left Column - Images */}
+          <div className="lg:col-span-2">
+            {/* Main Image */}
+            <div className="bg-white rounded-2xl shadow-lg overflow-hidden mb-4 relative group">
               <img
-                key={idx}
-                src={api + `/vehicle-images/${img.path}`}
-                alt={`Thumb ${idx + 1}`}
-                onClick={() => handleThumbnailClick(idx)}
-                className={`w-20 h-14 object-cover rounded cursor-pointer border ${
-                  idx === currentImageIndex
-                    ? "border-blue-500 ring-2 ring-blue-400"
-                    : "border-gray-300 hover:border-gray-500"
-                } transition`}
+                src={api + `/vehicle-images/${images[currentImageIndex]?.path}`}
+                alt={car.name}
+                className="w-full h-[500px] object-cover cursor-pointer transition-transform duration-300 group-hover:scale-105"
+                onClick={handleImageClick}
               />
-            ))}
-          </div>
-        </div>
-
-        {/* Car Info + Actions */}
-        <div className="pt-4 space-y-4 text-left">
-          <div className="flex items-center justify-between">
-            {/* Favourite button */}
-            <h2 className="text-4xl font-bold text-gray-900">
-              {`${car.makeName} ${car.modelName}`}
-            </h2>
-            <button
-              onClick={() => handleToggleFavourite(car.vehicleID)}
-              className={`p-2 rounded-full border transition
-                  ${
-                    favourites.includes(car.vehicleID)
-                      ? "bg-red-100 border-red-400 hover:bg-red-200"
-                      : "bg-gray-100 border-gray-200 hover:bg-gray-200"
+              {/* Navigation Overlay */}
+              <button
+                onClick={handlePrev}
+                className="absolute left-4 top-1/2 -translate-y-1/2 bg-white/90 backdrop-blur-sm hover:bg-white rounded-full p-3 shadow-lg transition-all opacity-0 group-hover:opacity-100"
+              >
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="w-6 h-6">
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M15 19l-7-7 7-7" />
+                </svg>
+              </button>
+              <button
+                onClick={handleNext}
+                className="absolute right-4 top-1/2 -translate-y-1/2 bg-white/90 backdrop-blur-sm hover:bg-white rounded-full p-3 shadow-lg transition-all opacity-0 group-hover:opacity-100"
+              >
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="w-6 h-6">
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7" />
+                </svg>
+              </button>
+            </div>
+            
+            {/* Thumbnails */}
+            <div className="flex gap-3 mb-8">
+              {images.map((img, idx) => (
+                <img
+                  key={idx}
+                  src={api + `/vehicle-images/${img.path}`}
+                  alt={`Thumb ${idx + 1}`}
+                  onClick={() => handleThumbnailClick(idx)}
+                  className={`w-24 h-20 object-cover rounded-lg cursor-pointer border-2 transition-all ${
+                    idx === currentImageIndex
+                      ? "border-black shadow-lg ring-2 ring-gray-400 ring-opacity-50"
+                      : "border-transparent hover:border-gray-300 opacity-75 hover:opacity-100"
                   }`}
-              aria-label="Favourite"
-            >
-              <Heart
-                className={`w-6 h-6 transition
-                    ${
-                      favourites.includes(car.vehicleID)
-                        ? "text-red-600 fill-red-600"
-                        : "text-gray-500"
-                    }`}
-                fill={
-                  favourites.includes(car.vehicleID) ? "currentColor" : "none"
-                }
-              />
-            </button>
-          </div>
+                />
+              ))}
+            </div>
 
-          <p className="text-md text-black leading-relaxed">
-            {car.description}
-          </p>
-
-          <p className="text-3xl text-black font-bold mt-4">{priceFormat}</p>
-
-          <div className="mt-8 space-y-4">
-            {[
-              { label: "Transmission", value: car.transmission },
-              { label: "Drive Type", value: car.driveType },
-              { label: "Body Type", value: car.bodyType },
-            ].map((it, i) => (
-              <div key={i} className="flex justify-between border-b pb-2">
-                <span className="text-gray-500">{it.label}</span>
-                <span className="font-medium text-gray-800">
-                  {it.value || "N/A"}
-                </span>
+            {/* Vehicle Overview Section */}
+            <div className="bg-white rounded-2xl shadow-lg p-8 mb-8">
+              <h3 className="text-2xl font-bold text-gray-900 mb-6 pb-4 border-b border-gray-200">
+                Vehicle Overview
+              </h3>
+              <div className="grid grid-cols-2 sm:grid-cols-4 gap-6">
+                {[
+                  { label: "Make", value: car.makeName, icon: "make.svg" },
+                  { label: "Model Name", value: car.modelName, icon: "model.svg" },
+                  { label: "Body Type", value: car.bodyType, icon: "body.svg" },
+                  { label: "Fuel", value: car.fuel, icon: "fuel.svg" },
+                  { label: "Drive Type", value: car.driveType, icon: "drive.svg" },
+                  { label: "Cylinders", value: car.cylinders, icon: "engine.svg" },
+                  { label: "Doors", value: car.doors, icon: "doors.svg" },
+                  { label: "Transmission", value: car.transmission, icon: "transmission.svg" },
+                ].map((it, i) => (
+                  <div key={i} className="flex flex-col items-center text-center">
+                    <div className="w-16 h-16 bg-gradient-to-br from-gray-50 to-gray-100 rounded-full flex items-center justify-center mb-3 shadow-sm">
+                      <img
+                        src={getImageUrl(`../../public/assets/icons/${it.icon}`)}
+                        alt={it.label}
+                        className="w-8 h-8"
+                      />
+                    </div>
+                    <span className="text-xs font-semibold text-gray-500 uppercase tracking-wide mb-1">{it.label}</span>
+                    <span className="text-sm font-bold text-gray-900">{it.value || "N/A"}</span>
+                  </div>
+                ))}
               </div>
-            ))}
+            </div>
           </div>
 
-          <div className="mt-8 flex gap-1 flex-wrap">
-            <button
-              onClick={() => {
-                // Set vehicle field to car's full name before opening modal
-                if (car) {
-                  window.selectedCarName = `${car.makeName || ""} ${car.modelName || ""}`.trim();
-                }
-                setShowBookingForm(true);
-              }}
-              className="bg-transparent border-2 border-black text-black font-semibold py-2 px-6 rounded-lg  transition hover:bg-black hover:text-white flex-1"
-            >
-              Book Test Drive
-            </button>
-            <button
-              onClick={() => setShowAdviceForm(true)}
-              className="bg-transparent border-2 border-black text-black font-semibold py-2 px-6 rounded-lg  transition hover:bg-black hover:text-white flex-1"
-            >
-              Request Advice
-            </button>
-            {!isPurchased ? (
-              <button
-                onClick={handlePurchaseClick}
-                className="bg-black border-2 border-black text-white font-semibold py-2 px-6 rounded-lg  transition hover:bg-black hover:text-white flex-1"
-              >
-                Purchase
-              </button>
-            ) : (
-              <button
-                onClick={handlePurchaseClick}
-                className="bg-black border-2 border-black text-white font-semibold py-2 px-6 rounded-lg  transition hover:bg-black hover:text-white flex-1"
-              >
-                Purchase Vehicle
-              </button>
-            )}
+          {/* Right Column - Info & Actions */}
+          <div className="space-y-6">
+            {/* Price & Favourite */}
+            <div className="bg-gradient-to-br from-white to-gray-50 rounded-2xl shadow-lg p-8">
+              <div className="flex items-start justify-between mb-4">
+                <div>
+                  <p className="text-sm font-semibold text-gray-500 uppercase tracking-wide mb-1">{car.makeName}</p>
+                  <h1 className="text-3xl font-bold text-gray-900">
+                    {car.modelName}
+                  </h1>
+                </div>
+                <button
+                  onClick={handleSaveViaHeart}
+                  className={`p-3 rounded-full transition-all shadow-sm ${
+                    favourites.includes(car.vehicleID)
+                      ? "bg-red-50 text-red-600 hover:bg-red-100"
+                      : "bg-gray-100 text-gray-400 hover:bg-gray-200"
+                  }`}
+                  aria-label="Favourite"
+                >
+                  <Heart
+                    className={`w-6 h-6 ${
+                      favourites.includes(car.vehicleID)
+                        ? "fill-current"
+                        : ""
+                    }`}
+                  />
+                </button>
+              </div>
+
+              {car.description && (
+                <p className="text-gray-600 leading-relaxed mb-6 text-sm">
+                  {car.description}
+                </p>
+              )}
+
+              <div className="mb-6">
+                <p className="text-sm font-semibold text-gray-500 mb-2">Price</p>
+                <p className="text-4xl font-bold text-gray-900">{priceFormat}</p>
+              </div>
+
+              {/* Quick Specs */}
+              <div className="grid grid-cols-1 gap-3 mb-8">
+                {[
+                  { label: "Transmission", value: car.transmission },
+                  { label: "Drive Type", value: car.driveType },
+                  { label: "Body Type", value: car.bodyType },
+                ].map((it, i) => (
+                  <div key={i} className="flex justify-between items-center py-2 border-b border-gray-100">
+                    <span className="text-sm font-medium text-gray-600">{it.label}</span>
+                    <span className="text-sm font-bold text-gray-900">
+                      {it.value || "N/A"}
+                    </span>
+                  </div>
+                ))}
+              </div>
+
+              {/* Action Buttons */}
+              <div className="space-y-3">
+                <button
+                  onClick={handlePurchaseClick}
+                  className="w-full bg-black text-white font-semibold py-4 rounded-xl hover:bg-gray-800 transition-all duration-200 transform hover:-translate-y-0.5 hover:shadow-xl"
+                >
+                  Purchase Vehicle
+                </button>
+                <button
+                  onClick={() => {
+                    if (car) {
+                      window.selectedCarName = `${car.makeName || ""} ${car.modelName || ""}`.trim();
+                    }
+                    setShowBookingForm(true);
+                  }}
+                  className="w-full bg-white border-2 border-gray-800 text-gray-900 font-semibold py-3 rounded-xl hover:bg-gray-50 transition-all"
+                >
+                  Book Test Drive
+                </button>
+                <button
+                  onClick={() => setShowAdviceForm(true)}
+                  className="w-full bg-gray-100 text-gray-900 font-semibold py-3 rounded-xl hover:bg-gray-200 transition-all"
+                >
+                  Request Advice
+                </button>
+              </div>
+            </div>
           </div>
         </div>
       </div>
+    </div>
 
-      {/* Lightbox Modal */}
-      {isLightboxOpen && (
+    {/* Lightbox Modal */}
+    {isLightboxOpen && (
         <div
           className="fixed inset-0 z-50 bg-black/90 flex items-center justify-center"
           onClick={() => setIsLightboxOpen(false)}
@@ -1770,43 +1784,6 @@ function CarDetailPage() {
           </div>
         </div>
       )}
-
-      {/* Overview */}
-      <div className="border border-gray-50 rounded-md p-6 bg-white">
-        <h3 className="text-2xl font-bold text-gray-800 mb-6">
-          Vehicle Overview
-        </h3>
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 text-gray-700">
-          {[
-            { label: "Make", value: car.makeName, icon: "make.svg" },
-            { label: "Model Name", value: car.modelName, icon: "model.svg" },
-            { label: "Body Type", value: car.bodyType, icon: "body.svg" },
-            { label: "Fuel", value: car.fuel, icon: "fuel.svg" },
-            { label: "Drive Type", value: car.driveType, icon: "drive.svg" },
-            { label: "Cylinders", value: car.cylinders, icon: "engine.svg" },
-            { label: "Doors", value: car.doors, icon: "doors.svg" },
-            {
-              label: "Transmission",
-              value: car.transmission,
-              icon: "transmission.svg",
-            },
-          ].map((it, i) => (
-            <div key={i} className="flex items-center">
-              <div className="w-9 h-9 rounded-full border border-gray-300 flex items-center justify-center mr-2">
-                <img
-                  src={getImageUrl(`../../public/assets/icons/${it.icon}`)}
-                  alt={it.label}
-                  className="w-5 h-5"
-                />
-              </div>
-              <span className="font-normal text-gray-800">{it.label}:</span>
-              <span className="ml-auto font-medium text-gray-700">
-                {it.value || "N/A"}
-              </span>
-            </div>
-          ))}
-        </div>
-      </div>
 
       {/* Test Drive Booking Modal */}
 
@@ -1974,8 +1951,7 @@ function CarDetailPage() {
         }}
       />
 
-
-    </div>
+    </>
   );
 }
 
