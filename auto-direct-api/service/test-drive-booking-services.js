@@ -7,9 +7,16 @@ const createTestDrive = async ( testDriveNewID, userID, vehicleID, status, notes
 		let createdTime = new Date(Date.now()).toISOString().replace('T', ' ').slice(0, 19);
 		let dealerID = null;
 		
-		// Try to fetch dealerID for the vehicle, but don't let it block the insert
+		// Try to fetch dealerID for the vehicle by joining through makes and manufacturers
 		try {
-			const dealerQuery = `SELECT dealerID FROM vehicles WHERE vehicleID = ? LIMIT 1`;
+			const dealerQuery = `
+				SELECT d.dealerID 
+				FROM vehicles v
+				JOIN makes m ON v.makeID = m.makeID
+				JOIN dealers d ON m.manufacturerID = d.manufacturerID
+				WHERE v.vehicleID = ?
+				LIMIT 1
+			`;
 			const dealerResult = await new Promise((resolve, reject) => {
 				pool.query(dealerQuery, [vehicleID], (err, result) => {
 					if (err) return reject(err);
@@ -26,6 +33,10 @@ const createTestDrive = async ( testDriveNewID, userID, vehicleID, status, notes
 		} catch (dealerErr) {
 			console.warn(`Error fetching dealerID for vehicleID ${vehicleID}, using NULL:`, dealerErr);
 			dealerID = null;
+		}
+		
+		if (!dealerID) {
+			throw new Error('No dealer found for this vehicle. Please ensure there is a dealer associated with the vehicle\'s manufacturer.');
 		}
 		
 		const query = `INSERT INTO test_drive_bookings (bookingID, userID, vehicleID, dealerID, time, status, customerNotes) VALUES (?, ?, ?, ?, ?, ?, ?);`;

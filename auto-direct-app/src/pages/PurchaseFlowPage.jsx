@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import { toast } from "react-toastify";
 import Cookies from "js-cookie";
@@ -13,6 +13,8 @@ import { autoFillForm, fieldMappings } from "../utils/autoFillUtils";
 function PurchaseFlowPage() {
   const navigate = useNavigate();
   const location = useLocation();
+  const addressInputRef = useRef(null);
+  const autocompleteRef = useRef(null);
   
   // Get car data from sessionStorage (new tab) or navigation state (same tab)
   const [car, setCar] = useState(null);
@@ -254,6 +256,132 @@ function PurchaseFlowPage() {
       setLoadingManufacturerDetails(false);
     }
   };
+
+  // Google Places Autocomplete
+  useEffect(() => {
+    console.log('🗺️ Google Places useEffect triggered');
+    console.log('🗺️ Current step:', currentPurchaseStep);
+    console.log('🗺️ addressInputRef.current:', addressInputRef.current);
+    console.log('🗺️ window.google available:', !!window.google);
+    
+    // Only initialize on step 2 (Contact Information)
+    if (currentPurchaseStep !== 2) {
+      console.log('⚠️ Not on contact information step');
+      return;
+    }
+    
+    if (!window.google) {
+      console.log('⚠️ Google Maps API not loaded yet');
+      return;
+    }
+
+    // Use setTimeout to ensure DOM is ready
+    const timeoutId = setTimeout(() => {
+      if (!addressInputRef.current) {
+        console.log('⚠️ Address input ref still not found after delay');
+        return;
+      }
+
+      try {
+        console.log('✅ Initializing Google Places Autocomplete');
+        const autocomplete = new window.google.maps.places.Autocomplete(
+          addressInputRef.current,
+          {
+            componentRestrictions: { country: 'au' }, // Restrict to Australia
+            fields: ['address_components', 'formatted_address'],
+            types: ['address']
+          }
+        );
+
+        console.log('✅ Autocomplete initialized successfully');
+
+      autocomplete.addListener('place_changed', () => {
+        console.log('📍 Place changed event fired');
+        const place = autocomplete.getPlace();
+        console.log('📍 Selected place:', place);
+        
+        if (!place.address_components) {
+          console.log('⚠️ No address components found');
+          return;
+        }
+
+      let streetNumber = '';
+      let streetName = '';
+      let suburb = '';
+      let state = '';
+      let postcode = '';
+
+      place.address_components.forEach(component => {
+        const types = component.types;
+        
+        if (types.includes('street_number')) {
+          streetNumber = component.long_name;
+        }
+        if (types.includes('route')) {
+          streetName = component.long_name;
+        }
+        if (types.includes('locality') || types.includes('postal_town')) {
+          suburb = component.long_name;
+        }
+        if (types.includes('administrative_area_level_1')) {
+          // Convert full state name to abbreviation
+          const stateMap = {
+            'New South Wales': 'NSW',
+            'Victoria': 'VIC',
+            'Queensland': 'QLD',
+            'Western Australia': 'WA',
+            'South Australia': 'SA',
+            'Tasmania': 'TAS',
+            'Australian Capital Territory': 'ACT',
+            'Northern Territory': 'NT'
+          };
+          state = stateMap[component.long_name] || component.short_name;
+        }
+        if (types.includes('postal_code')) {
+          postcode = component.long_name;
+        }
+      });
+
+      console.log('📍 Parsed address:', { streetNumber, streetName, suburb, state, postcode });
+
+      // Update form with parsed address
+      setPurchaseForm(prev => ({
+        ...prev,
+        streetNumber,
+        streetName,
+        suburb,
+        state,
+        postcode
+      }));
+
+      // Clear any errors for address fields
+      setFieldErrors(prev => ({
+        ...prev,
+        streetNumber: false,
+        streetName: false,
+        suburb: false,
+        state: false,
+        postcode: false
+      }));
+        });
+
+        autocompleteRef.current = autocomplete;
+      } catch (error) {
+        console.error('❌ Error initializing Google Places Autocomplete:', error);
+      }
+    }, 100); // Small delay to ensure DOM is ready
+
+    return () => {
+      clearTimeout(timeoutId);
+      if (autocompleteRef.current && window.google) {
+        try {
+          window.google.maps.event.clearInstanceListeners(autocompleteRef.current);
+        } catch (error) {
+          console.error('❌ Error cleaning up autocomplete:', error);
+        }
+      }
+    };
+  }, [currentPurchaseStep]);
 
   const resetPurchaseForm = () => {
     setCurrentPurchaseStep(1);
@@ -752,6 +880,21 @@ function PurchaseFlowPage() {
 
             <div className="space-y-4">
               <h4 className="text-lg font-semibold">Address</h4>
+              
+              {/* Google Places Autocomplete */}
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  Search Address
+                </label>
+                <input
+                  ref={addressInputRef}
+                  type="text"
+                  className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  placeholder="Start typing your address..."
+                />
+                <p className="text-xs text-gray-500 mt-1">Start typing to search and select your address</p>
+              </div>
+
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-2">
@@ -1414,17 +1557,17 @@ function PurchaseFlowPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-100">
+    <div className="min-h-screen bg-white">
       {/* Header */}
-      <div className="bg-white shadow-sm border-b">
-        <div className="max-w-7xl mx-auto px-4 py-4">
+      <div className="bg-white border-b">
+        <div className="max-w-7xl mx-auto px-4 py-6">
           <div className="flex items-center justify-between">
-            <h1 className="text-2xl font-bold text-gray-900">Purchase Vehicle</h1>
+            <h1 className="text-3xl font-bold text-gray-900">Purchase Vehicle</h1>
             <button
               onClick={() => navigate(-1)}
-              className="px-4 py-2 text-gray-600 hover:text-gray-800 border border-gray-300 rounded-lg hover:bg-gray-50"
+              className="px-6 py-2 text-gray-600 hover:text-gray-900 font-medium"
             >
-              Back to Details
+              ← Back
             </button>
           </div>
         </div>
@@ -1432,7 +1575,7 @@ function PurchaseFlowPage() {
 
       {/* Main Content */}
       <div className="max-w-7xl mx-auto px-4 py-8">
-        <div className="bg-white rounded-lg shadow-lg flex overflow-hidden" style={{minHeight: '600px'}}>
+        <div className="flex gap-8" style={{minHeight: '600px'}}>
           {/* Left Stepper Column */}
           <PurchaseStepper 
             currentStep={currentPurchaseStep} 
@@ -1441,29 +1584,48 @@ function PurchaseFlowPage() {
           
           {/* Right Content Column */}
           <div className="flex-1 flex flex-col">
-            <div className="flex items-center justify-between mb-6 px-6 pt-6">
-              <h3 className="text-2xl font-bold text-gray-800">
+            {/* Progress Bar */}
+            <div className="mb-6">
+              <div className="flex justify-between text-xs text-gray-600 mb-2">
+                <span>Progress</span>
+                <span>{Math.round(((currentPurchaseStep - 1) / (purchaseSteps.length - 1)) * 100)}%</span>
+              </div>
+              <div className="w-full bg-gray-200 rounded-full h-2">
+                <div 
+                  className="bg-blue-500 h-2 rounded-full transition-all duration-300 ease-out"
+                  style={{ 
+                    width: `${Math.max(0, ((currentPurchaseStep - 1) / (purchaseSteps.length - 1)) * 100)}%` 
+                  }}
+                />
+              </div>
+            </div>
+
+            <div className="mb-8">
+              <h3 className="text-2xl font-bold text-gray-900">
                 {purchaseSteps[currentPurchaseStep - 1]?.title}
               </h3>
+              <p className="text-gray-600 mt-2">
+                {purchaseSteps[currentPurchaseStep - 1]?.description}
+              </p>
             </div>
             
             {/* Step Content */}
-            <div className="flex-1 px-6 pb-6 overflow-y-auto">
+            <div className="flex-1 overflow-y-auto px-4">
               {renderStepContent()}
             </div>
             
             {/* Navigation Buttons */}
-            <div className="flex justify-between items-center px-6 py-4 border-t bg-gray-50">
+            <div className="flex justify-between items-center py-6 mt-8 border-t">
               <button
                 onClick={handlePrevStep}
                 disabled={currentPurchaseStep === 1}
-                className={`px-6 py-2 rounded-lg font-medium ${
+                className={`px-8 py-3 font-medium transition ${
                   currentPurchaseStep === 1
-                    ? 'bg-gray-200 text-gray-400 cursor-not-allowed'
-                    : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
+                    ? 'text-gray-400 cursor-not-allowed'
+                    : 'text-gray-700 hover:text-black'
                 }`}
               >
-                Previous
+                ← Previous
               </button>
               
               <button
@@ -1474,9 +1636,9 @@ function PurchaseFlowPage() {
                   console.log('🎯 Is final step?', currentPurchaseStep === purchaseSteps.length);
                   handleNextStep();
                 }}
-                className="px-6 py-2 bg-black text-white rounded-lg font-medium hover:bg-gray-800"
+                className="px-8 py-3 bg-black text-white font-medium hover:bg-gray-900 transition"
               >
-                {currentPurchaseStep === purchaseSteps.length ? 'Complete Purchase' : 'Next'}
+                {currentPurchaseStep === purchaseSteps.length ? 'Complete Purchase' : 'Next →'}
               </button>
             </div>
           </div>

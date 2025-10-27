@@ -20,14 +20,14 @@ function ManageUsersPage() {
     const token = Cookies.get("auto-direct-token");
     
     // Fetch users
-    fetch(api + '/admin/users', {method: 'GET', headers: {'Authorization': token} })
+    fetch(api + '/admin/users', {method: 'GET', headers: {'Authorization': `Bearer ${token}`} })
     .then((res) => { return res.json() })
     .then((data) => {
       setUsers(data.users);
     });
 
     // Fetch pending registrations
-    fetch(api + '/admin/pendingRegistrations', {method: 'GET', headers: {'Authorization': token} })
+    fetch(api + '/admin/pendingRegistrations', {method: 'GET', headers: {'Authorization': `Bearer ${token}`} })
     .then((res) => { return res.json() })
     .then((data) => {
       setPendingRegistrations(data.pendingRegistrations || []);
@@ -39,7 +39,7 @@ function ManageUsersPage() {
 	fetch(api + '/admin/updateUser', 
 		{
 			method: 'PUT', 
-			headers: {"Content-Type": "application/json", "Authorization": token}, 
+			headers: {"Content-Type": "application/json", "Authorization": `Bearer ${token}`}, 
 			body: JSON.stringify({user: user}) 
 		})
 	.then((res) => {
@@ -60,7 +60,7 @@ function ManageUsersPage() {
 	fetch(api + '/admin/disableUser', 
 		{
 			method: 'PUT', 
-			headers: {"Content-Type": "application/json", "Authorization": token}, 
+			headers: {"Content-Type": "application/json", "Authorization": `Bearer ${token}`}, 
 			body: JSON.stringify({userID: id}) 
 		})
 	.then(async (res) => {
@@ -89,7 +89,7 @@ function ManageUsersPage() {
 	fetch(api + '/admin/reactivateUser', 
 		{
 			method: 'PUT', 
-			headers: {"Content-Type": "application/json", "Authorization": token}, 
+			headers: {"Content-Type": "application/json", "Authorization": `Bearer ${token}`}, 
 			body: JSON.stringify({userID: id}) 
 		})
 	.then(async (res) => {
@@ -110,7 +110,7 @@ function ManageUsersPage() {
 
   const refreshUsers = () => {
     const token = Cookies.get("auto-direct-token");
-    fetch(api + '/admin/users', {method: 'GET', headers: {'Authorization': token} })
+    fetch(api + '/admin/users', {method: 'GET', headers: {'Authorization': `Bearer ${token}`} })
     .then((res) => { return res.json() })
     .then((data) => {
       setUsers(data.users);
@@ -131,7 +131,7 @@ function ManageUsersPage() {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          'Authorization': tokenAuth
+          'Authorization': `Bearer ${tokenAuth}`
         },
         body: JSON.stringify({ token })
       });
@@ -156,7 +156,7 @@ function ManageUsersPage() {
       const response = await fetch(api + `/admin/pendingRegistrations/${token}`, {
         method: 'DELETE',
         headers: {
-          'Authorization': tokenAuth
+          'Authorization': `Bearer ${tokenAuth}`
         }
       });
 
@@ -166,7 +166,7 @@ function ManageUsersPage() {
         // Refresh pending registrations
         const refreshResponse = await fetch(api + '/admin/pendingRegistrations', {
           method: 'GET', 
-          headers: {'Authorization': tokenAuth}
+          headers: {'Authorization': `Bearer ${tokenAuth}`}
         });
         const refreshData = await refreshResponse.json();
         setPendingRegistrations(refreshData.pendingRegistrations || []);
