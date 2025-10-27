@@ -329,7 +329,7 @@ const Navbar = () => {
                         {user?.roles?.some(role => [ "Administrator"].includes(role) ) && (
                           <button
                             onClick={() => navigate("/test-drive-dashboard")}
-                            className="block py-2 px-2 hover:underline hover:bg-white hover:text-black transition rounded"
+                            className="block w-full text-left py-2 px-2 hover:underline hover:bg-white hover:text-black transition rounded"
                           >
                             Test Drive Requests
                           </button>
@@ -338,7 +338,7 @@ const Navbar = () => {
                         {user?.roles?.some(role => [ "Administrator"].includes(role) ) && (
                           <button
                             onClick={() => navigate("/customer-service-queue")}
-                            className="block py-2 px-2 hover:underline hover:bg-white hover:text-black transition rounded"
+                            className="block w-full text-left py-2 px-2 hover:underline hover:bg-white hover:text-black transition rounded"
                           >
                             Customer Service Queue
                           </button>
@@ -346,7 +346,7 @@ const Navbar = () => {
                         {user?.roles?.some(role => [ "Administrator"].includes(role) ) && (
                           <button
                             onClick={() => navigate("/chatbot-inquiries")}
-                            className="block py-2 px-2 hover:underline hover:bg-white hover:text-black transition rounded"
+                            className="block w-full text-left py-2 px-2 hover:underline hover:bg-white hover:text-black transition rounded"
                           >
                             Chatbot Inquiries
                           </button>

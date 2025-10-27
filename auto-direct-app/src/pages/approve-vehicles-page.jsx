@@ -125,21 +125,21 @@ function ApproveVehiclesPage() {
         <p className="text-gray-500">No cars found.</p>
       ) : (
         <div className="overflow-x-auto">
-          <table className="min-w-full border-collapse text-left text-sm text-gray-700">
+          <table className="min-w-full border-collapse text-sm text-gray-700">
             <thead>
-              <tr className="border-b border-gray-300">
-                <th className="py-3 px-4 font-medium">Model Name</th>
-                <th className="py-3 px-4 font-medium">Make</th>
-                <th className="py-3 px-4 font-medium">Price</th>
-                <th className="py-3 px-4 font-medium">Transmission</th>
-                <th className="py-3 px-4 font-medium">Body Type</th>
-                <th className="py-3 px-4 font-medium">Fuel</th>
-                <th className="py-3 px-4 font-medium">Drive Type</th>
-                <th className="py-3 px-4 font-medium">Cylinders</th>
-                <th className="py-3 px-4 font-medium">Doors</th>
-                <th className="py-3 px-4 font-medium">Colour</th>
-                <th className="py-3 px-4 font-medium">Status</th>
-                <th className="py-3 px-4 font-medium text-right">Actions</th>
+              <tr className="bg-black text-white">
+                <th className="py-3 px-6 font-medium text-center">Model Name</th>
+                <th className="py-3 px-6 font-medium text-center">Make</th>
+                <th className="py-3 px-6 font-medium text-center">Price</th>
+                <th className="py-3 px-6 font-medium text-center">Transmission</th>
+                <th className="py-3 px-6 font-medium text-center">Body Type</th>
+                <th className="py-3 px-6 font-medium text-center">Fuel</th>
+                <th className="py-3 px-6 font-medium text-center">Drive Type</th>
+                <th className="py-3 px-6 font-medium text-center">Cylinders</th>
+                <th className="py-3 px-6 font-medium text-center">Doors</th>
+                <th className="py-3 px-6 font-medium text-center">Colour</th>
+                <th className="py-3 px-6 font-medium text-center">Status</th>
+                <th className="py-3 px-6 font-medium text-center">Actions</th>
               </tr>
             </thead>
             <tbody>

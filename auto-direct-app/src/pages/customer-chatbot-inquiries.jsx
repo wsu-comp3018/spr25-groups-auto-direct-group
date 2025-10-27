@@ -387,15 +387,15 @@ function CustomerChatbotInquiries() {
             </div>
           ) : (
             <div className="overflow-x-auto">
-              <table className="w-full">
-                <thead className="bg-gradient-to-r from-gray-50 to-gray-100 border-b border-gray-200">
-                  <tr>
-                    <th className="px-6 py-4 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Initial Message</th>
-                    <th className="px-6 py-4 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Contact Info</th>
-                    <th className="px-6 py-4 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Status</th>
-                    <th className="px-6 py-4 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Messages</th>
-                    <th className="px-6 py-4 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Last Activity</th>
-                    <th className="px-6 py-4 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Actions</th>
+              <table className="min-w-full border-collapse text-sm">
+                <thead>
+                  <tr className="bg-black text-white">
+                    <th className="py-3 px-6 font-medium text-center">Initial Message</th>
+                    <th className="py-3 px-6 font-medium text-center">Contact Info</th>
+                    <th className="py-3 px-6 font-medium text-center">Status</th>
+                    <th className="py-3 px-6 font-medium text-center">Messages</th>
+                    <th className="py-3 px-6 font-medium text-center">Last Activity</th>
+                    <th className="py-3 px-6 font-medium text-center">Actions</th>
                   </tr>
                 </thead>
                 <tbody className="bg-white divide-y divide-gray-100">

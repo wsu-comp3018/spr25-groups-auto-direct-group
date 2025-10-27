@@ -270,17 +270,17 @@ function ManageUsersPage() {
             <p className="text-gray-500">No users found.</p>
           ) : (
             <div className="overflow-x-auto">
-              <table className="min-w-full border-collapse text-left text-sm">
+              <table className="min-w-full border-collapse text-sm">
                 <thead>
                   <tr className="bg-black text-white">
-                    <th className="py-3 px-4 font-medium">First Name</th>
-                    <th className="py-3 px-4 font-medium">Last Name</th>
-                    <th className="py-3 px-4 font-medium">Email</th>
-                    <th className="py-3 px-4 font-medium">Phone Number</th>
-                    <th className="py-3 px-4 font-medium">Roles</th>
-                    <th className="py-3 px-4 font-medium">Status</th>
-                    <th className="py-3 px-4 font-medium">Created</th>
-                    <th className="py-3 px-4 font-medium text-right">Actions</th>
+                    <th className="py-3 px-6 font-medium text-center">First Name</th>
+                    <th className="py-3 px-6 font-medium text-center">Last Name</th>
+                    <th className="py-3 px-6 font-medium text-center">Email</th>
+                    <th className="py-3 px-6 font-medium text-center">Phone Number</th>
+                    <th className="py-3 px-6 font-medium text-center">Roles</th>
+                    <th className="py-3 px-6 font-medium text-center">Status</th>
+                    <th className="py-3 px-6 font-medium text-center">Created</th>
+                    <th className="py-3 px-6 font-medium text-center">Actions</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -298,14 +298,14 @@ function ManageUsersPage() {
             <p className="text-gray-500">No pending registrations found.</p>
           ) : (
             <div className="overflow-x-auto">
-              <table className="min-w-full border-collapse text-left text-sm">
+              <table className="min-w-full border-collapse text-sm">
                 <thead>
                   <tr className="bg-black text-white">
-                    <th className="py-3 px-4 font-medium">Email</th>
-                    <th className="py-3 px-4 font-medium">Roles</th>
-                    <th className="py-3 px-4 font-medium">Invited</th>
-                    <th className="py-3 px-4 font-medium">Expires</th>
-                    <th className="py-3 px-4 font-medium text-right">Actions</th>
+                    <th className="py-3 px-6 font-medium text-center">Email</th>
+                    <th className="py-3 px-6 font-medium text-center">Roles</th>
+                    <th className="py-3 px-6 font-medium text-center">Invited</th>
+                    <th className="py-3 px-6 font-medium text-center">Expires</th>
+                    <th className="py-3 px-6 font-medium text-center">Actions</th>
                   </tr>
                 </thead>
                 <tbody>

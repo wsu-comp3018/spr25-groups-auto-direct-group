@@ -285,24 +285,14 @@ function CustomerServiceQueue() {
         {/* Requests Table */}
         <div className="bg-white rounded-lg shadow-sm border overflow-hidden">
           <div className="overflow-x-auto">
-            <table className="w-full">
-              <thead className="bg-gray-50">
-                <tr>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    Customer
-                  </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    Vehicle(s)
-                  </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    Request Type
-                  </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    Time Owned
-                  </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    Actions
-                  </th>
+            <table className="min-w-full border-collapse text-sm">
+              <thead>
+                <tr className="bg-black text-white">
+                  <th className="py-3 px-6 font-medium text-center">Customer</th>
+                  <th className="py-3 px-6 font-medium text-center">Vehicle(s)</th>
+                  <th className="py-3 px-6 font-medium text-center">Request Type</th>
+                  <th className="py-3 px-6 font-medium text-center">Time Owned</th>
+                  <th className="py-3 px-6 font-medium text-center">Actions</th>
                 </tr>
               </thead>
               <tbody className="bg-white divide-y divide-gray-200">
