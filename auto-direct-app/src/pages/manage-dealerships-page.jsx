@@ -284,13 +284,13 @@ function ManageDealershipsPage() {
 
       {/* Dealership Table */}
       <div className="overflow-x-auto">
-        <table className="min-w-full border-collapse text-left text-sm">
+        <table className="min-w-full border-collapse text-sm">
           <thead>
             <tr className="bg-black text-white">
-              <th className="py-3 px-4 font-medium">Name</th>
-              <th className="py-3 px-4 font-medium">Address</th>
-              <th className="py-3 px-4 font-medium">Manufacturer</th>
-              <th className="py-3 px-4 font-medium">Actions</th>
+              <th className="py-3 px-6 font-medium text-center">Name</th>
+              <th className="py-3 px-6 font-medium text-center">Address</th>
+              <th className="py-3 px-6 font-medium text-center">Manufacturer</th>
+              <th className="py-3 px-6 font-medium text-center">Actions</th>
             </tr>
           </thead>
           <tbody>
@@ -366,7 +366,8 @@ function ManageDealershipsPage() {
                     <td className="py-3 px-4">
                       {getManufacturerName(d.manufacturerID)}
                     </td>
-                    <td className="py-3 px-4 flex gap-2">
+                    <td className="py-3 px-4">
+                      <div className="flex gap-2 justify-center">
                       <button
                         onClick={() => handleEdit(d)}
                         className="text-sm bg-black text-white px-3 py-1 rounded hover:bg-gray-800"
@@ -379,6 +380,7 @@ function ManageDealershipsPage() {
                       >
                         Delete
                       </button>
+                      </div>
                     </td>
                   </>
                 )}

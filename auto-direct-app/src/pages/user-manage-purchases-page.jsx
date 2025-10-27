@@ -55,18 +55,18 @@ function UserPurchasePage() {
 			</h2>
 
 			<div className="overflow-x-auto">
-				<table className="min-w-full border-collapse text-left text-sm text-gray-700">
+				<table className="min-w-full border-collapse text-sm text-gray-700">
 					<thead>
-						<tr className="border-b border-gray-300">
-						<th className="py-3 px-4 font-medium">VehicleName</th>
-						<th className="py-3 px-4 font-medium">Make</th>
-						<th className="py-3 px-4 font-medium">Price</th>
-						<th className="py-3 px-4 font-medium">Order Status</th>
-						<th className="py-3 px-4 font-medium">Order Date</th>
-						<th className="py-3 px-4 font-medium">Paid</th>
-						<th className="py-3 px-4 font-medium">Delivered</th>
-						<th className="py-3 px-4 font-medium">Notes</th>
-						<th className="py-3 px-4 font-medium text-right">Actions</th>
+						<tr className="bg-black text-white">
+						<th className="py-3 px-6 font-medium text-center">VehicleName</th>
+						<th className="py-3 px-6 font-medium text-center">Make</th>
+						<th className="py-3 px-6 font-medium text-center">Price</th>
+						<th className="py-3 px-6 font-medium text-center">Order Status</th>
+						<th className="py-3 px-6 font-medium text-center">Order Date</th>
+						<th className="py-3 px-6 font-medium text-center">Paid</th>
+						<th className="py-3 px-6 font-medium text-center">Delivered</th>
+						<th className="py-3 px-6 font-medium text-center">Notes</th>
+						<th className="py-3 px-6 font-medium text-center">Actions</th>
 						</tr>
 					</thead>
 					<tbody>

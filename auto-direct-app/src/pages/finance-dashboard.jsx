@@ -148,34 +148,34 @@ const FinanceDashboard = () => {
         ) : (
           <div className="bg-white rounded-lg shadow-sm border overflow-hidden">
             <div className="overflow-x-auto">
-              <table className="w-full">
-                <thead className="bg-gray-50 border-b">
-                  <tr>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                      <div className="flex items-center gap-2">
+              <table className="min-w-full border-collapse text-sm">
+                <thead>
+                  <tr className="bg-black text-white">
+                    <th className="py-3 px-6 font-medium text-center">
+                      <div className="flex items-center justify-center gap-2">
                         <Users size={16} />
                         Customer
                       </div>
                     </th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                      <div className="flex items-center gap-2">
+                    <th className="py-3 px-6 font-medium text-center">
+                      <div className="flex items-center justify-center gap-2">
                         <Car size={16} />
                         Test Drives
                       </div>
                     </th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                      <div className="flex items-center gap-2">
+                    <th className="py-3 px-6 font-medium text-center">
+                      <div className="flex items-center justify-center gap-2">
                         <CheckCircle size={16} />
                         Purchase Status
                       </div>
                     </th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                      <div className="flex items-center gap-2">
+                    <th className="py-3 px-6 font-medium text-center">
+                      <div className="flex items-center justify-center gap-2">
                         <DollarSign size={16} />
                         Commission
                       </div>
                     </th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Action</th>
+                    <th className="py-3 px-6 font-medium text-center">Action</th>
                   </tr>
                 </thead>
                 <tbody className="bg-white divide-y divide-gray-200">

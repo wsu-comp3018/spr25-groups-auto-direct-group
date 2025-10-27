@@ -107,14 +107,14 @@ function ManageManufacturersPage() {
       </div>
 
 		<div className="overflow-x-auto">
-			<table className="min-w-full border-collapse text-left text-sm">
+			<table className="min-w-full border-collapse text-sm">
 				<thead>
 					<tr className="bg-black text-white">
-					<th className="py-3 px-4 font-medium">Name</th>
-					<th className="py-3 px-4 font-medium">Country</th>
-					<th className="py-3 px-4 font-medium">ABN</th>
-					<th className="py-3 px-4 font-medium">Status</th>
-					<th className="py-3 px-4 font-medium text-right">Actions</th>
+					<th className="py-3 px-6 font-medium text-center">Name</th>
+					<th className="py-3 px-6 font-medium text-center">Country</th>
+					<th className="py-3 px-6 font-medium text-center">ABN</th>
+					<th className="py-3 px-6 font-medium text-center">Status</th>
+					<th className="py-3 px-6 font-medium text-center">Actions</th>
 					</tr>
 				</thead>
 				<tbody>

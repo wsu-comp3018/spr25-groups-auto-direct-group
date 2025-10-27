@@ -378,21 +378,21 @@ function ManageVehiclesPage() {
         <p className="text-gray-500">No cars found.</p>
       ) : (
         <div className="overflow-x-auto">
-          <table className="min-w-full border-collapse text-left text-sm">
+          <table className="min-w-full border-collapse text-sm">
             <thead>
               <tr className="bg-black text-white">
-                <th className="py-3 px-4 font-medium">Make</th>
-                <th className="py-3 px-4 font-medium">Model Name</th>
-                <th className="py-3 px-4 font-medium">Price</th>
-                <th className="py-3 px-4 font-medium">Transmission</th>
-                <th className="py-3 px-4 font-medium">Body Type</th>
-                <th className="py-3 px-4 font-medium">Fuel</th>
-                <th className="py-3 px-4 font-medium">Drive Type</th>
-                <th className="py-3 px-4 font-medium">Cylinders</th>
-                <th className="py-3 px-4 font-medium">Doors</th>
-                <th className="py-3 px-4 font-medium">Colour</th>
-                <th className="py-3 px-4 font-medium">Status</th>
-                <th className="py-3 px-4 font-medium text-middle">Actions</th>
+                <th className="py-3 px-6 font-medium text-center">Make</th>
+                <th className="py-3 px-6 font-medium text-center">Model Name</th>
+                <th className="py-3 px-6 font-medium text-center">Price</th>
+                <th className="py-3 px-6 font-medium text-center">Transmission</th>
+                <th className="py-3 px-6 font-medium text-center">Body Type</th>
+                <th className="py-3 px-6 font-medium text-center">Fuel</th>
+                <th className="py-3 px-6 font-medium text-center">Drive Type</th>
+                <th className="py-3 px-6 font-medium text-center">Cylinders</th>
+                <th className="py-3 px-6 font-medium text-center">Doors</th>
+                <th className="py-3 px-6 font-medium text-center">Colour</th>
+                <th className="py-3 px-6 font-medium text-center">Status</th>
+                <th className="py-3 px-6 font-medium text-center w-[320px]">Actions</th>
               </tr>
             </thead>
             <tbody>
@@ -413,7 +413,8 @@ function ManageVehiclesPage() {
                     <td className="py-3 px-4">{car.doors}</td>
                     <td className="py-3 px-4">{car.colour}</td>
                     <td className="py-3 px-4">{car.approvalStatus}</td>
-                    <td className="py-3 px-4 text-right flex items-center gap-2">
+                    <td className="py-3 px-4 w-[320px]">
+                      <div className="flex items-center justify-center gap-2">
                       {car.approvalStatus === "Pending Approval" && (
                         <>
                           <button
@@ -442,6 +443,7 @@ function ManageVehiclesPage() {
                       >
                         Delete
                       </button>
+                      </div>
                     </td>
                   </>
                 </tr>

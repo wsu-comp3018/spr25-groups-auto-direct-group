@@ -65,7 +65,8 @@ const manufacturerRow = ({manufacturerData, handleSave, handleToggleStatus, canc
 					<option value="Inactive">Inactive</option>
 				</select>
 				</td>
-				<td className="py-3 px-4 text-right flex gap-2 justify-end">
+				<td className="py-3 px-4">
+				<div className="flex gap-2 justify-center">
 				<button
 					onClick={() => handleSaveClick()}
 					className="text-sm bg-black text-white px-3 py-1 rounded hover:bg-gray-800"
@@ -78,6 +79,7 @@ const manufacturerRow = ({manufacturerData, handleSave, handleToggleStatus, canc
 				>
 					Cancel
 				</button>
+				</div>
 				</td>
 			</>
 			) : (
@@ -86,7 +88,8 @@ const manufacturerRow = ({manufacturerData, handleSave, handleToggleStatus, canc
 				<td className="py-3 px-4">{m.country}</td>
 				<td className="py-3 px-4">{m.ABN}</td>
 				<td className="py-3 px-4">{m.manufacturerStatus}</td>
-				<td className="py-3 px-4 text-right flex gap-2 justify-end">
+				<td className="py-3 px-4">
+				<div className="flex gap-2 justify-center">
 				<button
 					onClick={() => toggleEdit()}
 					className="text-sm bg-black text-white px-3 py-1 rounded hover:bg-gray-800"
@@ -101,6 +104,7 @@ const manufacturerRow = ({manufacturerData, handleSave, handleToggleStatus, canc
 				>
 					{ m.manufacturerStatus == "Active" ? "Disable" : "Enable"}
 				</button>
+				</div>
 				</td>
 			</>
 			)}

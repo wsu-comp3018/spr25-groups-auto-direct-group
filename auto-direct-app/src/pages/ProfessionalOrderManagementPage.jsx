@@ -860,17 +860,11 @@ const ProfessionalOrderManagementPage = () => {
             </button>
 
             {/* Search Results */}
-            {searchAttempted && (
+            {searchAttempted && orderNotFound && (
               <div className="mt-6">
-                {orderFound ? (
-                  <div className="bg-green-50 border border-green-200 rounded-md p-4 mb-6">
-                    <p className="text-green-800 font-medium">✅ Order found! Details loaded below.</p>
-                  </div>
-                ) : orderNotFound ? (
-                  <div className="bg-red-50 border border-red-200 rounded-md p-4 mb-6">
-                    <p className="text-red-800 font-medium">❌ Order not found. Please check the order ID.</p>
-                  </div>
-                ) : null}
+                <div className="bg-red-50 border border-red-200 rounded-md p-4 mb-6">
+                  <p className="text-red-800 font-medium">❌ Order not found. Please check the order ID.</p>
+                </div>
               </div>
             )}
 

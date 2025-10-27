@@ -255,18 +255,18 @@ function MyAdviceRequestsPage({ token }) {
         <p className="text-gray-500">No {activeFilter} requests found.</p>
       ) : (
         <div className="overflow-x-auto">
-          <table className="min-w-full border-collapse text-left text-sm text-gray-700">
+          <table className="min-w-full border-collapse text-sm text-gray-700">
             <thead>
-              <tr className="border-b border-gray-300">
-                <th className="py-3 px-4 font-medium">Name</th>
-                <th className="py-3 px-4 font-medium">Email</th>
-                <th className="py-3 px-4 font-medium">Phone</th>
-                <th className="py-3 px-4 font-medium">Car</th>
-                <th className="py-3 px-4 font-medium"></th>
-                <th className="py-3 px-4 font-medium">Submitted</th>
-                <th className="py-3 px-4 font-medium">Status</th>
-                <th className="py-3 px-4 font-medium">Assigned To</th>
-                <th className="py-3 px-4 font-medium justify-center items-center">Actions</th>
+              <tr className="bg-black text-white">
+                <th className="py-3 px-6 font-medium text-center">Name</th>
+                <th className="py-3 px-6 font-medium text-center">Email</th>
+                <th className="py-3 px-6 font-medium text-center">Phone</th>
+                <th className="py-3 px-6 font-medium text-center">Car</th>
+                <th className="py-3 px-6 font-medium text-center"></th>
+                <th className="py-3 px-6 font-medium text-center">Submitted</th>
+                <th className="py-3 px-6 font-medium text-center">Status</th>
+                <th className="py-3 px-6 font-medium text-center">Assigned To</th>
+                <th className="py-3 px-6 font-medium text-center">Actions</th>
               </tr>
             </thead>
             <tbody>
