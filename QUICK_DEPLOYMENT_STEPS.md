@@ -19,6 +19,12 @@
 2. **Create database:** `autos-direct`
 3. **Create user and assign to database**
 4. **Import your database schema** (from `auto-direct-api/data/`)
+5. **Run database setup script:**
+   ```bash
+   cd auto-direct-api
+   npm run setup-db
+   ```
+   This creates the `vehicle_comparison` table and other required tables.
 
 ### Step 4: Configure Environment Variables (5 minutes)
 1. **In cPanel File Manager, go to `api/` folder**
