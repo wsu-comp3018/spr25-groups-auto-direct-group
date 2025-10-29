@@ -6,6 +6,7 @@ const verifyToken = require('../middleware/authentication.js');
 const authorizeUser = require('../middleware/authorization.js');
 const { createTestDrive, getTestDrivesByUser, getTestDrivesByUserDealer, updateDealerTestDrive, updateUserTestDrive, updateTestDriveStatus } = require('../service/test-drive-booking-services.js')
 const { getUserRolesByID } = require('../service/role-services.js');
+const { sendTestDriveConfirmationEmail } = require('../service/email-service.js');
 // Get all test drive bookings for admin dashboard
 router.get('/admin-requests', async (req, res) => {
 	try {

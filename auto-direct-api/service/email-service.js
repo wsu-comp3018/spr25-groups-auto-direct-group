@@ -16,6 +16,370 @@ const emailService = {
     });
   },
 
+  // Professional AutoDirect email template
+  createProfessionalEmailTemplate(subject, content, customerName = '') {
+    return `
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>${subject}</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Inter', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            color: #000000;
+            background-color: #f5f5f5;
+        }
+        
+        .email-container {
+            max-width: 650px;
+            margin: 20px auto;
+            background-color: #ffffff;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+        }
+        
+        .header {
+            background: #000000;
+            color: #ffffff;
+            padding: 30px;
+            text-align: center;
+            position: relative;
+            border-bottom: 2px solid #333333;
+        }
+        
+        .logo-section {
+            position: relative;
+            z-index: 2;
+            margin-bottom: 20px;
+        }
+        
+        .logo-container {
+            width: 300px;
+            height: 60px;
+            margin: 0 auto;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 10px;
+        }
+        
+        .logo {
+            max-width: 100%;
+            max-height: 100%;
+            object-fit: contain;
+        }
+        
+        .company-name {
+            font-size: 28px;
+            font-weight: 700;
+            margin-bottom: 5px;
+            letter-spacing: 1px;
+            color: #ffffff;
+        }
+        
+        .tagline {
+            font-size: 14px;
+            color: #cccccc;
+            font-weight: 300;
+            letter-spacing: 1px;
+        }
+        
+        .content {
+            padding: 45px 40px;
+            background-color: #ffffff;
+        }
+        
+        .greeting {
+            font-size: 20px;
+            font-weight: 600;
+            color: #000000;
+            margin-bottom: 25px;
+        }
+        
+        .message-text {
+            font-size: 16px;
+            color: #333333;
+            margin-bottom: 25px;
+            line-height: 1.7;
+        }
+        
+        .highlight-box {
+            background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+            border-left: 5px solid #000000;
+            padding: 25px;
+            margin: 30px 0;
+            border-radius: 0 8px 8px 0;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+        }
+        
+        .highlight-box h3 {
+            color: #000000;
+            font-size: 18px;
+            font-weight: 700;
+            margin-bottom: 10px;
+        }
+        
+        .details-container {
+            background-color: #fafafa;
+            border: 2px solid #e9ecef;
+            border-radius: 12px;
+            padding: 30px;
+            margin: 30px 0;
+            box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.02);
+        }
+        
+        .details-title {
+            font-size: 22px;
+            font-weight: 800;
+            color: #000000;
+            margin-bottom: 20px;
+            text-align: center;
+            padding-bottom: 15px;
+            border-bottom: 3px solid #000000;
+        }
+        
+        .detail-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 12px 0;
+            border-bottom: 1px solid #e9ecef;
+        }
+        
+        .detail-row:last-child {
+            border-bottom: none;
+        }
+        
+        .detail-label {
+            font-weight: 600;
+            color: #000000;
+            font-size: 15px;
+            min-width: 140px;
+        }
+        
+        .detail-value {
+            color: #444444;
+            font-size: 15px;
+            text-align: right;
+            flex: 1;
+        }
+        
+        .detail-value strong {
+            color: #000000;
+            font-weight: 700;
+        }
+        
+        .action-section {
+            background: linear-gradient(135deg, #f1f3f4 0%, #e8eaed 100%);
+            padding: 25px;
+            margin: 30px 0;
+            border-radius: 12px;
+            border: 1px solid #dadce0;
+        }
+        
+        .action-title {
+            font-size: 18px;
+            font-weight: 700;
+            color: #000000;
+            margin-bottom: 15px;
+        }
+        
+        .action-list {
+            list-style: none;
+            padding: 0;
+        }
+        
+        .action-list li {
+            padding: 8px 0;
+            color: #333333;
+            position: relative;
+            padding-left: 25px;
+        }
+        
+        .action-list li::before {
+            content: '•';
+            position: absolute;
+            left: 0;
+            color: #000000;
+            font-weight: bold;
+            font-size: 16px;
+        }
+        
+        .signature-section {
+            margin-top: 40px;
+            padding-top: 25px;
+            border-top: 2px solid #f0f0f0;
+        }
+        
+        .signature {
+            font-size: 16px;
+            font-weight: 600;
+            color: #000000;
+            margin-bottom: 5px;
+        }
+        
+        .signature-title {
+            font-size: 14px;
+            color: #666666;
+            font-weight: 400;
+        }
+        
+        .footer {
+            background: linear-gradient(135deg, #000000 0%, #333333 100%);
+            color: #ffffff;
+            padding: 40px 30px;
+            text-align: center;
+        }
+        
+        .footer-content {
+            margin-bottom: 25px;
+        }
+        
+        .company-info {
+            font-size: 18px;
+            font-weight: 700;
+            margin-bottom: 15px;
+            letter-spacing: 1px;
+        }
+        
+        .contact-details {
+            font-size: 14px;
+            margin: 8px 0;
+            opacity: 0.9;
+        }
+        
+        .contact-details strong {
+            color: #ffffff;
+            font-weight: 600;
+        }
+        
+        .social-links {
+            margin: 25px 0;
+            padding: 20px 0;
+            border-top: 1px solid #444444;
+            border-bottom: 1px solid #444444;
+        }
+        
+        .social-link {
+            color: #ffffff;
+            text-decoration: none;
+            margin: 0 15px;
+            font-size: 14px;
+            opacity: 0.9;
+            transition: opacity 0.3s ease;
+        }
+        
+        .social-link:hover {
+            opacity: 1;
+            text-decoration: underline;
+        }
+        
+        .disclaimer {
+            font-size: 12px;
+            color: #cccccc;
+            margin-top: 20px;
+            font-style: italic;
+            line-height: 1.5;
+        }
+        
+        /* Mobile responsiveness */
+        @media (max-width: 600px) {
+            .email-container {
+                margin: 10px;
+                border-radius: 8px;
+            }
+            
+            .header, .content, .footer {
+                padding: 25px 20px;
+            }
+            
+            .company-name {
+                font-size: 26px;
+            }
+            
+            .details-container {
+                padding: 20px;
+            }
+            
+            .detail-row {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 5px;
+            }
+            
+            .detail-value {
+                text-align: left;
+            }
+            
+            .detail-label {
+                min-width: auto;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="email-container">
+        <!-- Header Section -->
+        <div class="header">
+            <div class="logo-section">
+                <div class="company-name">Autos Direct</div>
+                <div class="tagline">Your Premier Automotive Partner</div>
+            </div>
+        </div>
+        
+        <!-- Content Section -->
+        <div class="content">
+            ${customerName ? `<div class="greeting">Dear ${customerName},</div>` : ''}
+            ${content}
+            
+            <div class="signature-section">
+                <div class="signature">Best regards,</div>
+                <div class="signature-title">The AutoDirect Team</div>
+            </div>
+        </div>
+        
+        <!-- Footer Section -->
+        <div class="footer">
+            <div class="footer-content">
+                <div class="company-info">AutoDirect</div>
+                <div class="contact-details">
+                    <strong>Email:</strong> autosdirect.au@gmail.com
+                </div>
+                <div class="contact-details">
+                    <strong>Customer Service:</strong> Available 24/7
+                </div>
+                <div class="contact-details">
+                    <strong>Website:</strong> www.autodirect.com.au
+                </div>
+            </div>
+            
+            <div class="social-links">
+                <a href="#" class="social-link">Contact Us</a>
+                <a href="#" class="social-link">Privacy Policy</a>
+                <a href="#" class="social-link">Terms of Service</a>
+                <a href="#" class="social-link">Support Center</a>
+            </div>
+            
+            <div class="disclaimer">
+                This is an automated email from AutoDirect. Please do not reply directly to this email.<br>
+                © ${new Date().getFullYear()} AutoDirect. All rights reserved. | Licensed Automotive Dealer
+            </div>
+        </div>
+    </div>
+</body>
+</html>`;
+  },
+
   // Send customer confirmation email
   async sendCustomerConfirmationEmail(customerDetails, vehicleDetails, manufacturerDetails, orderID) {
     console.log('📧 sendCustomerConfirmationEmail called with:');
@@ -24,50 +388,116 @@ const emailService = {
     console.log('- Order ID:', orderID);
     
     const transporter = this.createTransporter();
+    const customerName = `${customerDetails.firstName} ${customerDetails.lastName}`;
+    
+    const content = `
+      <div class="message-text">
+        Thank you for placing your order with <strong>AutoDirect</strong>! We're thrilled to help you get your new vehicle. 
+        Your order has been successfully received and is now being processed by our team.
+      </div>
+      
+      <div class="highlight-box">
+        <h3>Order Successfully Placed!</h3>
+        <p>Your unique order reference number has been generated and all our teams have been notified to begin processing your request.</p>
+      </div>
+      
+      <div class="details-container">
+        <div class="details-title">Order Confirmation Details</div>
+        <div class="detail-row">
+          <span class="detail-label">Order ID:</span>
+          <span class="detail-value"><strong style="color: #d4af37; font-size: 16px;">${orderID}</strong></span>
+        </div>
+        <div class="detail-row">
+          <span class="detail-label">Customer:</span>
+          <span class="detail-value">${customerName}</span>
+        </div>
+        <div class="detail-row">
+          <span class="detail-label">Email:</span>
+          <span class="detail-value">${customerDetails.email}</span>
+        </div>
+        <div class="detail-row">
+          <span class="detail-label">Manufacturer:</span>
+          <span class="detail-value">${manufacturerDetails?.companyName || vehicleDetails.makeName}</span>
+        </div>
+        <div class="detail-row">
+          <span class="detail-label">Vehicle:</span>
+          <span class="detail-value"><strong>${vehicleDetails.makeName} ${vehicleDetails.modelName}</strong></span>
+        </div>
+        <div class="detail-row">
+          <span class="detail-label">Year:</span>
+          <span class="detail-value">${vehicleDetails.year || 'Current Model'}</span>
+        </div>
+        <div class="detail-row">
+          <span class="detail-label">VIN:</span>
+          <span class="detail-value">${vehicleDetails.vin || vehicleDetails.vehicleID || 'To be provided upon delivery'}</span>
+        </div>
+        ${vehicleDetails.price ? `
+        <div class="detail-row">
+          <span class="detail-label">Price:</span>
+          <span class="detail-value"><strong>$${Number(vehicleDetails.price).toLocaleString()}</strong></span>
+        </div>
+        ` : ''}
+        <div class="detail-row">
+          <span class="detail-label">Test Drive Requested:</span>
+          <span class="detail-value">${customerDetails.testDriveRequested ? 'Yes' : 'No'}</span>
+        </div>
+      </div>
+      
+      <div class="action-section">
+        <div class="action-title">🚨 IMPORTANT - Please Save Your Order ID</div>
+        <p style="margin: 10px 0; color: #d4af37; font-weight: 600; font-size: 16px;">Order ID: ${orderID}</p>
+        <p style="margin: 10px 0; color: #333;">This Order ID will be used for:</p>
+        <ul class="action-list">
+          <li>Payment identification and processing</li>
+          <li>All correspondence regarding your order</li>
+          <li>Tracking your order status and delivery</li>
+          <li>Customer service inquiries and support</li>
+        </ul>
+      </div>
+      
+      ${customerDetails.testDriveRequested ? `
+      <div class="highlight-box">
+        <h3>Test Drive Scheduled</h3>
+        <p>Our Test Drive Team will contact you within 24 hours to finalize your appointment details and confirm the time and location.</p>
+      </div>
+      ` : ''}
+      
+      <div class="action-section">
+        <div class="action-title">What happens next?</div>
+        <ul class="action-list">
+          <li>Payment instructions will be provided by the manufacturer</li>
+          <li>Our logistics team will coordinate delivery once payment is confirmed</li>
+          <li>You'll receive updates at every step of the process</li>
+          <li>All vehicle documentation will be prepared for delivery</li>
+          <li>Final inspection and quality checks will be completed</li>
+        </ul>
+      </div>
+      
+      <div class="message-text">
+        <strong>Need assistance?</strong><br>
+        For any enquiries about your order, please contact our Customer Service Team and reference your Order ID. 
+        We're here to help make your vehicle purchase experience as smooth as possible.
+      </div>
+      
+      <div class="message-text">
+        We truly appreciate your business and look forward to delivering your new vehicle. Thank you for choosing 
+        AutoDirect as your trusted automotive partner!
+      </div>
+    `;
+    
+    const subject = `AutoDirect - Order Confirmation ${orderID}`;
+    const htmlContent = this.createProfessionalEmailTemplate(subject, content, customerName);
     
     const mailOptions = {
-      from: this.auth.user,
+      from: `AutoDirect <${this.auth.user}>`,
       to: customerDetails.email,
-      subject: `Auto's Direct Order - ${orderID}`,
+      subject: subject,
       headers: {
         'Content-Type': 'text/html; charset=utf-8',
         'X-Priority': '3',
         'X-MSMail-Priority': 'Normal'
       },
-      html: `
-        <!DOCTYPE html>
-        <html lang="en">
-        <head>
-          <meta charset="UTF-8">
-          <meta name="viewport" content="width=device-width, initial-scale=1.0">
-          <title>Auto's Direct Order - ${orderID}</title>
-        </head>
-        <body style="margin: 0; padding: 20px; background-color: #ffffff; color: black; font-family: Arial, sans-serif;">
-          <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px; line-height: 1.6; color: black;">
-            <p style="color: black;">Dear ${customerDetails.firstName} ${customerDetails.lastName},</p>
-            
-            <p style="color: black;">Thank you for placing your order with Autos Direct. A unique reference number has been generated for your purchase:</p>
-            
-            <p style="color: black;"><strong>Order Details:</strong></p>
-            <p style="color: black;"><strong>Order ID:</strong> ${orderID}</p>
-            <p style="color: black;"><strong>Manufacturer:</strong> ${manufacturerDetails?.companyName || vehicleDetails.makeName}</p>
-            <p style="color: black;"><strong>Vehicle Make & Model:</strong> ${vehicleDetails.makeName} ${vehicleDetails.modelName}</p>
-            <p style="color: black;"><strong>VIN:</strong> ${vehicleDetails.vin || vehicleDetails.vehicleID || 'To be provided'}</p>
-            
-            <p style="color: black;">Please keep this Order ID safe, as it will be used as an identifier for your payment and all correspondence regarding your order.</p>
-            
-            <p style="color: black;">If you have requested a test drive, our Test Drive Team will contact you shortly to finalise the appointment.</p>
-            
-            <p style="color: black;">For any further enquiries, please contact our Customer Service Team at [support@email.com] or [phone number].</p>
-            
-            <p style="color: black;">We appreciate your order and look forward to delivering your new vehicle.</p>
-            
-            <p style="color: black;">Yours sincerely,<br>
-            Autos Direct Team</p>
-          </div>
-        </body>
-        </html>
-      `
+      html: htmlContent
     };
 
     console.log('📧 Sending email from:', mailOptions.from);
@@ -394,55 +824,82 @@ const emailService = {
     
     try {
       const transporter = this.createTransporter();
+      const customerName = `${customerData.firstName} ${customerData.lastName}`;
+      
+      const content = `
+        <div class="message-text">
+          Thank you for booking a test drive with <strong>AutoDirect</strong>! We're excited to help you experience 
+          your potential new vehicle firsthand.
+        </div>
+        
+        <div class="highlight-box">
+          <h3>Test Drive Booking Confirmed!</h3>
+          <p>Our sales team will contact you within 24 hours to finalize all the details and confirm your appointment.</p>
+        </div>
+        
+        <div class="details-container">
+          <div class="details-title">Test Drive Booking Details</div>
+          <div class="detail-row">
+            <span class="detail-label">Vehicle:</span>
+            <span class="detail-value"><strong>${vehicleData.makeName} ${vehicleData.modelName}</strong></span>
+          </div>
+          <div class="detail-row">
+            <span class="detail-label">Year:</span>
+            <span class="detail-value">${vehicleData.year || 'Current Model'}</span>
+          </div>
+          <div class="detail-row">
+            <span class="detail-label">Customer Name:</span>
+            <span class="detail-value">${customerName}</span>
+          </div>
+          <div class="detail-row">
+            <span class="detail-label">Email:</span>
+            <span class="detail-value">${customerData.email}</span>
+          </div>
+          <div class="detail-row">
+            <span class="detail-label">Phone:</span>
+            <span class="detail-value">${customerData.phone}</span>
+          </div>
+          <div class="detail-row">
+            <span class="detail-label">Preferred Date:</span>
+            <span class="detail-value"><strong>${customerData.preferredDate}</strong></span>
+          </div>
+          <div class="detail-row">
+            <span class="detail-label">Preferred Time:</span>
+            <span class="detail-value"><strong>${customerData.preferredTime}</strong></span>
+          </div>
+        </div>
+        
+        <div class="action-section">
+          <div class="action-title">What happens next?</div>
+          <ul class="action-list">
+            <li>Our sales team will call you within 24 hours</li>
+            <li>We'll confirm the exact location and timing</li>
+            <li>Any special requirements will be discussed</li>
+            <li>We'll provide directions and our contact details</li>
+            <li>Vehicle will be prepared and ready for your test drive</li>
+          </ul>
+        </div>
+        
+        <div class="message-text">
+          <strong>Need to make changes?</strong><br>
+          No problem! Simply contact our customer service team and we'll help you reschedule 
+          or modify your booking at your convenience.
+        </div>
+        
+        <div class="message-text">
+          We look forward to helping you find your perfect vehicle. Thank you for choosing AutoDirect 
+          as your trusted automotive partner!
+        </div>
+      `;
+      
+      const subject = 'Test Drive Booking Confirmed - AutoDirect';
+      const htmlContent = this.createProfessionalEmailTemplate(subject, content, customerName);
       
       const mailOptions = {
-        from: this.auth.user,
+        from: `AutoDirect <${this.auth.user}>`,
         to: customerData.email,
-        subject: 'Test Drive Booking Confirmation - Autos Direct',
-        html: `
-          <!DOCTYPE html>
-          <html lang="en">
-          <head>
-            <meta charset="UTF-8">
-            <meta name="viewport" content="width=device-width, initial-scale=1.0">
-            <title>Test Drive Booking Confirmation</title>
-          </head>
-          <body style="margin: 0; padding: 20px; background-color: #ffffff; color: black; font-family: Arial, sans-serif;">
-            <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px; line-height: 1.6; color: black;">
-              <h2 style="color: black; border-bottom: 2px solid black; padding-bottom: 10px;">Test Drive Booking Confirmation</h2>
-              
-              <p style="color: black;">Dear ${customerData.firstName} ${customerData.lastName},</p>
-              
-              <p style="color: black;">Thank you for booking a test drive with <strong>Autos Direct</strong>. We have received your request and our team will contact you shortly to confirm the appointment details.</p>
-              
-              <div style="background-color: #f8f9fa; border: 1px solid #dee2e6; border-radius: 5px; padding: 20px; margin: 20px 0;">
-                <h3 style="color: black; margin-top: 0;">Booking Details</h3>
-                <p style="color: black; margin: 8px 0;"><strong>Vehicle:</strong> ${vehicleData.makeName} ${vehicleData.modelName}</p>
-                <p style="color: black; margin: 8px 0;"><strong>Year:</strong> ${vehicleData.year}</p>
-                <p style="color: black; margin: 8px 0;"><strong>Customer Name:</strong> ${customerData.firstName} ${customerData.lastName}</p>
-                <p style="color: black; margin: 8px 0;"><strong>Email:</strong> ${customerData.email}</p>
-                <p style="color: black; margin: 8px 0;"><strong>Phone:</strong> ${customerData.phone}</p>
-                <p style="color: black; margin: 8px 0;"><strong>Preferred Date:</strong> ${customerData.preferredDate}</p>
-                <p style="color: black; margin: 8px 0;"><strong>Preferred Time:</strong> ${customerData.preferredTime}</p>
-              </div>
-              
-              <p style="color: black;">Our sales team will contact you within 24 hours to confirm your test drive appointment and provide you with the exact location and any additional details.</p>
-              
-              <p style="color: black;">If you have any questions or need to make changes to your booking, please don't hesitate to contact us.</p>
-              
-              <p style="color: black;">Thank you for choosing Autos Direct!</p>
-              
-              <p style="color: black;">Best regards,<br>
-              <strong>The Autos Direct Team</strong></p>
-              
-              <hr style="border: none; border-top: 1px solid #dee2e6; margin: 30px 0;">
-              <p style="color: #6c757d; font-size: 12px; text-align: center;">
-                This is an automated confirmation email. Please do not reply to this email.
-              </p>
-            </div>
-          </body>
-          </html>
-        `
+        subject: subject,
+        html: htmlContent
       };
       
       const result = await transporter.sendMail(mailOptions);
@@ -464,70 +921,130 @@ const emailService = {
     
     try {
       const transporter = this.createTransporter();
+      const customerName = `${customerData.firstName} ${customerData.lastName}`;
       
-      // Build vehicle list HTML
+      // Build professional vehicle list HTML
       let vehicleListHtml = '';
       if (Array.isArray(vehicleData) && vehicleData.length > 0) {
-        vehicleListHtml = vehicleData.map(vehicle => `
-          <div style="background-color: #f8f9fa; border: 1px solid #dee2e6; border-radius: 5px; padding: 15px; margin: 10px 0;">
-            <h4 style="color: black; margin: 0 0 10px 0;">${vehicle.makeName} ${vehicle.modelName}</h4>
-            <p style="color: black; margin: 5px 0;"><strong>Year:</strong> ${vehicle.year}</p>
-            <p style="color: black; margin: 5px 0;"><strong>Price:</strong> $${vehicle.price ? Number(vehicle.price).toLocaleString() : 'Contact for pricing'}</p>
-            ${vehicle.description ? `<p style="color: black; margin: 5px 0;"><strong>Description:</strong> ${vehicle.description}</p>` : ''}
+        vehicleListHtml = vehicleData.map((vehicle, index) => `
+          <div class="details-container" style="margin: 20px 0;">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+              <h4 style="color: #000000; margin: 0; font-size: 20px; font-weight: 700;">
+                ${vehicle.makeName} ${vehicle.modelName}
+              </h4>
+              <span style="background-color: #000000; color: #ffffff; padding: 6px 15px; border-radius: 25px; font-size: 14px; font-weight: 600;">
+                Vehicle ${index + 1}
+              </span>
+            </div>
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px;">
+              <div class="detail-row">
+                <span class="detail-label">Year:</span>
+                <span class="detail-value">${vehicle.year || 'Current Model'}</span>
+              </div>
+              <div class="detail-row">
+                <span class="detail-label">Price:</span>
+                <span class="detail-value"><strong>$${vehicle.price ? Number(vehicle.price).toLocaleString() : 'Contact for pricing'}</strong></span>
+              </div>
+              ${vehicle.fuelType ? `
+              <div class="detail-row">
+                <span class="detail-label">Fuel Type:</span>
+                <span class="detail-value">${vehicle.fuelType}</span>
+              </div>
+              ` : ''}
+              ${vehicle.transmission ? `
+              <div class="detail-row">
+                <span class="detail-label">Transmission:</span>
+                <span class="detail-value">${vehicle.transmission}</span>
+              </div>
+              ` : ''}
+            </div>
+            ${vehicle.description ? `
+            <div style="margin-top: 15px; padding-top: 15px; border-top: 1px solid #e9ecef; font-size: 14px; color: #555555;">
+              <strong>Description:</strong> ${vehicle.description}
+            </div>
+            ` : ''}
           </div>
         `).join('');
       } else {
-        vehicleListHtml = '<p style="color: black;">Vehicle details will be provided separately.</p>';
+        vehicleListHtml = `
+          <div class="details-container" style="text-align: center; color: #666666; font-style: italic;">
+            <p>Vehicle details will be provided in your detailed comparison report.</p>
+          </div>
+        `;
       }
       
+      const content = `
+        <div class="message-text">
+          Thank you for requesting a vehicle comparison with <strong>AutoDirect</strong>! Our expert automotive 
+          team will prepare a comprehensive analysis to help you make the most informed decision for your needs and budget.
+        </div>
+        
+        <div class="highlight-box">
+          <h3>Vehicle Comparison Request Confirmed!</h3>
+          <p>Expect your detailed professional comparison report within 24-48 hours, delivered directly to your inbox.</p>
+        </div>
+        
+        <div class="details-container">
+          <div class="details-title">Request Information</div>
+          <div class="detail-row">
+            <span class="detail-label">Customer Name:</span>
+            <span class="detail-value">${customerName}</span>
+          </div>
+          <div class="detail-row">
+            <span class="detail-label">Email:</span>
+            <span class="detail-value">${customerData.email}</span>
+          </div>
+          <div class="detail-row">
+            <span class="detail-label">Phone:</span>
+            <span class="detail-value">${customerData.phone}</span>
+          </div>
+          ${customerData.message ? `
+          <div class="detail-row">
+            <span class="detail-label">Special Requirements:</span>
+            <span class="detail-value">${customerData.message}</span>
+          </div>
+          ` : ''}
+        </div>
+        
+        <div style="margin: 30px 0;">
+          <h3 style="color: #000000; font-size: 22px; font-weight: 700; margin-bottom: 20px; text-align: center;">
+            Vehicles Selected for Comparison
+          </h3>
+          ${vehicleListHtml}
+        </div>
+        
+        <div class="action-section">
+          <div class="action-title">Your comprehensive comparison report will include:</div>
+          <ul class="action-list">
+            <li>Detailed specifications and performance data</li>
+            <li>Pricing analysis and value assessment</li>
+            <li>Fuel efficiency and running cost estimates</li>
+            <li>Safety ratings and reliability scores</li>
+            <li>Feature comparison and technology overview</li>
+            <li>Our expert recommendations based on your requirements</li>
+          </ul>
+        </div>
+        
+        <div class="message-text">
+          <strong>Need to add more vehicles or make changes?</strong><br>
+          Simply contact our team and we'll update your comparison request. We're committed to helping you 
+          find the perfect vehicle that matches your lifestyle, budget, and preferences.
+        </div>
+        
+        <div class="message-text">
+          Thank you for choosing AutoDirect as your trusted automotive partner. Our team is dedicated to 
+          providing you with the most accurate and helpful vehicle information to guide your decision.
+        </div>
+      `;
+      
+      const subject = 'Vehicle Comparison Request Confirmed - AutoDirect';
+      const htmlContent = this.createProfessionalEmailTemplate(subject, content, customerName);
+      
       const mailOptions = {
-        from: this.auth.user,
+        from: `AutoDirect <${this.auth.user}>`,
         to: customerData.email,
-        subject: 'Vehicle Comparison Request Confirmation - Autos Direct',
-        html: `
-          <!DOCTYPE html>
-          <html lang="en">
-          <head>
-            <meta charset="UTF-8">
-            <meta name="viewport" content="width=device-width, initial-scale=1.0">
-            <title>Vehicle Comparison Request Confirmation</title>
-          </head>
-          <body style="margin: 0; padding: 20px; background-color: #ffffff; color: black; font-family: Arial, sans-serif;">
-            <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px; line-height: 1.6; color: black;">
-              <h2 style="color: black; border-bottom: 2px solid black; padding-bottom: 10px;">Vehicle Comparison Request Confirmation</h2>
-              
-              <p style="color: black;">Dear ${customerData.firstName} ${customerData.lastName},</p>
-              
-              <p style="color: black;">Thank you for requesting a vehicle comparison with <strong>Autos Direct</strong>. We have received your request and our team will prepare a detailed comparison for you.</p>
-              
-              <div style="background-color: #f8f9fa; border: 1px solid #dee2e6; border-radius: 5px; padding: 20px; margin: 20px 0;">
-                <h3 style="color: black; margin-top: 0;">Request Details</h3>
-                <p style="color: black; margin: 8px 0;"><strong>Customer Name:</strong> ${customerData.firstName} ${customerData.lastName}</p>
-                <p style="color: black; margin: 8px 0;"><strong>Email:</strong> ${customerData.email}</p>
-                <p style="color: black; margin: 8px 0;"><strong>Phone:</strong> ${customerData.phone}</p>
-                ${customerData.message ? `<p style="color: black; margin: 8px 0;"><strong>Additional Notes:</strong> ${customerData.message}</p>` : ''}
-              </div>
-              
-              <h3 style="color: black;">Vehicles for Comparison</h3>
-              ${vehicleListHtml}
-              
-              <p style="color: black;">Our sales team will prepare a comprehensive comparison including specifications, pricing, and features for the vehicles you've selected. You can expect to receive this comparison within 24-48 hours.</p>
-              
-              <p style="color: black;">If you have any questions or would like to add more vehicles to your comparison, please don't hesitate to contact us.</p>
-              
-              <p style="color: black;">Thank you for choosing Autos Direct!</p>
-              
-              <p style="color: black;">Best regards,<br>
-              <strong>The Autos Direct Team</strong></p>
-              
-              <hr style="border: none; border-top: 1px solid #dee2e6; margin: 30px 0;">
-              <p style="color: #6c757d; font-size: 12px; text-align: center;">
-                This is an automated confirmation email. Please do not reply to this email.
-              </p>
-            </div>
-          </body>
-          </html>
-        `
+        subject: subject,
+        html: htmlContent
       };
       
       const result = await transporter.sendMail(mailOptions);
