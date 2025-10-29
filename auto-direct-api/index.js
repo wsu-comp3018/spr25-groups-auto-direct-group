@@ -20,7 +20,7 @@ const app = express();
 const server = http.createServer(app);
 let io;
 const connectDB = require("./service/databaseConnection");
-const PORT = process.env.PORT || 3000;
+const PORT = process.env.PORT || 3001;
 
 const mysql = require('mysql2')
 const { connectionConfig } = require('./config/connectionsConfig');

@@ -9,11 +9,11 @@ function CustomerChatbotInquiries() {
   // Environment-based configuration
   const API_BASE_URL = process.env.NODE_ENV === 'production' 
     ? 'https://autos-direct.com.au' 
-    : 'http://localhost:3000';
+    : 'http://localhost:3001';
 
   const SOCKET_URL = process.env.NODE_ENV === 'production'
     ? 'https://autos-direct.com.au'
-    : 'http://localhost:3000';
+    : 'http://localhost:3001';
 
   const [inquiries, setInquiries] = useState([]);
   const [loading, setLoading] = useState(false);

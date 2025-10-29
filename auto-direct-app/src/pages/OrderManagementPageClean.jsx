@@ -7,7 +7,7 @@ import 'react-toastify/dist/ReactToastify.css';
 // Clean Order Management Page with Auto-Fill Functionality
 const OrderManagementPageClean = () => {
   const navigate = useNavigate();
-  const api = import.meta.env.VITE_API_URL || 'http://localhost:3000';
+  const api = import.meta.env.VITE_API_URL || 'http://localhost:3001';
 
   // Form state for customer details
   const [formData, setFormData] = useState({

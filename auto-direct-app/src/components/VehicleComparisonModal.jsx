@@ -14,7 +14,7 @@ const VehicleComparisonModal = ({ isOpen, onClose }) => {
   const fetchComparisonData = async () => {
     try {
       setLoading(true);
-      const response = await fetch('http://localhost:3000/finance/comparison-data');
+      const response = await fetch('http://localhost:3001/finance/comparison-data');
       if (response.ok) {
         const data = await response.json();
         setComparisonData(data);

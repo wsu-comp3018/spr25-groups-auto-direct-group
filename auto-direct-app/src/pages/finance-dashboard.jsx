@@ -19,7 +19,7 @@ const FinanceDashboard = () => {
         .find(row => row.startsWith('auto-direct-token='))
         ?.split('=')[1];
 
-      const response = await fetch('http://localhost:3000/finance-requests/admin-requests', {
+      const response = await fetch('http://localhost:3001/finance-requests/admin-requests', {
         headers: {
           'Authorization': `Bearer ${token}`,
           'Content-Type': 'application/json'
