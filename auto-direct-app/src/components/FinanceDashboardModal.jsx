@@ -30,8 +30,8 @@ function FinanceDashboardModal({ isOpen, onClose }) {
         ?.split('=')[1];
 
       const [summaryResponse, dataResponse] = await Promise.all([
-        fetch('http://localhost:3000/finance/summary'),
-        fetch('http://localhost:3000/finance/dashboard-data')
+        fetch('http://localhost:3001/finance/summary'),
+        fetch('http://localhost:3001/finance/dashboard-data')
       ]);
 
       if (summaryResponse.ok && dataResponse.ok) {
