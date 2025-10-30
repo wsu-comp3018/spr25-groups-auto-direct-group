@@ -1,0 +1,162 @@
+@import "tailwindcss";
+
+html, body {
+  margin: 0;
+    padding: 0;
+    font-family: 'Inter', sans-serif;
+    
+    color: black;
+
+}
+
+/* Professional Toast Animations */
+@keyframes slide-in {
+  from {
+    transform: translateX(100%) scale(0.95);
+    opacity: 0;
+  }
+  to {
+    transform: translateX(0) scale(1);
+    opacity: 1;
+  }
+}
+
+@keyframes fade-out {
+  from {
+    transform: translateX(0) scale(1);
+    opacity: 1;
+  }
+  to {
+    transform: translateX(100%) scale(0.95);
+    opacity: 0;
+  }
+}
+
+.animate-slide-in {
+  animation: slide-in 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.animate-fade-out {
+  animation: fade-out 0.3s cubic-bezier(0.7, 0, 0.84, 0);
+}
+
+/* Custom scrollbar styling for navigation sidebars */
+.nav-scrollbar::-webkit-scrollbar {
+  width: 12px;
+}
+
+.nav-scrollbar::-webkit-scrollbar-track {
+  background: rgba(255, 255, 255, 0.3);
+  border-radius: 6px;
+}
+
+.nav-scrollbar::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.8);
+  border-radius: 6px;
+  border: 2px solid rgba(255, 255, 255, 0.5);
+}
+
+.nav-scrollbar::-webkit-scrollbar-thumb:hover {
+  background: rgba(255, 255, 255, 1);
+}
+
+/* Fallback for Firefox */
+.nav-scrollbar {
+  scrollbar-width: thin;
+  scrollbar-color: rgba(255, 255, 255, 0.8) rgba(255, 255, 255, 0.3);
+}
+
+/* Add subtle gradient to indicate scrollable content */
+.nav-scrollbar::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 20px;
+  background: linear-gradient(transparent, rgba(0, 0, 0, 0.3));
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+.nav-scrollbar.scrollable::after {
+  opacity: 1;
+}
+
+/* Force scrollbar to always be visible */
+.nav-scrollbar {
+  scrollbar-gutter: stable;
+}
+
+/* Add a subtle border to indicate scrollable area */
+.nav-scrollbar.scrollable {
+  border-right: 2px solid rgba(255, 255, 255, 0.2);
+}
+
+/* Temporary debug - make scrollbar always visible */
+.nav-scrollbar {
+  overflow-y: scroll !important;
+}
+
+/* Specific styling for admin submenu scrollbars */
+.nav-scrollbar::-webkit-scrollbar {
+  width: 8px;
+}
+
+.nav-scrollbar::-webkit-scrollbar-track {
+  background: rgba(255, 255, 255, 0.2);
+  border-radius: 4px;
+}
+
+.nav-scrollbar::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.7);
+  border-radius: 4px;
+  border: 1px solid rgba(255, 255, 255, 0.4);
+}
+
+.nav-scrollbar::-webkit-scrollbar-thumb:hover {
+  background: rgba(255, 255, 255, 0.9);
+}
+
+/* Force admin submenu scrollbars to be very visible */
+.admin-submenu-scrollbar {
+  overflow-y: scroll !important;
+  scrollbar-width: thick !important;
+  scrollbar-color: white rgba(255, 255, 255, 0.3) !important;
+}
+
+.admin-submenu-scrollbar::-webkit-scrollbar {
+  width: 16px !important;
+}
+
+.admin-submenu-scrollbar::-webkit-scrollbar-track {
+  background: rgba(255, 255, 255, 0.4) !important;
+  border-radius: 8px !important;
+}
+
+.admin-submenu-scrollbar::-webkit-scrollbar-thumb {
+  background: white !important;
+  border-radius: 8px !important;
+  border: 2px solid rgba(255, 255, 255, 0.8) !important;
+}
+
+.admin-submenu-scrollbar::-webkit-scrollbar-thumb:hover {
+  background: rgba(255, 255, 255, 0.9) !important;
+}
+
+/* Add scroll indicator for admin submenus */
+.admin-submenu-scrollbar::after {
+  content: '↓ Scroll for more options ↓';
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background: linear-gradient(transparent, rgba(0, 0, 0, 0.8));
+  color: white;
+  text-align: center;
+  padding: 8px;
+  font-size: 10px;
+  pointer-events: none;
+  opacity: 0.7;
+}
