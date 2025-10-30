@@ -6,6 +6,7 @@ const router = express.Router();
 const { v4: uuidv4 } = require('uuid');
 const axios = require('axios');
 const { jwtKey } = require('../config/connectionsConfig.js');
+const { emailService } = require('../service/email-service');
 const verifyToken = require('../middleware/authentication');
 const authorizeUser = require('../middleware/authorization');
 const { getRoleIDByLabel, getUserRolesByID, createUserRole } = require('../service/role-services.js');
@@ -100,6 +101,85 @@ router.post('/login', async (req, res) => {
 	} catch (error) {
 		res.status(500).json({ error: 'Login failed: ' + error });
 	}
+});
+
+// Forgot password: send reset link
+router.post('/forgot-password', async (req, res) => {
+    try {
+        const { emailAddress } = req.body;
+        if (!emailAddress) return res.status(400).json({ message: 'emailAddress is required' });
+
+        const rows = await getUserByEmail(emailAddress);
+        const userExists = Array.isArray(rows) && rows.length > 0;
+
+        const token = jwt.sign({ emailAddress }, jwtKey, { expiresIn: '15m' });
+        const resetUrl = `${process.env.FRONTEND_URL || 'http://localhost:5173'}/reset-password?token=${encodeURIComponent(token)}`;
+
+        const subject = 'Reset your AutoDirect password';
+        const html = emailService.createProfessionalEmailTemplate(subject, `
+            <p>Hello,</p>
+            <p>We received a request to reset your password. Click the button below to create a new password. This link expires in 15 minutes.</p>
+            <p style="margin:20px 0;">
+                <a href="${resetUrl}" style="background:#000;color:#fff;padding:12px 18px;border-radius:6px;text-decoration:none;">Reset Password</a>
+            </p>
+            <p>If you did not request this, you can safely ignore this email.</p>
+        `);
+
+        console.log('[ForgotPassword] Reset URL:', resetUrl);
+
+        if (userExists) {
+            try {
+                const transporter = emailService.createTransporter();
+                await transporter.sendMail({
+                    from: emailService.auth.user,
+                    to: emailAddress,
+                    subject,
+                    html
+                });
+            } catch (e) {
+                console.error('forgot-password email send error:', e);
+                // Continue to avoid user enumeration
+            }
+        }
+
+        // In non-production, return the reset URL to unblock flow without email
+        const payload = { message: 'If the email exists, a reset link will be sent.' };
+        if ((process.env.NODE_ENV || 'development') !== 'production' || req.query.debug === '1') {
+            payload.resetUrl = resetUrl;
+        }
+        return res.status(200).json(payload);
+    } catch (error) {
+        return res.status(500).json({ error: 'Failed to initiate password reset: ' + error });
+    }
+});
+
+// Reset password: verify token and set new password
+router.post('/reset-password', async (req, res) => {
+    try {
+        const { token, newPassword } = req.body;
+        if (!token || !newPassword) return res.status(400).json({ message: 'token and newPassword are required' });
+
+        let payload;
+        try {
+            payload = jwt.verify(token, jwtKey);
+        } catch (e) {
+            return res.status(400).json({ message: 'Invalid or expired token' });
+        }
+
+        const rows = await getUserByEmail(payload.emailAddress);
+        if (!rows || rows.length === 0) {
+            return res.status(400).json({ message: 'Invalid token' });
+        }
+
+        const user = rows[0];
+        const salt = bcrypt.genSaltSync(10);
+        const passwordHash = bcrypt.hashSync(newPassword, salt);
+        await updateUserPassword(user.userID, passwordHash);
+
+        return res.status(200).json({ message: 'Password has been reset.' });
+    } catch (error) {
+        return res.status(500).json({ error: 'Failed to reset password: ' + error });
+    }
 });
 
 // returns user profile

@@ -1,7 +1,7 @@
 // Login component: Renders the login form for user authentication
 import React, { useState, useRef } from "react";
 import Cookies from 'js-cookie';
-import { useNavigate } from "react-router-dom"; // Import useNavigate
+import { useNavigate, Link } from "react-router-dom"; // Import useNavigate
 import { useUser } from "../contexts/UserContext"; // Import your UserContext
 import api from "../data/api-calls";
 import ReCAPTCHA from "react-google-recaptcha";
@@ -207,6 +207,9 @@ function Login() {
             Login
 					</button>
 				</form>
+			<div className="mt-4 text-center">
+				<Link to="/forgot-password" className="text-sm text-blue-700 hover:underline">Forgot your password?</Link>
+			</div>
 			</div>
 		</div>
 	</div>
