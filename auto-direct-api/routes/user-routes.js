@@ -15,9 +15,10 @@ const { updateUserAsUser, createUser, getUserByEmail, getUserByID, getUserInfoBy
 // reCAPTCHA verification function
 const verifyRecaptcha = async (recaptchaToken) => {
 	try {
+		const secretKey = process.env.RECAPTCHA_SECRET_KEY || '6LfKgtcrAAAAAJZ2BL_4DGDVqNytFjer40klwvsP'; // Fallback to production key
 		const response = await axios.post('https://www.google.com/recaptcha/api/siteverify', null, {
 			params: {
-				secret: '6LeIxAcTAAAAAGG-vFI1TnRWxMZNFuojJ4WifJWe',
+				secret: secretKey,
 				response: recaptchaToken
 			}
 		});
