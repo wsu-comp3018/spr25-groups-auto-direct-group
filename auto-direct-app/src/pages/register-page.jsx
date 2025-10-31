@@ -437,7 +437,7 @@ const RegisterPage = () => {
               <div className="flex justify-center">
                 <ReCAPTCHA
                   ref={recaptchaRef}
-                  sitekey="6LeIxAcTAAAAAJcZVRqyHh71UMIEGNQ_MXjiZKhI"
+                  sitekey={import.meta.env.VITE_RECAPTCHA_SITE_KEY || "6LfKgtcrAAAAAGCmjr1qoXSMbp3tU-yHP-Cl_44r"}
                   onChange={handleRecaptchaChange}
                   theme="light"
                 />
