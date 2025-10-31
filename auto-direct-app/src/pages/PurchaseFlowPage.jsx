@@ -612,10 +612,11 @@ function PurchaseFlowPage() {
           suburb: purchaseForm.suburb,
           state: purchaseForm.state,
           postcode: purchaseForm.postcode,
+          licenseFirstName: purchaseForm.licenseFirstName,
+          licenseLastName: purchaseForm.licenseLastName,
           licenseNumber: purchaseForm.licenseNumber,
           licenseState: purchaseForm.licenseState,
-          licenseFirstName: purchaseForm.licenseFirstName,
-          licenseLastName: purchaseForm.licenseLastName
+          licenseExpiryDate: purchaseForm.licenseExpiryDate
         },
         vehicleDetails: {
           vehicleID: car.vehicleID,
@@ -668,6 +669,11 @@ function PurchaseFlowPage() {
               customerEmail: purchaseForm.email,
               customerPhone: purchaseForm.phone,
               customerAddress: `${purchaseForm.streetNumber} ${purchaseForm.streetName}, ${purchaseForm.suburb}, ${purchaseForm.state} ${purchaseForm.postcode}`,
+              licenseFirstName: purchaseForm.licenseFirstName,
+              licenseLastName: purchaseForm.licenseLastName,
+              licenseNumber: purchaseForm.licenseNumber,
+              licenseState: purchaseForm.licenseState,
+              licenseExpiryDate: purchaseForm.licenseExpiryDate,
               vehicleDetails: {
                 vehicleID: car.vehicleID,
                 makeID: car.makeID || car.makeid,

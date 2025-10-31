@@ -35,8 +35,9 @@ const createTestDrive = async ( testDriveNewID, userID, vehicleID, status, notes
 			dealerID = null;
 		}
 		
+		// Allow NULL dealerID - dealer can be assigned later
 		if (!dealerID) {
-			throw new Error('No dealer found for this vehicle. Please ensure there is a dealer associated with the vehicle\'s manufacturer.');
+			console.warn(`No dealerID found for vehicleID ${vehicleID}. Proceeding with NULL dealer - can be assigned later.`);
 		}
 		
 		const query = `INSERT INTO test_drive_bookings (bookingID, userID, vehicleID, dealerID, time, status, customerNotes) VALUES (?, ?, ?, ?, ?, ?, ?);`;
