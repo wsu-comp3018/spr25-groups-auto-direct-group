@@ -161,16 +161,24 @@ function TestDrivePage({ car: providedCar, thumbnailPath, onClose }) {
     }
   };
 
-  return (
-    <div className="min-h-screen bg-transparent py-10 px-0 flex items-start justify-center">
-      <div className="bg-white rounded-2xl border border-gray-100 w-full max-w-[900px]">
-        <div className="sticky top-0 z-20 bg-white/90 backdrop-blur border-b border-gray-100">
-          <div className="px-8 md:px-10 py-4">
-            <h1 className="text-2xl md:text-3xl font-extrabold text-gray-900 tracking-tight text-center">Book a Test Drive</h1>
+  // If onClose is provided, render as modal
+  if (onClose) {
+    return (
+      <div className="fixed inset-0 backdrop-blur-sm bg-white/20 z-50 flex items-center justify-center p-6">
+        <div className="bg-white rounded-2xl border border-gray-100 w-[85vw] max-h-[90vh] overflow-auto shadow-2xl">
+          <div className="sticky top-0 z-20 bg-white/90 backdrop-blur border-b border-gray-100">
+            <div className="px-8 md:px-10 py-4 flex justify-between items-center">
+              <h1 className="text-2xl md:text-3xl font-extrabold text-gray-900 tracking-tight">Book a Test Drive</h1>
+              <button 
+                onClick={onClose}
+                className="text-gray-500 hover:text-gray-700 text-2xl font-bold px-3 py-1 hover:bg-gray-100 rounded-full transition-colors"
+              >
+                ×
+              </button>
+            </div>
           </div>
-        </div>
-        <div className="px-8 md:px-10 pt-6">
-          <p className="text-center text-gray-500 mt-0 mb-6 md:mb-8 text-base md:text-lg">Experience your next car before you buy. Choose your date and time, then we’ll be in touch.</p>
+          <div className="px-8 md:px-10 pt-6">
+            <p className="text-center text-gray-500 mt-0 mb-8 md:mb-10 text-base md:text-lg">Experience your next car before you buy. Choose your date and time, then we'll be in touch.</p>
 
           {/* Vehicle Summary */}
           <div className="rounded-xl bg-gray-50 border border-gray-200 p-4 md:p-5 mb-8">
@@ -227,53 +235,53 @@ function TestDrivePage({ car: providedCar, thumbnailPath, onClose }) {
         </div>
 
         <form onSubmit={handleSubmit} className="px-8 md:px-10 pb-8">
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-10">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-12">
             {/* Left: Details */}
-            <div className="flex flex-col gap-5">
+            <div className="flex flex-col gap-8">
               <div className="relative">
-                <label className="block text-gray-800 font-semibold mb-1 flex items-center gap-2"><User className="w-5 h-5 text-black"/> Full Name</label>
-                <input type="text" name="name" required value={formData.name} onChange={handleChange} className="border border-gray-300 p-3 rounded-lg w-full focus:ring-2 focus:ring-gray-300 focus:border-gray-400 transition bg-white" placeholder="Enter your full name" />
+                <label className="block text-gray-800 font-semibold mb-2 flex items-center gap-2"><User className="w-5 h-5 text-black"/> Full Name</label>
+                <input type="text" name="name" required value={formData.name} onChange={handleChange} className="border border-gray-300 p-4 rounded-lg w-full focus:ring-2 focus:ring-gray-300 focus:border-gray-400 transition bg-white" placeholder="Enter your full name" />
               </div>
               <div className="relative">
-                <label className="block text-gray-800 font-semibold mb-1 flex items-center gap-2"><Mail className="w-5 h-5 text-black"/> Email Address</label>
-                <input type="email" name="email" required value={formData.email} onChange={handleChange} className="border border-gray-300 p-3 rounded-lg w-full focus:ring-2 focus:ring-gray-300 focus:border-gray-400 transition bg-white" placeholder="name@example.com" />
+                <label className="block text-gray-800 font-semibold mb-2 flex items-center gap-2"><Mail className="w-5 h-5 text-black"/> Email Address</label>
+                <input type="email" name="email" required value={formData.email} onChange={handleChange} className="border border-gray-300 p-4 rounded-lg w-full focus:ring-2 focus:ring-gray-300 focus:border-gray-400 transition bg-white" placeholder="name@example.com" />
               </div>
               <div className="relative">
-                <label className="block text-gray-800 font-semibold mb-1 flex items-center gap-2"><Phone className="w-5 h-5 text-black"/> Phone Number</label>
-                <input type="tel" name="phone" required value={formData.phone} onChange={handleChange} className="border border-gray-300 p-3 rounded-lg w-full focus:ring-2 focus:ring-gray-300 focus:border-gray-400 transition bg-white" placeholder="e.g. 0412 345 678" />
+                <label className="block text-gray-800 font-semibold mb-2 flex items-center gap-2"><Phone className="w-5 h-5 text-black"/> Phone Number</label>
+                <input type="tel" name="phone" required value={formData.phone} onChange={handleChange} className="border border-gray-300 p-4 rounded-lg w-full focus:ring-2 focus:ring-gray-300 focus:border-gray-400 transition bg-white" placeholder="e.g. 0412 345 678" />
               </div>
               <div className="relative">
-                <label className="block text-gray-800 font-semibold mb-1 flex items-center gap-2"><MapPin className="w-5 h-5 text-black"/> Suburb</label>
-                <input type="text" name="suburb" required value={formData.suburb} onChange={handleChange} className="border border-gray-300 p-3 rounded-lg w-full focus:ring-2 focus:ring-gray-300 focus:border-gray-400 transition bg-white" placeholder="Your suburb" />
+                <label className="block text-gray-800 font-semibold mb-2 flex items-center gap-2"><MapPin className="w-5 h-5 text-black"/> Suburb</label>
+                <input type="text" name="suburb" required value={formData.suburb} onChange={handleChange} className="border border-gray-300 p-4 rounded-lg w-full focus:ring-2 focus:ring-gray-300 focus:border-gray-400 transition bg-white" placeholder="Your suburb" />
               </div>
               <div className="relative">
-                <label className="block text-gray-800 font-semibold mb-1 flex items-center gap-2"><Car className="w-5 h-5 text-black"/> Vehicle</label>
-                <input type="text" name="vehicle" required value={formData.vehicle} onChange={handleChange} className="border border-gray-300 p-3 rounded-lg w-full focus:ring-2 focus:ring-gray-300 focus:border-gray-400 transition bg-white" placeholder="Vehicle to test drive" />
+                <label className="block text-gray-800 font-semibold mb-2 flex items-center gap-2"><Car className="w-5 h-5 text-black"/> Vehicle</label>
+                <input type="text" name="vehicle" required value={formData.vehicle} onChange={handleChange} className="border border-gray-300 p-4 rounded-lg w-full focus:ring-2 focus:ring-gray-300 focus:border-gray-400 transition bg-white" placeholder="Vehicle to test drive" />
               </div>
             </div>
 
             {/* Right: Date & Slots */}
-            <div className="flex flex-col gap-5">
+            <div className="flex flex-col gap-8">
               <div className="relative">
-                <label className="block text-gray-800 font-semibold mb-2 flex items-center gap-2"><CalendarDays className="w-5 h-5 text-black"/> Preferred Date</label>
-                <DatePicker selected={selectedDate} onChange={handleDateSelect} dateFormat="yyyy-MM-dd" className="border border-gray-300 p-3 rounded-lg w-full focus:ring-2 focus:ring-gray-300 focus:border-gray-400 transition cursor-pointer bg-white" placeholderText="Select a date" required />
-                <p className="text-xs text-gray-500 mt-2">We’ll confirm availability with the dealership.</p>
+                <label className="block text-gray-800 font-semibold mb-3 flex items-center gap-2"><CalendarDays className="w-5 h-5 text-black"/> Preferred Date</label>
+                <DatePicker selected={selectedDate} onChange={handleDateSelect} dateFormat="yyyy-MM-dd" className="border border-gray-300 p-4 rounded-lg w-full focus:ring-2 focus:ring-gray-300 focus:border-gray-400 transition cursor-pointer bg-white" placeholderText="Select a date" required />
+                <p className="text-xs text-gray-500 mt-3">We'll confirm availability with the dealership.</p>
               </div>
 
               <div className="">
-                <div className="font-semibold text-gray-800 mb-2">Available Time Slots</div>
+                <div className="font-semibold text-gray-800 mb-4">Available Time Slots</div>
                 {selectedDate ? (
                   loadingSlots ? (
-                    <div className="text-center text-gray-400 py-6">Loading slots...</div>
+                    <div className="text-center text-gray-400 py-8">Loading slots...</div>
                   ) : (
-                    <div className="grid grid-cols-2 gap-3">
+                    <div className="grid grid-cols-2 gap-4">
                       {["09:00AM - 10:00AM","10:00AM - 11:00AM","11:00AM - 12:00PM","12:00PM - 01:00PM","01:00PM - 02:00PM","02:00PM - 03:00PM","03:00PM - 04:00PM","04:00PM - 05:00PM"].map((slot) => {
                         const isBooked = availableSlots && availableSlots.booked && availableSlots.booked.includes(slot);
                         return (
                           <button
                             key={slot}
                             type="button"
-                            className={`border rounded-lg p-3 font-semibold w-full transition-all duration-150 shadow-sm text-sm focus:outline-none focus:ring-2 focus:ring-gray-300 ${isBooked ? "bg-gray-100 text-gray-400 cursor-not-allowed" : formData.slot===slot?"bg-black text-white border-black":"bg-white hover:bg-gray-50"}`}
+                            className={`border rounded-lg p-4 font-semibold w-full transition-all duration-150 shadow-sm text-sm focus:outline-none focus:ring-2 focus:ring-gray-300 ${isBooked ? "bg-gray-100 text-gray-400 cursor-not-allowed" : formData.slot===slot?"bg-black text-white border-black":"bg-white hover:bg-gray-50"}`}
                             onClick={()=>!isBooked && setFormData(prev=>({...prev,slot}))}
                             disabled={isBooked}
                           >
@@ -284,7 +292,7 @@ function TestDrivePage({ car: providedCar, thumbnailPath, onClose }) {
                     </div>
                   )
                 ) : (
-                  <div className="text-gray-400 text-sm py-6">Select a date to view available slots.</div>
+                  <div className="text-gray-400 text-sm py-8">Select a date to view available slots.</div>
                 )}
               </div>
             </div>
@@ -306,8 +314,8 @@ function TestDrivePage({ car: providedCar, thumbnailPath, onClose }) {
         </div>
       </div>
     </div>
-  );
-
+    );
+  }
 
   if (!car) {
     return (
@@ -318,18 +326,18 @@ function TestDrivePage({ car: providedCar, thumbnailPath, onClose }) {
   }
 
   return (
-    <div className="min-h-screen pt-24 px-4 max-w-4xl mx-auto">
-      <h2 className="text-3xl font-bold text-gray-800 mb-6 text-center">Book a Test Drive</h2>
-      <form onSubmit={handleSubmit} className="bg-white shadow rounded-lg p-8 flex flex-col gap-8">
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          <div className="flex flex-col gap-4">
+    <div className="min-h-screen pt-24 px-4 max-w-6xl mx-auto">
+      <h2 className="text-3xl font-bold text-gray-800 mb-8 text-center">Book a Test Drive</h2>
+      <form onSubmit={handleSubmit} className="bg-white shadow rounded-lg p-8 flex flex-col gap-10">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+          <div className="flex flex-col gap-6">
             <input
               type="text"
               name="name"
               required
               value={formData.name}
               onChange={handleChange}
-              className="border border-gray-300 p-3 rounded"
+              className="border border-gray-300 p-4 rounded"
               placeholder="Name*"
             />
             <input
@@ -338,7 +346,7 @@ function TestDrivePage({ car: providedCar, thumbnailPath, onClose }) {
               required
               value={formData.email}
               onChange={handleChange}
-              className="border border-gray-300 p-3 rounded"
+              className="border border-gray-300 p-4 rounded"
               placeholder="Email*"
             />
             <input
@@ -347,7 +355,7 @@ function TestDrivePage({ car: providedCar, thumbnailPath, onClose }) {
               required
               value={formData.phone}
               onChange={handleChange}
-              className="border border-gray-300 p-3 rounded"
+              className="border border-gray-300 p-4 rounded"
               placeholder="Phone*"
             />
             <input
@@ -356,10 +364,10 @@ function TestDrivePage({ car: providedCar, thumbnailPath, onClose }) {
               required
               value={formData.suburb}
               onChange={handleChange}
-              className="border border-gray-300 p-3 rounded"
+              className="border border-gray-300 p-4 rounded"
               placeholder="Suburb*"
             />
-            <div className="flex gap-2">
+            <div className="flex gap-4">
               <input
                 type="text"
                 name="date"
@@ -367,7 +375,7 @@ function TestDrivePage({ car: providedCar, thumbnailPath, onClose }) {
                 value={selectedDate}
                 onClick={handleDateClick}
                 readOnly
-                className="border border-gray-300 p-3 rounded w-1/2 cursor-pointer"
+                className="border border-gray-300 p-4 rounded w-1/2 cursor-pointer"
                 placeholder="dd/mm/yyyy*"
               />
               <input
@@ -376,7 +384,7 @@ function TestDrivePage({ car: providedCar, thumbnailPath, onClose }) {
                 required
                 value={formData.vehicle}
                 onChange={handleChange}
-                className="border border-gray-300 p-3 rounded w-1/2"
+                className="border border-gray-300 p-4 rounded w-1/2"
                 placeholder="Vehicle to Test Drive*"
               />
             </div>

@@ -3,7 +3,7 @@ const express = require('express');
 const router = express.Router();
 const verifyToken = require('../middleware/authentication');
 const authorizeUser = require('../middleware/authorization');
-const { enhancedEmailService } = require('../service/enhanced-email-service');
+const { emailService } = require('../service/email-service.js');
 
 // In-memory storage for orders (in production, this would be a database)
 const orderStorage = new Map();
@@ -121,30 +121,27 @@ router.post('/mark-paid', [verifyToken, authorizeUser], async (req, res) => {
       return res.status(403).json({ error: 'Unauthorized - Admin access required' });
     }
 
-    // Send data entry team notification
-    await enhancedEmailService.sendDataEntryTeamNotification({
-      orderID,
-      customerName: customerName || 'N/A',
-      customerEmail: customerEmail || 'N/A',
-      manufacturerName: manufacturerDetails?.manufacturerName || vehicleDetails?.makeName || 'N/A',
-      vehicleMake: vehicleDetails?.makeName || 'N/A',
-      vehicleModel: vehicleDetails?.modelName || 'N/A',
-      vehicleVIN: vehicleDetails?.vin || vehicleDetails?.vehicleID || 'N/A',
-      deliveryAddress: customerAddress || 'N/A'
-    });
+    // Send data entry team notification using updated email service
+    await emailService.sendSalesTeamNotification({
+      firstName: customerName?.split(' ')[0] || 'N/A',
+      lastName: customerName?.split(' ')[1] || '',
+      email: customerEmail || 'N/A'
+    }, {
+      makeName: vehicleDetails?.makeName || 'N/A',
+      modelName: vehicleDetails?.modelName || 'N/A',
+      vin: vehicleDetails?.vin || vehicleDetails?.vehicleID || 'N/A'
+    }, orderID);
 
-    // Send logistics team notification
-    await enhancedEmailService.sendLogisticsTeamNotification({
-      orderID,
-      customerName: customerName || 'N/A',
-      customerEmail: customerEmail || 'N/A',
-      manufacturerName: manufacturerDetails?.manufacturerName || vehicleDetails?.makeName || 'N/A',
-      vehicleMake: vehicleDetails?.makeName || 'N/A',
-      vehicleModel: vehicleDetails?.modelName || 'N/A',
-      vehicleVIN: vehicleDetails?.vin || vehicleDetails?.vehicleID || 'N/A',
-      deliveryAddress: customerAddress || 'N/A',
-      testDriveRequested: false
-    });
+    // Send logistics team notification using updated email service
+    await emailService.sendLogisticsTeamNotification({
+      firstName: customerName?.split(' ')[0] || 'N/A',
+      lastName: customerName?.split(' ')[1] || '',
+      email: customerEmail || 'N/A'
+    }, {
+      makeName: vehicleDetails?.makeName || 'N/A',
+      modelName: vehicleDetails?.modelName || 'N/A',
+      vin: vehicleDetails?.vin || vehicleDetails?.vehicleID || 'N/A'
+    }, orderID);
 
     console.log('✅ Order marked as paid and emails sent');
     res.status(200).json({ 
@@ -199,8 +196,18 @@ router.post('/process-order', [verifyToken, authorizeUser], async (req, res) => 
       trackingPassword: orderID.slice(-6)
     };
 
-    // Send all order processed emails
-    await enhancedEmailService.sendAllOrderProcessedEmails(orderData);
+    // Send all order processed emails using updated email service
+    await emailService.sendAllPurchaseNotifications({
+      firstName: orderData.customerFirstName || 'N/A',
+      lastName: orderData.customerLastName || '',
+      email: orderData.customerEmail || 'N/A'
+    }, {
+      makeName: orderData.vehicleMake || 'N/A',
+      modelName: orderData.vehicleModel || 'N/A',
+      vin: orderData.vehicleVIN || 'N/A'
+    }, {
+      companyName: orderData.manufacturerName || 'N/A'
+    }, orderData.orderID);
 
     console.log('✅ Order processed and all emails sent');
     res.status(200).json({ 

@@ -5,8 +5,7 @@ const { connectionConfig } = require('../config/connectionsConfig.js');
 const pool = mysql.createPool(connectionConfig);
 const { v4: uuidv4 } = require('uuid');
 const bcrypt = require('bcryptjs');
-const nodemailer = require('nodemailer');
-const emailConfig = require('../email-config');
+const { emailService } = require('../service/email-service.js');
 
 const verifyToken = require('../middleware/authentication');
 const authorizeUser = require('../middleware/authorization');
@@ -15,60 +14,66 @@ const { getAllUsers, updateUser, disableUserByUserID, createUser, getUserByEmail
 
 // -------- Manage Vehicles --------
 
-// Email configuration
-const transporter = nodemailer.createTransport(emailConfig);
+// Updated to use new email service
 
-// Function to send invitation email
+// Function to send invitation email using new professional template
 const sendInvitationEmail = async (email, invitationUrl, roles, expiresAt) => {
-  const mailOptions = {
-    from: emailConfig.auth.user,
-    to: email,
-    subject: 'Invitation to Join Autos Direct',
-    html: `
-      <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
-        <div style="background-color: #1f2937; color: white; padding: 20px; text-align: center;">
-          <h1 style="margin: 0;">Autos Direct</h1>
+  try {
+    const content = `
+      <div class="message-text">
+        Welcome to <strong>AutoDirect</strong>! You have been invited to join our team and we're excited to have you on board.
+      </div>
+      
+      <div class="highlight-box">
+        <h3>You're Invited!</h3>
+        <p>You have been invited to join Autos Direct as a <strong>${roles.join(', ')}</strong>.</p>
+      </div>
+      
+      <div class="details-container">
+        <div class="details-title">Invitation Details</div>
+        <div class="detail-row">
+          <span class="detail-label">Email:</span>
+          <span class="detail-value">${email}</span>
         </div>
-        
-        <div style="padding: 30px 20px; background-color: #f9fafb;">
-          <h2 style="color: #1f2937; margin-bottom: 20px;">You're Invited!</h2>
-          
-          <p style="color: #374151; font-size: 16px; line-height: 1.6;">
-            You have been invited to join Autos Direct as a <strong>${roles.join(', ')}</strong>.
-          </p>
-          
-          <div style="background-color: white; padding: 20px; border-radius: 8px; margin: 20px 0; border-left: 4px solid #1f2937;">
-            <p style="margin: 0; color: #374151;">
-              <strong>Email:</strong> ${email}<br>
-              <strong>Roles:</strong> ${roles.join(', ')}<br>
-              <strong>Expires:</strong> ${new Date(expiresAt).toLocaleString()}
-            </p>
-          </div>
-          
-          <div style="text-align: center; margin: 30px 0;">
-            <a href="${invitationUrl}" 
-               style="background-color: #1f2937; color: white; padding: 12px 30px; text-decoration: none; border-radius: 6px; font-weight: bold; display: inline-block;">
-              Complete Registration
-            </a>
-          </div>
-          
-          <p style="color: #6b7280; font-size: 14px; line-height: 1.5;">
-            This invitation link will expire on ${new Date(expiresAt).toLocaleString()}. 
-            If you have any questions, please contact your administrator.
-          </p>
-          
-          <hr style="border: none; border-top: 1px solid #e5e7eb; margin: 30px 0;">
-          
-          <p style="color: #9ca3af; font-size: 12px; text-align: center;">
-            This is an automated message from Autos Direct. Please do not reply to this email.
-          </p>
+        <div class="detail-row">
+          <span class="detail-label">Roles:</span>
+          <span class="detail-value">${roles.join(', ')}</span>
+        </div>
+        <div class="detail-row">
+          <span class="detail-label">Expires:</span>
+          <span class="detail-value">${new Date(expiresAt).toLocaleString()}</span>
         </div>
       </div>
-    `
-  };
+      
+      <div class="cta-container" style="text-align: center; margin: 30px 0;">
+        <a href="${invitationUrl}" 
+           class="cta-button" 
+           style="background-color: #000000; color: white; padding: 15px 30px; text-decoration: none; border-radius: 6px; font-weight: bold; display: inline-block; font-size: 16px;">
+          Complete Registration
+        </a>
+      </div>
+      
+      <div class="info-box" style="background: #f8f9fa; padding: 15px; border-radius: 5px; margin: 20px 0;">
+        <p style="margin: 0; color: #6b7280; font-size: 14px; line-height: 1.5;">
+          This invitation link will expire on ${new Date(expiresAt).toLocaleString()}. 
+          If you have any questions, please contact your administrator.
+        </p>
+      </div>
+    `;
 
-  try {
+    const subject = 'Invitation to Join AutoDirect';
+    const htmlContent = emailService.createProfessionalEmailTemplate(subject, content, '');
+    
+    const transporter = emailService.createTransporter();
+    const mailOptions = {
+      from: `AutoDirect <${emailService.auth.user}>`,
+      to: email,
+      subject: subject,
+      html: htmlContent
+    };
+
     await transporter.sendMail(mailOptions);
+    console.log('Invitation email sent successfully with new professional template');
     return { success: true };
   } catch (error) {
     console.error('Email sending failed:', error);

@@ -116,6 +116,9 @@ function PurchaseFlowPage() {
     notes: ""
   });
 
+  // Today in YYYY-MM-DD for date input min and comparisons
+  const todayStr = new Date().toISOString().split('T')[0];
+
   const [manufacturers, setManufacturers] = useState([]);
   const [manufacturerDetails, setManufacturerDetails] = useState(null);
   const [loadingManufacturerDetails, setLoadingManufacturerDetails] = useState(false);
@@ -492,7 +495,15 @@ function PurchaseFlowPage() {
         errors.licenseLastName = !validateRequired(purchaseForm.licenseLastName);
         errors.licenseNumber = !validateLicenseNumber(purchaseForm.licenseNumber);
         errors.licenseState = !validateLicenseState(purchaseForm.licenseState);
-        errors.licenseExpiryDate = !validateRequired(purchaseForm.licenseExpiryDate);
+        // License expiry must be present and not in the past
+        const isExpiryProvided = validateRequired(purchaseForm.licenseExpiryDate);
+        let isExpired = false;
+        if (isExpiryProvided) {
+          const expiry = new Date(purchaseForm.licenseExpiryDate + 'T00:00:00');
+          const today = new Date(todayStr + 'T00:00:00');
+          isExpired = expiry < today;
+        }
+        errors.licenseExpiryDate = !isExpiryProvided || isExpired;
         break;
       default:
         // No validation needed for other steps
@@ -1094,9 +1105,10 @@ function PurchaseFlowPage() {
                   className={`w-full p-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 ${
                     fieldErrors.licenseExpiryDate ? 'border-red-500' : 'border-gray-300'
                   }`}
+                  min={todayStr}
                 />
                 {fieldErrors.licenseExpiryDate && (
-                  <p className="text-red-500 text-sm mt-1">License expiry date is required</p>
+                  <p className="text-red-500 text-sm mt-1">License expiry date must be today or later</p>
                 )}
               </div>
             </div>

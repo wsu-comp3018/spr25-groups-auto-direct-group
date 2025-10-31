@@ -20,7 +20,7 @@ const app = express();
 const server = http.createServer(app);
 let io;
 const connectDB = require("./service/databaseConnection");
-const PORT = process.env.PORT || 3000;
+const PORT = process.env.PORT || 3001;
 
 const mysql = require('mysql2')
 const { connectionConfig } = require('./config/connectionsConfig');
@@ -89,6 +89,17 @@ try {
       }
 
       // pool.destroy(); // Commented out - not needed for connection pools
+    });
+  });
+
+  // Simple DB connectivity ping (no dependency on specific tables)
+  app.get('/api/db-ping', (req, res) => {
+    pool.query('SELECT 1 as ok', (err, results) => {
+      if (err) {
+        console.error(`DB ping failed: ${err}`);
+        return res.status(500).json({ ok: false, error: String(err) });
+      }
+      res.json({ ok: true, result: results[0] });
     });
   });
 
