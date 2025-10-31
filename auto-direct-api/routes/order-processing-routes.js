@@ -19,7 +19,12 @@ router.post('/process-order-purchase', async (req, res) => {
       customerName, 
       customerEmail, 
       customerPhone, 
-      customerAddress, 
+      customerAddress,
+      licenseFirstName,
+      licenseLastName,
+      licenseNumber,
+      licenseState,
+      licenseExpiryDate,
       vehicleDetails, 
       manufacturerDetails 
     } = req.body;
@@ -37,17 +42,33 @@ router.post('/process-order-purchase', async (req, res) => {
       customerEmail: customerEmail || '',
       customerPhone: customerPhone || '',
       deliveryAddress: customerAddress || '',
-      licenseNumber: '', // This would come from the form
+      
+      // License Information
+      licenseFirstName: licenseFirstName || '',
+      licenseLastName: licenseLastName || '',
+      licenseNumber: licenseNumber || '',
+      licenseState: licenseState || '',
+      licenseExpiryDate: licenseExpiryDate || '',
       
       // Vehicle Details from the purchase
-      vehicleMake: vehicleDetails?.makeName || '',
-      vehicleModel: vehicleDetails?.modelName || '',
-      vehicleYear: vehicleDetails?.year || '2024',
+      vehicleMake: vehicleDetails?.makeName || vehicleDetails?.make || '',
+      vehicleModel: vehicleDetails?.modelName || vehicleDetails?.model || '',
+      vehicleYear: vehicleDetails?.year || vehicleDetails?.modelYear || '2024',
       vehicleVIN: vehicleDetails?.vin || vehicleDetails?.vehicleID || orderID,
       vehicleID: vehicleDetails?.vehicleID || orderID,
       
+      // Vehicle additional details
+      price: vehicleDetails?.price || 0,
+      totalPrice: vehicleDetails?.price || 0,
+      fuelType: vehicleDetails?.fuelType || '',
+      transmission: vehicleDetails?.transmission || '',
+      bodyType: vehicleDetails?.bodyType || '',
+      driveType: vehicleDetails?.driveType || '',
+      color: vehicleDetails?.color || vehicleDetails?.colour || '',
+      mileage: vehicleDetails?.mileage || 0,
+      
       // Manufacturer Details
-      manufacturerName: manufacturerDetails?.manufacturerName || vehicleDetails?.makeName || '',
+      manufacturerName: manufacturerDetails?.manufacturerName || vehicleDetails?.makeName || vehicleDetails?.make || '',
       manufacturerContact: manufacturerDetails?.email || 'contact@manufacturer.com',
       
       // Logistics Data
@@ -387,7 +408,7 @@ router.post('/update-sap', [verifyToken, authorizeUser], async (req, res) => {
 // Get all orders for Order Management Page
 router.get('/get-all-orders', [verifyToken, authorizeUser], async (req, res) => {
   try {
-    console.log('�🚨🚨 GET ALL ORDERS ENDPOINT HIT! Request received at:', new Date().toISOString());
+    console.log('🚨🚨 GET ALL ORDERS ENDPOINT HIT! Request received at:', new Date().toISOString());
     console.log('🔗 Full request headers:', req.headers);
     console.log('🔑 Authorization header:', req.headers.authorization);
 
@@ -401,74 +422,15 @@ router.get('/get-all-orders', [verifyToken, authorizeUser], async (req, res) => 
     //   return res.status(403).json({ error: 'Unauthorized - Admin access required' });
     // }
 
-    // Get all orders from memory storage (in production, this would be from database)
-    const allOrders = Array.from(orderStorage.values());
+    // Import the purchase services to get real database data
+    const { getAllPurchases } = require('../service/purchase-services.js');
     
-    // Add some default test orders if storage is empty (for demo purposes)
-    if (allOrders.length === 0) {
-      // Add current test orders to storage for consistency
-      const testOrders = [
-        {
-          orderID: 'SUBBE814UP',
-          customerName: 'John Smith',
-          customerFirstName: 'John',
-          customerLastName: 'Smith',
-          customerEmail: 'john.smith@email.com',
-          customerPhone: '+1 (555) 123-4567',
-          deliveryAddress: '123 Main Street, City, State 12345',
-          vehicleMake: 'Toyota',
-          vehicleModel: 'Camry',
-          status: 'Processing',
-          salesRep: 'Mike Johnson',
-          estimatedDelivery: '2025-11-15',
-          orderDate: new Date().toISOString(),
-          paymentStatus: 'confirmed'
-        },
-        {
-          orderID: 'SUBJJ332UP',
-          customerName: 'Sarah Davis',
-          customerFirstName: 'Sarah',
-          customerLastName: 'Davis',
-          customerEmail: 'sarah.davis@email.com',
-          customerPhone: '+1 (555) 987-6543',
-          deliveryAddress: '456 Oak Avenue, Town, State 67890',
-          vehicleMake: 'Honda',
-          vehicleModel: 'Civic',
-          status: 'Confirmed',
-          salesRep: 'Lisa Chen',
-          estimatedDelivery: '2025-12-01',
-          orderDate: new Date().toISOString(),
-          paymentStatus: 'confirmed'
-        },
-        {
-          orderID: 'SUBAS562UP',
-          customerName: 'Michael Brown',
-          customerFirstName: 'Michael',
-          customerLastName: 'Brown',
-          customerEmail: 'michael.brown@email.com',
-          customerPhone: '+1 (555) 456-7890',
-          deliveryAddress: '789 Pine Road, Village, State 54321',
-          vehicleMake: 'Ford',
-          vehicleModel: 'F-150',
-          status: 'Delivered',
-          salesRep: 'Tom Wilson',
-          estimatedDelivery: '2025-10-20',
-          orderDate: new Date().toISOString(),
-          paymentStatus: 'confirmed'
-        }
-      ];
-
-      // Add test orders to storage
-      testOrders.forEach(order => {
-        orderStorage.set(order.orderID, order);
-      });
-
-      console.log('✅ Initialized with test orders:', testOrders.length);
-      res.status(200).json(testOrders);
-      return;
-    }
-
-    console.log('✅ Retrieved orders from storage:', allOrders.length);
+    // Get all orders from the database
+    const allOrders = await getAllPurchases();
+    
+    console.log('✅ Retrieved orders from database:', allOrders.length);
+    console.log('📊 Sample order data:', allOrders.length > 0 ? allOrders[0] : 'No orders found');
+    
     res.status(200).json(allOrders);
 
   } catch (error) {
