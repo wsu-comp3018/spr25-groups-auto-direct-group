@@ -353,15 +353,6 @@ function Chatbot() {
 
   return (
     <>
-      {/* Chatbot Toggle Button */}
-      <button
-        onClick={toggleChatbot}
-        className="fixed bottom-6 right-6 bg-black text-white p-4 rounded-full shadow-lg hover:bg-gray-800 transition-colors z-50 flex items-center gap-2"
-      >
-        <MessageCircle className="h-6 w-6" />
-        <span className="hidden sm:block">Chat Support</span>
-      </button>
-
       {/* Chatbot Window */}
       {isOpen && (
         <div className={`fixed bottom-6 right-6 bg-white rounded-lg shadow-xl border z-50 transition-all duration-300 ${
@@ -612,6 +603,17 @@ function Chatbot() {
             </>
           )}
         </div>
+      )}
+
+      {/* Floating Chat Button */}
+      {!isOpen && (
+        <button
+          onClick={() => setIsOpen(true)}
+          className="fixed bottom-6 right-6 bg-black text-white p-4 rounded-full shadow-lg hover:bg-gray-800 transition-all z-40 flex items-center gap-2"
+        >
+          <MessageCircle className="h-6 w-6" />
+          <span className="font-medium">Chat Support</span>
+        </button>
       )}
     </>
   );

@@ -277,11 +277,11 @@ function TestDriveDashboard() {
                         <div>
                           <div className="text-sm font-medium text-gray-900">{req.name}</div>
                           <div className="text-sm text-gray-500 flex items-center gap-1 mt-1">
-                            <span>📧</span> {req.email}
+                            {req.email}
                           </div>
                           {req.phone && (
                             <div className="text-sm text-gray-500 flex items-center gap-1">
-                              <span>📞</span> {req.phone}
+                              {req.phone}
                             </div>
                           )}
                         </div>
