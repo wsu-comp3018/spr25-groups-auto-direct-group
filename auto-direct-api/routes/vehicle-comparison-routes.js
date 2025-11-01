@@ -4,13 +4,14 @@ const { v4: uuidv4 } = require('uuid');
 const verifyToken = require('../middleware/authentication.js');
 const { sendComparisonConfirmationEmail } = require('../service/email-service.js');
 
+// Create pool once at the top
+const mysql = require('mysql2');
+const { connectionConfig } = require('../config/connectionsConfig.js');
+const pool = mysql.createPool(connectionConfig);
+
 // Submit new vehicle comparison request
 router.post('/submit-comparison', verifyToken, async (req, res) => {
     try {
-        const mysql = require('mysql2');
-        const { connectionConfig } = require('../config/connectionsConfig.js');
-        const pool = mysql.createPool(connectionConfig);
-
         const {
             primaryVehicleID,
             secondaryVehicleID,
@@ -93,7 +94,7 @@ router.post('/submit-comparison', verifyToken, async (req, res) => {
                         const vehicleData = vehicleResult.map(vehicle => ({
                             makeName: vehicle.makeName || '',
                             modelName: vehicle.modelName || '',
-                            year: 'N/A', // Year not available in database
+                            year: 'N/A',
                             price: vehicle.price || '',
                             bodyType: vehicle.bodyType || '',
                             colour: vehicle.colour || '',
@@ -113,9 +114,18 @@ router.post('/submit-comparison', verifyToken, async (req, res) => {
                     }
                 } catch (emailError) {
                     console.error('❌ Error sending vehicle comparison confirmation email:', emailError);
-                    // Don't fail the request if email fails
                 }
             })();
+
+            // Emit real-time update to admin dashboard
+            const io = req.app.get('io');
+            if (io) {
+                io.emit('new_comparison', {
+                    requestID: comparisonRequestID,
+                    timestamp: new Date().toISOString()
+                });
+                console.log('Socket.IO: Emitted new_comparison event');
+            }
             
             res.status(201).json({
                 success: true,
@@ -133,10 +143,6 @@ router.post('/submit-comparison', verifyToken, async (req, res) => {
 // Get all vehicle comparison requests for admin dashboard
 router.get('/admin-comparisons', async (req, res) => {
     try {
-        const mysql = require('mysql2');
-        const { connectionConfig } = require('../config/connectionsConfig.js');
-        const pool = mysql.createPool(connectionConfig);
-
         const comparisonQuery = `
             SELECT 
                 vcr.requestID,
@@ -308,10 +314,6 @@ router.get('/admin-comparisons', async (req, res) => {
 // Admin: Assign dealer to comparison request
 router.put('/admin/assign-dealer', async (req, res) => {
     try {
-        const mysql = require('mysql2');
-        const { connectionConfig } = require('../config/connectionsConfig.js');
-        const pool = mysql.createPool(connectionConfig);
-
         const { requestID, dealerID } = req.body;
 
         const updateQuery = `
@@ -345,10 +347,6 @@ router.put('/admin/assign-dealer', async (req, res) => {
 // Admin: Mark comparison request as completed
 router.put('/admin/mark-completed', async (req, res) => {
     try {
-        const mysql = require('mysql2');
-        const { connectionConfig } = require('../config/connectionsConfig.js');
-        const pool = mysql.createPool(connectionConfig);
-
         const { requestID, adminNotes } = req.body;
 
         const updateQuery = `
@@ -382,10 +380,6 @@ router.put('/admin/mark-completed', async (req, res) => {
 // Admin: Cancel comparison request
 router.put('/admin/cancel-request', async (req, res) => {
     try {
-        const mysql = require('mysql2');
-        const { connectionConfig } = require('../config/connectionsConfig.js');
-        const pool = mysql.createPool(connectionConfig);
-
         const { requestID, adminNotes } = req.body;
 
         const updateQuery = `
