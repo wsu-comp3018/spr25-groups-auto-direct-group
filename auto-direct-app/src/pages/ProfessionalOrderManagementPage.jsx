@@ -6,7 +6,7 @@ import 'react-toastify/dist/ReactToastify.css';
 
 const ProfessionalOrderManagementPage = () => {
   const navigate = useNavigate();
-  const api = import.meta.env.VITE_API_URL || 'http://localhost:3001';
+  const api = import.meta.env.VITE_API_URL || 'https://autos-direct.com.au';
 
   // State for view mode
   const [viewMode, setViewMode] = useState('table'); // 'search' or 'table' - Default to table like the league system
