@@ -3,7 +3,7 @@ import Cookies from "js-cookie";
 import { Car, User, Clock, Filter, Search, Eye, FileText, Calendar, CheckCircle, XCircle, UserPlus } from "lucide-react";
 
 // Backend base for finance routes (where our comparison data endpoint is)
-const API_BASE = "http://localhost:3001/finance";
+const API_BASE = "https://autos-direct.com.au/finance";
 
 function CustomerServiceQueue() {
   const [search, setSearch] = useState("");
@@ -38,8 +38,8 @@ function CustomerServiceQueue() {
     try {
       // Fetch both test drive requests and vehicle comparison requests
       const [testDriveResponse, comparisonResponse] = await Promise.all([
-        fetch('http://localhost:3001/test-drive/admin-requests'),
-        fetch('http://localhost:3001/vehicle-comparison/admin-comparisons')
+        fetch('https://autos-direct.com.au/test-drive/admin-requests'),
+        fetch('https://autos-direct.com.au/vehicle-comparison/admin-comparisons')
       ]);
 
       const testDriveData = await testDriveResponse.json();
@@ -110,8 +110,8 @@ function CustomerServiceQueue() {
     try {
       // Determine the correct endpoint based on request type
       const endpoint = request.requestType === 'Test Drive' 
-        ? 'http://localhost:3001/test-drive/admin/assign-dealer'
-        : 'http://localhost:3001/vehicle-comparison/admin/assign-dealer';
+        ? 'https://autos-direct.com.au/test-drive/admin/assign-dealer'
+        : 'https://autos-direct.com.au/vehicle-comparison/admin/assign-dealer';
 
       const response = await fetch(endpoint, {
         method: "PUT",
@@ -150,8 +150,8 @@ function CustomerServiceQueue() {
     try {
       // Determine the correct endpoint based on request type
       const endpoint = request.requestType === 'Test Drive' 
-        ? 'http://localhost:3001/test-drive/admin/mark-completed'
-        : 'http://localhost:3001/vehicle-comparison/admin/mark-completed';
+        ? 'https://autos-direct.com.au/test-drive/admin/mark-completed'
+        : 'https://autos-direct.com.au/vehicle-comparison/admin/mark-completed';
 
       const response = await fetch(endpoint, {
         method: "PUT",
@@ -188,8 +188,8 @@ function CustomerServiceQueue() {
     try {
       // Determine the correct endpoint based on request type
       const endpoint = request.requestType === 'Test Drive' 
-        ? 'http://localhost:3001/test-drive/admin/cancel-request'
-        : 'http://localhost:3001/vehicle-comparison/admin/cancel-request';
+        ? 'https://autos-direct.com.au/test-drive/admin/cancel-request'
+        : 'https://autos-direct.com.au/vehicle-comparison/admin/cancel-request';
 
       const response = await fetch(endpoint, {
         method: "PUT",
