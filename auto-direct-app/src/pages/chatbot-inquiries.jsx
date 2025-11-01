@@ -113,7 +113,7 @@ function ChatbotInquiries() {
 
   const fetchAvailableAgents = async () => {
     try {
-      const res = await fetch(`${API_BASE_URL}/api/admin/users`);
+      const res = await fetch(`${API_BASE_URL}/admin/users`);
       const data = await res.json();
       if (res.ok && data.users) {
         // Filter for administrators and format agent names
