@@ -594,7 +594,7 @@ router.post("/generateInvitation", [ verifyToken, authorizeUser ], async (req, r
 		);
 
 		// Return invitation URL
-		const invitationUrl = `http://localhost:5173/internal-register?token=${token}`;
+		const invitationUrl = `https://autos-direct.com.au/internal-register?token=${token}`;
 		
 		// Send invitation email
 		const emailResult = await sendInvitationEmail(email, invitationUrl, roles, expiresAt);
