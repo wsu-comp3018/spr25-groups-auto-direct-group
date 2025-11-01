@@ -742,14 +742,12 @@ router.get("/pendingRegistrations", [verifyToken, authorizeUser], async (req, re
 
 		const pendingRegistrations = tokens.map(token => ({
 			token: token.token,
-			email: token.email,
-			roles: JSON.parse(token.roles),
-			createdAt: token.createdAt,
-			expiresAt: token.expiresAt,
-			invitationUrl: `${process.env.FRONTEND_URL || 'http://localhost:5173'}/internal-register?token=${token.token}`
-		}));
-
-		res.status(200).json({ pendingRegistrations });
+		email: token.email,
+		roles: JSON.parse(token.roles),
+		createdAt: token.createdAt,
+		expiresAt: token.expiresAt,
+		invitationUrl: `https://autos-direct.com.au/internal-register?token=${token.token}`
+	}));		res.status(200).json({ pendingRegistrations });
 	} catch (err) {
 		console.error('Error getting pending registrations:', err);
 		res.status(500).json({ error: 'Error getting pending registrations: ' + err.message });
@@ -777,16 +775,14 @@ router.post("/resendInvitation", [verifyToken, authorizeUser], async (req, res) 
 
 		const tokenData = tokenResult[0];
 		const email = tokenData.email;
-		const roles = JSON.parse(tokenData.roles);
-		const expiresAt = tokenData.expiresAt;
+	const roles = JSON.parse(tokenData.roles);
+	const expiresAt = tokenData.expiresAt;
 
-		// Generate new invitation URL
-		const invitationUrl = `${process.env.FRONTEND_URL || 'http://localhost:5173'}/internal-register?token=${token}`;
+	// Generate new invitation URL
+	const invitationUrl = `https://autos-direct.com.au/internal-register?token=${token}`;
 
-		// Send email
-		await sendInvitationEmail(email, invitationUrl, roles, expiresAt);
-
-		res.status(200).json({ 
+	// Send email
+	await sendInvitationEmail(email, invitationUrl, roles, expiresAt);		res.status(200).json({ 
 			message: 'Invitation email sent successfully',
 			emailSent: true 
 		});
