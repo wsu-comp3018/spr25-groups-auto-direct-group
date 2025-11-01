@@ -13,7 +13,7 @@ function ChatbotInquiries() {
 
   const SOCKET_URL = process.env.NODE_ENV === 'production'
     ? 'https://autos-direct.com.au'
-    : 'https://autos-direct.com.au';
+    : 'https://autos-direct.scom.au';
   const [inquiries, setInquiries] = useState([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
