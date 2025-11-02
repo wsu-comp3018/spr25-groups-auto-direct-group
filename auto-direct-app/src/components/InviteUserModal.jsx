@@ -3,7 +3,7 @@ import Cookies from 'js-cookie';
 import api from '../data/api-calls';
 import toast from 'react-hot-toast';
 
-const InviteUserModal = ({ isOpen, onClose }) => {
+const InviteUserModal = ({ isOpen, onClose, onInviteSent }) => {
   const [formData, setFormData] = useState({
     email: '',
     roles: [],
@@ -57,6 +57,11 @@ const InviteUserModal = ({ isOpen, onClose }) => {
         toast.success(`Invitation sent successfully to ${data.email}! They should receive an email shortly.`);
       } else {
         toast.success(`Invitation generated but email failed to send. Share this link manually: ${data.invitationUrl}`);
+      }
+      
+      // Call the callback to refresh pending registrations
+      if (onInviteSent) {
+        onInviteSent();
       }
       
       // Reset form

@@ -357,6 +357,15 @@ function ManageUsersPage() {
       <InviteUserModal
         isOpen={showInviteUserModal}
         onClose={() => setShowInviteUserModal(false)}
+        onInviteSent={() => {
+          // Refresh pending registrations after invitation is sent
+          const token = Cookies.get("auto-direct-token");
+          fetch(api + '/admin/pendingRegistrations', {method: 'GET', headers: {'Authorization': `Bearer ${token}`} })
+          .then((res) => { return res.json() })
+          .then((data) => {
+            setPendingRegistrations(data.pendingRegistrations || []);
+          });
+        }}
       />
     </div>
   );
