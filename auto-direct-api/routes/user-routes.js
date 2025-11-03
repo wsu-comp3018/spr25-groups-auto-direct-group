@@ -16,7 +16,7 @@ const verifyRecaptcha = async (recaptchaToken) => {
 	try {
 		const response = await axios.post('https://www.google.com/recaptcha/api/siteverify', null, {
 			params: {
-				secret: '6LeIxAcTAAAAAGG-vFI1TnRWxMZNFuojJ4WifJWe',
+				secret: '6LeTvgAsAAAAAOokWu74HPVM-LwT5XA6BhAOTeJj',
 				response: recaptchaToken
 			}
 		});
@@ -34,15 +34,15 @@ router.post('/register', async (req, res) => {
 	try {
 		const { emailAddress, password, recaptchaToken } = req.body;
 		
-		// Verify reCAPTCHA (temporarily disabled for development)
-		// if (!recaptchaToken) {
-		// 	return res.status(400).json({error: "reCAPTCHA verification is required"});
-		// }
+		// Verify reCAPTCHA
+		if (!recaptchaToken) {
+			return res.status(400).json({error: "reCAPTCHA verification is required"});
+		}
 		
-		// const isRecaptchaValid = await verifyRecaptcha(recaptchaToken);
-		// if (!isRecaptchaValid) {
-		// 	return res.status(400).json({error: "reCAPTCHA verification failed"});
-		// }
+		const isRecaptchaValid = await verifyRecaptcha(recaptchaToken);
+		if (!isRecaptchaValid) {
+			return res.status(400).json({error: "reCAPTCHA verification failed"});
+		}
 		
 		const emailExists = await getUserByEmail(emailAddress);
 		if (emailExists.length > 0) {
@@ -66,17 +66,14 @@ router.post('/register', async (req, res) => {
 router.post('/login', async (req, res) => {
 	const { emailAddress, password, recaptchaToken } = req.body;
 	
-	// Verify reCAPTCHA (temporarily disabled for development)
-	// Allow development bypass token
-	if (recaptchaToken === "development-bypass") {
-		// Skip verification for development
-	} else if (!recaptchaToken) {
+	// Verify reCAPTCHA
+	if (!recaptchaToken) {
 		return res.status(400).json({message: "reCAPTCHA verification is required"});
-	} else {
-		const isRecaptchaValid = await verifyRecaptcha(recaptchaToken);
-		if (!isRecaptchaValid) {
-			return res.status(400).json({message: "reCAPTCHA verification failed"});
-		}
+	}
+	
+	const isRecaptchaValid = await verifyRecaptcha(recaptchaToken);
+	if (!isRecaptchaValid) {
+		return res.status(400).json({message: "reCAPTCHA verification failed"});
 	}
 	
 	try {
