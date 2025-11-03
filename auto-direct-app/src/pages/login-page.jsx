@@ -1,7 +1,7 @@
 // Login component: Renders the login form for user authentication
 import React, { useState, useRef } from "react";
 import Cookies from 'js-cookie';
-import { useNavigate } from "react-router-dom"; // Import useNavigate
+import { useNavigate, Link } from "react-router-dom"; // Import useNavigate
 import { useUser } from "../contexts/UserContext"; // Import your UserContext
 import api from "../data/api-calls";
 import ReCAPTCHA from "react-google-recaptcha";
@@ -34,11 +34,11 @@ function Login() {
     e.preventDefault();
     setErrorMessage(""); // Clear any previous error
 
-    // Validate reCAPTCHA (temporarily disabled for development)
-    // if (!recaptchaToken) {
-    //   setErrorMessage("Please complete the reCAPTCHA verification.");
-    //   return;
-    // }
+    // Validate reCAPTCHA
+    if (!recaptchaToken) {
+      setErrorMessage("Please complete the reCAPTCHA verification.");
+      return;
+    }
 
     try {
       const response = await fetch(api + "/user/login", {
@@ -46,7 +46,7 @@ function Login() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           ...formData,
-          recaptchaToken: "development-bypass" // Temporary bypass for development
+          recaptchaToken: recaptchaToken
         }),
       });
 
@@ -171,17 +171,17 @@ function Login() {
               </div>
             </div>
 
-            {/* reCAPTCHA Section - temporarily disabled for development */}
-            {/* <div className="space-y-4">
+            {/* reCAPTCHA Section */}
+            <div className="space-y-4">
               <div className="flex justify-center">
                 <ReCAPTCHA
                   ref={recaptchaRef}
-                  sitekey="6LeIxAcTAAAAAGG-vFI1TnRWxMZNFuojJ4WifJWe"
+                  sitekey={import.meta.env.VITE_RECAPTCHA_SITE_KEY || "6LfKgtcrAAAAAGCmjr1qoXSMbp3tU-yHP-Cl_44r"}
                   onChange={handleRecaptchaChange}
                   theme="light"
                 />
               </div>
-            </div> */}
+            </div>
 
             {/* Error Message */}
             {errorMessage && (
@@ -207,6 +207,9 @@ function Login() {
             Login
 					</button>
 				</form>
+			<div className="mt-4 text-center">
+				<Link to="/forgot-password" className="text-sm text-blue-700 hover:underline">Forgot your password?</Link>
+			</div>
 			</div>
 		</div>
 	</div>

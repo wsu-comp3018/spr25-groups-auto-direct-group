@@ -13,15 +13,18 @@ router.post('/purchase', [ verifyToken, authorizeUser ], async (req, res) => {
 	console.log('🚨 Full request body:', JSON.stringify(req.body, null, 2));
 	
 	try {
-		const purchaseNewID = uuidv4();
 		const { vehicleID, notes, customerDetails, orderID } = req.body;
+		
+		// Use the orderID from frontend (like VOLAS168UP) instead of generating UUID
+		const purchaseNewID = orderID || uuidv4();
 		
 		console.log('🚀 Purchase submitted with data:');
 		console.log('- Customer Details:', customerDetails);
 		console.log('- Order ID:', orderID);
+		console.log('- Purchase ID (saved to DB):', purchaseNewID);
 		console.log('- Vehicle ID:', vehicleID);
 		
-		const result = await createPurchase(purchaseNewID, req.userID, vehicleID, notes);
+		const result = await createPurchase(purchaseNewID, req.userID, vehicleID, notes, customerDetails);
 		console.log('✅ Purchase created in database:', result);
 
 		// Send response immediately to user

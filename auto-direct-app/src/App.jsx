@@ -46,6 +46,8 @@ import PaymentInstructionsPage from "./pages/PaymentInstructionsPage"; // Paymen
 import PaymentDetailsPage from "./pages/PaymentDetailsPage"; // Payment details page
 import TestDriveDashboard from "./pages/test-drive-dashboard";
 import CustomerServiceQueue from "./pages/customer-service-queue";
+import ForgotPasswordPage from "./pages/forgot-password-page";
+import ResetPasswordPage from "./pages/reset-password-page";
 
 import ProtectedRoute from "./components/ProtectedRoute";
 import { UserProvider } from "./contexts/UserContext"; // path may change based on your setup
@@ -67,6 +69,8 @@ function App() {
           <Route path="/saved-cars" element={<SavedCarsPage />} />
           <Route path="/contact" element={<ContactPage />} />
           <Route path="/login" element={<LoginPage />} />
+          <Route path="/forgot-password" element={<ForgotPasswordPage />} />
+          <Route path="/reset-password" element={<ResetPasswordPage />} />
           <Route path="/register" element={<RegisterPage />} />
           <Route path="/internal-register" element={<InternalRegisterPage />} />
           <Route path="/manage-my-purchases" element={<UserManagePurchasesPage />} />

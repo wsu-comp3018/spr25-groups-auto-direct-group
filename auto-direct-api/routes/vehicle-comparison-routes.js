@@ -24,7 +24,7 @@ router.post('/submit-comparison', verifyToken, async (req, res) => {
         } = req.body;
 
         const comparisonRequestID = uuidv4();
-        const userID = req.user.userID;
+        const userID = req.userID;
 
         const insertQuery = `
             INSERT INTO vehicle_comparison 

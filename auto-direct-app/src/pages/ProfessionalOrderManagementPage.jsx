@@ -134,7 +134,11 @@ const ProfessionalOrderManagementPage = () => {
       email: orderData.customerEmail || '',
       bestContact: orderData.customerPhone || '',
       deliveryAddress: orderData.deliveryAddress || '',
+      licenseFirstName: orderData.licenseFirstName || '',
+      licenseLastName: orderData.licenseLastName || '',
       licenseNumber: orderData.licenseNumber || '',
+      licenseState: orderData.licenseState || '',
+      licenseExpiryDate: orderData.licenseExpiryDate || '',
       vehicleModel: `${orderData.vehicleMake || ''} ${orderData.vehicleModel || ''}`.trim(),
       manufacturer: orderData.manufacturerName || '',
       manufacturerContact: '',
@@ -577,9 +581,9 @@ const ProfessionalOrderManagementPage = () => {
                       {/* Vehicle Details */}
                       <div>
                         <div className="font-semibold text-black text-sm">{order.vehicleMake} {order.vehicleModel}</div>
-                        <div className="text-sm text-gray-600">{order.vehicleMake} • 2024</div>
+                        <div className="text-sm text-gray-600">{order.vehicleMake} • {order.vehicleYear || '2024'}</div>
                         <div className="text-xs text-gray-500">VIN:</div>
-                        <div className="text-xs font-mono text-gray-600">{order.orderID}***</div>
+                        <div className="text-xs font-mono text-gray-600">{order.vehicleVIN ? order.vehicleVIN.substring(0, 13) + '***' : order.orderID + '***'}</div>
                       </div>
 
                       {/* Status */}
@@ -618,7 +622,9 @@ const ProfessionalOrderManagementPage = () => {
 
                       {/* Financial */}
                       <div>
-                        <div className="font-bold text-black text-base">${order.totalPrice || order.price || '50,000'}</div>
+                        <div className="font-bold text-black text-base">
+                          ${(order.totalPrice || order.price || 0).toLocaleString()}
+                        </div>
                         <div className="text-xs text-gray-600">
                           {order.financingOption === 'cash' || order.financingOption === 'Cash Purchase' ? 'Cash Payment' : 
                            order.financingOption === 'finance' || order.financingOption === 'Finance' ? 'Financing Available' :
@@ -913,6 +919,60 @@ const ProfessionalOrderManagementPage = () => {
                       name="bestContact"
                       value={formData.bestContact}
                       onChange={handleInputChange}
+                      className="w-full border border-gray-300 rounded-md px-3 py-2 focus:ring-2 focus:ring-black focus:border-black"
+                      readOnly
+                    />
+                  </div>
+                </div>
+
+                <h3 className="text-lg font-semibold text-black mb-4 mt-6">License Information</h3>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">License First Name</label>
+                    <input
+                      type="text"
+                      name="licenseFirstName"
+                      value={formData.licenseFirstName || ''}
+                      className="w-full border border-gray-300 rounded-md px-3 py-2 focus:ring-2 focus:ring-black focus:border-black"
+                      readOnly
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">License Last Name</label>
+                    <input
+                      type="text"
+                      name="licenseLastName"
+                      value={formData.licenseLastName || ''}
+                      className="w-full border border-gray-300 rounded-md px-3 py-2 focus:ring-2 focus:ring-black focus:border-black"
+                      readOnly
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">License Number</label>
+                    <input
+                      type="text"
+                      name="licenseNumber"
+                      value={formData.licenseNumber || ''}
+                      className="w-full border border-gray-300 rounded-md px-3 py-2 focus:ring-2 focus:ring-black focus:border-black"
+                      readOnly
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">License State</label>
+                    <input
+                      type="text"
+                      name="licenseState"
+                      value={formData.licenseState || ''}
+                      className="w-full border border-gray-300 rounded-md px-3 py-2 focus:ring-2 focus:ring-black focus:border-black"
+                      readOnly
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">License Expiry Date</label>
+                    <input
+                      type="text"
+                      name="licenseExpiryDate"
+                      value={formData.licenseExpiryDate || ''}
                       className="w-full border border-gray-300 rounded-md px-3 py-2 focus:ring-2 focus:ring-black focus:border-black"
                       readOnly
                     />
