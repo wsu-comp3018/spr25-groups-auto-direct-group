@@ -14,7 +14,7 @@ const transporter = nodemailer.createTransport(emailConfig);
 const sendComplaintEmail = async (complaintData) => {
   const mailOptions = {
     from: emailConfig.auth.user,
-    to: '22070210@student.westernsydney.edu.au',
+    to: 'paulmiller999@gmail.com',
     subject: `New Complaint from ${complaintData.customer_name}`,
     html: `
       <h2>New Customer Complaint</h2>
